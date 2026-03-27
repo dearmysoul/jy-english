@@ -1,0 +1,2543 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>영어듣기 연습</title>
+  <link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/pretendard@latest/dist/web/static/pretendard.css" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #F1EFE8;
+      --surface: #E8E6DF;
+      --card: #FFFFFF;
+      --border: #D3D1C7;
+      --fg: #2C2C2A;
+      --muted-fg: #5F5E5A;
+      --hint: #888780;
+      --primary: #378ADD;
+      --primary-dark: #185FA5;
+      --primary-bg: #E6F1FB;
+      --success: #639922;
+      --success-bg: #EAF3DE;
+      --success-dark: #27500A;
+      --fail: #E24B4A;
+      --fail-bg: #FCEBEB;
+      --fail-dark: #791F1F;
+      --cta: #BA7517;
+      --cta-bg: #FAEEDA;
+      --font: 'Pretendard', -apple-system, 'Apple SD Gothic Neo', sans-serif;
+      --radius: 4px;
+      --nav-h: 52px;
+    }
+
+    body.dark {
+      --bg: #1C1C1A;
+      --surface: #252523;
+      --card: #2C2C2A;
+      --border: #3A3A37;
+      --fg: #EDECEA;
+      --muted-fg: #A8A69F;
+      --hint: #6E6D67;
+      --primary-bg: #1A2D42;
+      --success-bg: #1A2E0A;
+      --fail-bg: #2E1111;
+      --cta-bg: #2E1F06;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      height: 100%;
+    }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--fg);
+      font-size: 16px;
+      line-height: 1.5;
+      transition: background .2s, color .2s;
+    }
+
+    /* ── NAV ── */
+    #app-nav {
+      max-width: 900px;
+      margin: 1rem auto 2rem;
+      background: var(--card);
+      border-radius: 4px;
+      box-shadow: 0 1px 2px rgba(0,0,0,.06), 0 1px 3px rgba(0,0,0,.08);
+      display: flex;
+      flex-direction: column;
+      padding: 1rem 1rem 1.25rem;
+    }
+    .nav-top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .nav-title-section {
+      text-align: center;
+      padding-top: 0.75rem;
+    }
+    .nav-title-section .nav-main-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--fg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+    }
+    .nav-title-section .nav-main-title.hidden-on-session {
+      display: none;
+    }
+    .nav-title-section .nav-sub-title {
+      font-size: 14px;
+      color: var(--muted-fg);
+      margin-top: 4px;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--fg);
+      cursor: pointer;
+      padding: 0;
+      border-radius: 4px;
+      border: none;
+      background: none;
+      font-family: var(--font);
+      flex-shrink: 0;
+    }
+
+    .nav-logo i {
+      font-size: 1.2rem;
+      color: var(--primary);
+      vertical-align: middle;
+    }
+
+    .nav-back {
+      background: none;
+      border: none;
+      cursor: pointer;
+      width: 2rem;
+      height: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      color: var(--fg);
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+
+    .nav-back:hover {
+      background: var(--surface);
+    }
+
+    .dark-btn {
+      margin-left: auto;
+      background: var(--surface);
+      border: none;
+      cursor: pointer;
+      width: 2.5rem;
+      height: 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      color: var(--hint);
+      font-size: 1.2rem;
+      flex-shrink: 0;
+      transition: all .3s;
+    }
+
+    .dark-btn:hover { transform: scale(1.1); }
+
+    /* ── PAGES ── */
+    .page {
+      display: none;
+      min-height: 100vh;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    /* ── HOME ── */
+    #page-home .page-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 1rem 40px;
+    }
+
+    .home-header {
+      margin-bottom: 24px;
+    }
+
+    .home-header h1 {
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    .home-header p {
+      font-size: 15px;
+      color: var(--muted-fg);
+      margin-top: 4px;
+    }
+
+    .session-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 16px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      transition: box-shadow .15s;
+    }
+
+    .session-card:hover {
+      box-shadow: 0 2px 8px rgba(0, 0, 0, .08);
+    }
+
+    .session-card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .session-card-title {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .session-card-subtitle {
+      font-size: 13px;
+      color: var(--muted-fg);
+      margin-top: 2px;
+    }
+
+    .session-card-date {
+      font-size: 12px;
+      color: var(--hint);
+      background: var(--surface);
+      padding: 3px 8px;
+      border-radius: var(--radius);
+      white-space: nowrap;
+    }
+
+    .session-card-footer {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .session-prog-bar {
+      flex: 1;
+      height: 6px;
+      background: var(--surface);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .session-prog-fill {
+      height: 100%;
+      background: var(--primary);
+      border-radius: var(--radius);
+      transition: width .3s;
+    }
+
+    .session-prog-label {
+      font-size: 12px;
+      color: var(--muted-fg);
+      white-space: nowrap;
+    }
+
+    .session-start-btn {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius);
+      padding: 8px 14px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: var(--font);
+    }
+
+    .session-start-btn:hover {
+      background: var(--primary-dark);
+    }
+
+    /* ── AUDIO PLAYER ── */
+    .player-wrap {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 14px 16px 12px;
+      margin-bottom: 1rem;
+    }
+    .player-inner {
+      max-width: 100%;
+    }
+
+    /* Error state */
+    .player-error {
+      background: var(--cta-bg);
+      border: 1px solid var(--cta);
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .player-error-head {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--cta);
+    }
+
+    .player-error-head i {
+      font-size: 18px;
+    }
+
+    .player-error-body {
+      font-size: 13px;
+      color: var(--muted-fg);
+      line-height: 1.6;
+    }
+
+    .player-error-cmd {
+      font-family: monospace;
+      font-size: 12px;
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 8px 10px;
+      color: var(--fg);
+      margin-top: 4px;
+      word-break: break-all;
+      white-space: pre-wrap;
+    }
+
+    /* Player UI */
+    .player-ui {
+      display: none;
+    }
+
+    .player-ui.ready {
+      display: block;
+    }
+
+    /* Seek row */
+    .player-seek-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .player-time {
+      font-size: 12px;
+      color: var(--muted-fg);
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+      min-width: 36px;
+    }
+
+    .player-time.dur {
+      text-align: right;
+    }
+
+    .player-seek-track {
+      flex: 1;
+      position: relative;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .player-seek-bg {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 4px;
+      background: var(--border);
+      border-radius: var(--radius);
+    }
+
+    .player-seek-fill {
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 4px;
+      background: var(--primary);
+      border-radius: var(--radius);
+      width: 0;
+      pointer-events: none;
+      transition: width .1s linear;
+    }
+
+    .player-seek-input {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+      margin: 0;
+      z-index: 2;
+      -webkit-appearance: none;
+    }
+
+    .player-seek-thumb {
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 14px;
+      height: 14px;
+      background: var(--primary);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 1;
+      left: 0;
+    }
+
+    /* Controls row */
+    .player-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: center;
+    }
+
+    .player-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius);
+      font-family: var(--font);
+    }
+
+    .skip-btn {
+      width: 38px;
+      height: 38px;
+      font-size: 22px;
+      color: var(--muted-fg);
+    }
+
+    .skip-btn:hover {
+      background: var(--surface);
+    }
+
+    .play-btn {
+      width: 48px;
+      height: 48px;
+      font-size: 26px;
+      background: var(--primary);
+      color: #fff;
+      border-radius: 50%;
+      transition: background .15s;
+    }
+
+    .play-btn:hover {
+      background: var(--primary-dark);
+    }
+
+    .speed-selector {
+      display: flex;
+      gap: 3px;
+      margin-left: 8px;
+    }
+
+    .speed-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 4px 7px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted-fg);
+      cursor: pointer;
+      font-family: var(--font);
+      transition: all .15s;
+    }
+
+    .speed-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .speed-btn.active {
+      background: var(--primary-bg);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    /* ── SESSION ── */
+    .session-content {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 1rem 40px;
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 2rem;
+      height: 2rem;
+      background: none;
+      border: none;
+      border-radius: 4px;
+      font-size: 1.1rem;
+      color: var(--fg);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .back-btn:hover { background: var(--surface); }
+
+    .session-header-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+    .session-header-left {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .session-title-text {
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    .session-subtitle-text {
+      font-size: 13px;
+      color: var(--muted-fg);
+      margin-top: 2px;
+    }
+
+    .reset-btn {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 6px 10px;
+      font-size: 13px;
+      color: var(--muted-fg);
+      cursor: pointer;
+      font-family: var(--font);
+    }
+
+    .reset-btn:hover {
+      background: var(--surface);
+    }
+
+    /* Score */
+    .score-bar {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      margin-bottom: 14px;
+    }
+
+    .score-info {
+      display: flex;
+      align-items: baseline;
+      gap: 3px;
+      margin-bottom: 8px;
+    }
+
+    .score-correct {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--success);
+    }
+
+    .score-divider {
+      font-size: 18px;
+      color: var(--hint);
+    }
+
+    .score-total {
+      font-size: 16px;
+      color: var(--muted-fg);
+    }
+
+    .score-label {
+      font-size: 14px;
+      color: var(--hint);
+      margin-left: 4px;
+    }
+
+    .score-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .score-progress-track {
+      flex: 1;
+      height: 8px;
+      background: var(--surface);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .score-progress-fill {
+      height: 100%;
+      background: var(--success);
+      border-radius: var(--radius);
+      width: 0;
+      transition: width .4s;
+    }
+
+    .score-answered {
+      font-size: 13px;
+      color: var(--hint);
+      white-space: nowrap;
+    }
+
+    /* Q Grid */
+    .q-grid-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 12px 14px;
+      margin-bottom: 14px;
+    }
+    .q-grid {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 5px;
+    }
+
+    .q-grid-btn {
+      aspect-ratio: 1;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--muted-fg);
+      font-size: 16px;
+      font-weight: 600;
+      font-family: var(--font);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background .15s, color .15s, border-color .15s;
+    }
+
+    .q-grid-btn.correct {
+      background: var(--success-bg);
+      color: var(--success);
+      border-color: var(--success);
+    }
+
+    .q-grid-btn.wrong {
+      background: var(--fail-bg);
+      color: var(--fail);
+      border-color: var(--fail);
+    }
+
+    /* Question card */
+    .q-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 12px;
+      overflow: hidden;
+      scroll-margin-top: calc(var(--nav-h) + 4px);
+    }
+
+    .q-card-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 14px 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .q-num-badge {
+      width: 26px;
+      height: 26px;
+      flex-shrink: 0;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      background: var(--surface);
+      color: var(--muted-fg);
+    }
+
+    .q-num-badge.correct {
+      background: var(--success-bg);
+      color: var(--success);
+    }
+
+    .q-num-badge.wrong {
+      background: var(--fail-bg);
+      color: var(--fail);
+    }
+
+    .q-type-badge {
+      font-size: 11px;
+      color: var(--hint);
+      background: var(--surface);
+      padding: 2px 7px;
+      border-radius: var(--radius);
+    }
+
+    .q-card-body {
+      padding: 14px;
+    }
+
+    .q-text {
+      font-size: 15px;
+      color: var(--fg);
+      line-height: 1.55;
+      margin-bottom: 12px;
+    }
+
+    /* Image options */
+    .img-opts-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .img-opt-btn {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--card);
+      padding: 8px 4px 6px;
+      cursor: pointer;
+      font-family: var(--font);
+      transition: all .15s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .img-opt-btn:hover:not(:disabled) {
+      border-color: var(--primary);
+      background: var(--primary-bg);
+    }
+
+    .img-opt-btn img {
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: contain;
+      display: block;
+    }
+
+    .img-opt-btn .opt-num {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--primary);
+      line-height: 1;
+    }
+
+    .img-opt-btn.selected-correct {
+      border-color: var(--success);
+      background: var(--success-bg);
+    }
+
+    .img-opt-btn.selected-correct .opt-num {
+      color: var(--success);
+    }
+
+    .img-opt-btn.correct-answer {
+      border-color: var(--success);
+      background: var(--success-bg);
+    }
+
+    .img-opt-btn.correct-answer .opt-num {
+      color: var(--success);
+    }
+
+    .img-opt-btn.selected-wrong {
+      border-color: var(--fail);
+      background: var(--fail-bg);
+    }
+
+    .img-opt-btn.selected-wrong .opt-num {
+      color: var(--fail);
+    }
+
+    .img-opt-btn:disabled {
+      cursor: default;
+    }
+
+    /* feedback icon overlay on image option */
+    .img-opt-btn .img-fb-icon {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      font-size: 16px;
+      display: none;
+    }
+
+    .img-opt-btn.selected-correct .img-fb-icon,
+    .img-opt-btn.correct-answer .img-fb-icon,
+    .img-opt-btn.selected-wrong .img-fb-icon {
+      display: block;
+    }
+
+    .img-opt-btn.selected-correct .img-fb-icon,
+    .img-opt-btn.correct-answer .img-fb-icon {
+      color: var(--success);
+    }
+
+    .img-opt-btn.selected-wrong .img-fb-icon {
+      color: var(--fail);
+    }
+
+    /* Text options */
+    .text-opts {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .text-opt-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--card);
+      color: var(--fg);
+      padding: 10px 12px;
+      font-size: 15px;
+      cursor: pointer;
+      font-family: var(--font);
+      text-align: left;
+      width: 100%;
+      transition: all .15s;
+    }
+
+    .text-opt-btn:hover:not(:disabled) {
+      border-color: var(--primary);
+      background: var(--primary-bg);
+    }
+
+    .text-opt-btn .opt-label {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--primary);
+      flex-shrink: 0;
+      width: 22px;
+      text-align: center;
+    }
+
+    .text-opt-btn .opt-text {
+      flex: 1;
+    }
+
+    .text-opt-btn.selected-correct {
+      border-color: var(--success);
+      background: var(--success-bg);
+    }
+
+    .text-opt-btn.selected-correct .opt-label {
+      color: var(--success);
+    }
+
+    .text-opt-btn.correct-answer {
+      border-color: var(--success);
+      background: var(--success-bg);
+    }
+
+    .text-opt-btn.correct-answer .opt-label {
+      color: var(--success);
+    }
+
+    .text-opt-btn.selected-wrong {
+      border-color: var(--fail);
+      background: var(--fail-bg);
+    }
+
+    .text-opt-btn.selected-wrong .opt-label {
+      color: var(--fail);
+    }
+
+    .text-opt-btn:disabled {
+      cursor: default;
+    }
+
+    /* Table */
+    .q-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 12px;
+      font-size: 14px;
+    }
+
+    .q-table th {
+      background: var(--primary-bg);
+      color: var(--primary-dark);
+      padding: 8px 10px;
+      text-align: left;
+      border: 1px solid var(--border);
+      font-weight: 600;
+    }
+
+    .q-table td {
+      padding: 8px 10px;
+      border: 1px solid var(--border);
+      vertical-align: top;
+    }
+
+    .q-table tr:nth-child(even) td {
+      background: var(--surface);
+    }
+
+    .q-table .row-label {
+      font-weight: 700;
+      color: var(--primary);
+      width: 28px;
+    }
+
+    /* Dialogue */
+    .dialogue-context {
+      background: var(--primary-bg);
+      border: 1px solid #85B7EB;
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      margin-bottom: 12px;
+    }
+
+    .dialogue-line {
+      font-size: 14px;
+      color: #0C447C;
+      line-height: 1.7;
+    }
+
+    .dialogue-blank {
+      display: inline-block;
+      border-bottom: 2px solid var(--primary);
+      min-width: 120px;
+      vertical-align: middle;
+    }
+
+    body.dark .dialogue-context {
+      border-color: #1e3a5c;
+    }
+
+    body.dark .dialogue-line {
+      color: #85B7EB;
+    }
+
+    /* Feedback */
+    .feedback-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: var(--radius);
+      font-size: 14px;
+      font-weight: 600;
+      margin-top: 12px;
+    }
+
+    .feedback-bar.correct {
+      background: var(--success-bg);
+      color: var(--success-dark);
+    }
+
+    .feedback-bar.wrong {
+      background: var(--fail-bg);
+      color: var(--fail-dark);
+    }
+
+    .feedback-bar i {
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    /* Script */
+    .script-toggle-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--muted-fg);
+      padding: 7px 12px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: var(--font);
+      margin-top: 10px;
+      transition: background .15s;
+    }
+
+    .script-toggle-btn:hover {
+      background: var(--surface);
+    }
+
+    .script-block {
+      display: none;
+      margin-top: 8px;
+      background: var(--primary-bg);
+      border: 1px solid #85B7EB;
+      border-radius: var(--radius);
+      padding: 12px 14px;
+    }
+
+    .script-block.open {
+      display: block;
+    }
+
+    .script-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary-dark);
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      margin-bottom: 6px;
+    }
+
+    .script-text {
+      font-size: 14px;
+      color: #0C447C;
+      line-height: 1.75;
+      white-space: pre-wrap;
+    }
+
+    body.dark .script-block {
+      border-color: #1e3a5c;
+    }
+
+    body.dark .script-text,
+    body.dark .script-title {
+      color: #85B7EB;
+    }
+
+    /* ── EXAM MODE: neutral selected ── */
+    .q-grid-btn.answered {
+      background: var(--primary-bg);
+      color: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .img-opt-btn.exam-selected {
+      border-color: var(--primary);
+      background: var(--primary-bg);
+    }
+
+    .img-opt-btn.exam-selected .opt-num {
+      color: var(--primary);
+    }
+
+    .text-opt-btn.exam-selected {
+      border-color: var(--primary);
+      background: var(--primary-bg);
+    }
+
+    .text-opt-btn.exam-selected .opt-label {
+      color: var(--primary);
+    }
+
+    /* ── COMPLETE BUTTON ── */
+    .complete-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--success);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius);
+      padding: 8px 18px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: var(--font);
+      transition: background .15s;
+      white-space: nowrap;
+    }
+
+    .complete-btn:hover {
+      background: var(--success-dark);
+    }
+
+    /* ── RESULT PAGE ── */
+    .result-content {
+      max-width: 672px;
+      margin: 0 auto;
+      padding: 16px 16px 80px;
+    }
+
+    .result-header-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .result-session-info .result-title {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .result-session-info .result-sub {
+      font-size: 13px;
+      color: var(--muted-fg);
+      margin-top: 2px;
+    }
+
+    .result-score-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px 18px 20px;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    .result-score-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: 4px;
+      margin-bottom: 4px;
+    }
+
+    .result-score-num {
+      font-size: 52px;
+      font-weight: 800;
+      color: var(--success);
+      line-height: 1;
+    }
+
+    .result-score-denom {
+      font-size: 26px;
+      font-weight: 600;
+      color: var(--muted-fg);
+    }
+
+    .result-score-pct {
+      font-size: 15px;
+      color: var(--muted-fg);
+      margin-top: 4px;
+    }
+
+    .result-progress-track {
+      height: 8px;
+      background: var(--surface);
+      border-radius: var(--radius);
+      overflow: hidden;
+      margin-top: 14px;
+    }
+
+    .result-progress-fill {
+      height: 100%;
+      background: var(--success);
+      border-radius: var(--radius);
+      transition: width .5s;
+    }
+
+    .result-action-row {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .result-action-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: var(--radius);
+      padding: 10px 22px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: var(--font);
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--fg);
+      transition: background .15s;
+    }
+
+    .result-action-btn:hover {
+      background: var(--surface);
+    }
+
+    .result-action-btn.primary {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+    }
+
+    .result-action-btn.primary:hover {
+      background: var(--primary-dark);
+    }
+
+    .result-q-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+
+    .result-q-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 14px 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .result-q-body {
+      padding: 14px;
+    }
+
+    .result-script {
+      background: var(--primary-bg);
+      border: 1px solid #85B7EB;
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      margin-top: 12px;
+    }
+
+    .result-script-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary-dark);
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      margin-bottom: 6px;
+    }
+
+    .result-script-text {
+      font-size: 14px;
+      color: #0C447C;
+      line-height: 1.75;
+      white-space: pre-wrap;
+    }
+
+    body.dark .result-script {
+      border-color: #1e3a5c;
+    }
+
+    body.dark .result-script-text,
+    body.dark .result-script-title {
+      color: #85B7EB;
+    }
+  
+  .gate-btn {
+    display: flex; align-items: center; justify-content: center;
+    width: 2rem; height: 2rem;
+    background: var(--primary-bg);
+    color: var(--primary-dark);
+    border: none; border-radius: 4px;
+    cursor: pointer; text-decoration: none;
+    font-size: 1.1rem; flex-shrink: 0;
+    transition: background .2s, color .2s;
+  }
+  .gate-btn:hover { background: var(--primary); color: #fff; }
+</style>
+</head>
+
+<body>
+
+  <!-- NAV -->
+  <nav id="app-nav">
+    <div class="nav-top-row">
+      <a class="gate-btn" href="../index.html" title="학습 홈"><i class="ri-home-4-line"></i></a>
+      <button class="dark-btn" onclick="toggleDark()">
+        <i class="ri-moon-line" id="dark-icon"></i>
+      </button>
+    </div>
+    <div class="nav-title-section" id="nav-title-section">
+      <div class="nav-main-title"><i class="ri-headphone-line"></i> 영어듣기</div>
+      <div class="nav-sub-title" id="nav-sub-title">회차를 선택하여 학습을 시작하세요</div>
+    </div>
+  </nav>
+
+  <!-- HOME PAGE -->
+  <div id="page-home" class="page active">
+    <div class="page-inner">
+      <div id="session-list"></div>
+    </div>
+  </div>
+
+  <!-- SESSION PAGE -->
+  <div id="page-session" class="page">
+    <!-- Session content -->
+    <div class="session-content">
+      <!-- 세션 헤더: 뒤로 + 제목 + 초기화 -->
+      <div class="session-header-bar">
+        <div class="session-header-left">
+          <button class="back-btn" onclick="goHome()"><i class="ri-arrow-left-line"></i></button>
+          <div>
+            <div class="session-title-text" id="session-title-text"></div>
+            <div class="session-subtitle-text" id="session-subtitle-text"></div>
+          </div>
+        </div>
+        <button class="reset-btn" onclick="confirmReset()">
+          <i class="ri-reset-right-line"></i> 초기화
+        </button>
+      </div>
+
+      <!-- Audio Player (카드) -->
+      <div class="player-wrap" id="player-wrap">
+        <audio id="main-audio" preload="auto"></audio>
+        <div class="player-inner">
+          <!-- Error / Setup guide -->
+          <div class="player-error" id="player-error" style="display:none">
+            <div class="player-error-head">
+              <i class="ri-folder-music-line"></i>
+              <span>음성 파일이 없습니다</span>
+            </div>
+            <div class="player-error-body">
+              아래 명령어로 음성을 다운로드한 후 <code>audio/</code> 폴더에 저장하세요.
+              <div class="player-error-cmd" id="error-cmd">yt-dlp -x --audio-format m4a -o "audio/세션ID.m4a" [유튜브URL]</div>
+            </div>
+          </div>
+          <!-- Player UI -->
+          <div class="player-ui" id="player-ui">
+            <div class="player-seek-row">
+              <span class="player-time" id="time-cur">0:00</span>
+              <div class="player-seek-track" id="seek-track">
+                <div class="player-seek-bg"></div>
+                <div class="player-seek-fill" id="seek-fill"></div>
+                <div class="player-seek-thumb" id="seek-thumb"></div>
+                <input type="range" class="player-seek-input" id="seek-input" min="0" max="1000" value="0" step="1">
+              </div>
+              <span class="player-time dur" id="time-dur">0:00</span>
+            </div>
+            <div class="player-controls">
+              <button class="player-btn skip-btn" onclick="skipTime(-10)" title="-10초">
+                <i class="ri-replay-10-line"></i>
+              </button>
+              <button class="player-btn play-btn" id="play-btn" onclick="togglePlay()">
+                <i class="ri-play-large-fill" id="play-icon"></i>
+              </button>
+              <button class="player-btn skip-btn" onclick="skipTime(10)" title="+10초">
+                <i class="ri-forward-10-line"></i>
+              </button>
+              <div class="speed-selector" id="speed-selector">
+                <button class="speed-btn" data-speed="0.8">0.8x</button>
+                <button class="speed-btn active" data-speed="1">1x</button>
+                <button class="speed-btn" data-speed="1.25">1.25x</button>
+                <button class="speed-btn" data-speed="1.5">1.5x</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Progress (exam mode only shows answered count) -->
+      <div class="score-bar">
+        <div class="score-info">
+          <span class="score-correct" id="score-answered-count">0</span>
+          <span class="score-divider">&nbsp;/&nbsp;</span>
+          <span class="score-total" id="score-total">20</span>
+          <span class="score-label">답변</span>
+        </div>
+        <div class="score-row">
+          <div class="score-progress-track">
+            <div class="score-progress-fill" id="score-fill"></div>
+          </div>
+          <div class="score-answered" id="score-answered">0/20 완료</div>
+        </div>
+      </div>
+      <!-- Q grid -->
+      <div class="q-grid-card">
+        <div class="q-grid" id="q-grid"></div>
+      </div>
+      <!-- Questions -->
+      <div id="questions-list"></div>
+      <!-- Complete button (bottom) -->
+      <div style="margin-top:24px; padding-bottom:8px;">
+        <button class="complete-btn" id="complete-btn" onclick="submitSession()"
+          style="width:100%; justify-content:center; padding:14px; font-size:16px;">
+          <i class="ri-check-double-line"></i> 완료 — 결과 보기
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULT PAGE -->
+  <div id="page-result" class="page">
+    <div class="result-content">
+      <div class="result-header-bar">
+        <div class="result-session-info">
+          <div class="result-title" id="result-title"></div>
+          <div class="result-sub" id="result-sub"></div>
+        </div>
+      </div>
+      <!-- Score summary -->
+      <div class="result-score-card">
+        <div class="result-score-row">
+          <span class="result-score-num" id="result-score-num">0</span>
+          <span class="result-score-denom" id="result-score-denom">/20</span>
+        </div>
+        <div class="result-score-pct" id="result-score-pct"></div>
+        <div class="result-progress-track">
+          <div class="result-progress-fill" id="result-progress-fill"></div>
+        </div>
+      </div>
+      <!-- Action buttons -->
+      <div class="result-action-row">
+        <button class="result-action-btn" onclick="retrySession()">
+          <i class="ri-replay-line"></i> 다시 풀기
+        </button>
+        <button class="result-action-btn primary" onclick="goHome()">
+          <i class="ri-home-line"></i> 홈으로
+        </button>
+      </div>
+      <!-- Question results -->
+      <div id="result-questions-list" style="margin-top:20px;"></div>
+    </div>
+  </div>
+
+
+  <script>
+    /* ══════════════════════════════════════════
+       SESSION DATA
+       audioFile: "https://dfpmpbjhljsyypofpvfu.supabase.co/storage/v1/object/public/listening-audio/{id}.m4a" — 같은 폴더 내 audio/ 디렉토리
+       youtubeUrl: 다운로드 참고용
+    ══════════════════════════════════════════ */
+    const SESSIONS = [
+      {
+        id: "2019_m1_r1",
+        title: "2019학년도 제1회",
+        subtitle: "중1 영어듣기능력평가",
+        date: "2019. 4. 9.",
+        audioFile: "https://dfpmpbjhljsyypofpvfu.supabase.co/storage/v1/object/public/listening-audio/2019_m1_r1.m4a",
+        youtubeUrl: "",
+        questions: [
+          { num: 1, type: "image", q: "다음을 듣고, ‘I’가 무엇인지 가장 적절한 것을 고르시오.", options: ["images/2019_m1_r1/q1_1.jpg", "images/2019_m1_r1/q1_2.jpg", "images/2019_m1_r1/q1_3.jpg", "images/2019_m1_r1/q1_4.jpg", "images/2019_m1_r1/q1_5.jpg"], answer: 1, script: "W: I live in the sea. I am very soft and slippery. I have a round head. I also have two eyes and eight legs. I sometimes shoot dark ink. What am I?" },
+          { num: 2, type: "image", q: "대화를 듣고, 여자가 구입할 마스크로 가장 적절한 것을 고르시오.", options: ["images/2019_m1_r1/q2_1.jpg", "images/2019_m1_r1/q2_2.jpg", "images/2019_m1_r1/q2_3.jpg", "images/2019_m1_r1/q2_4.jpg", "images/2019_m1_r1/q2_5.jpg"], answer: 4, script: "M: Hello. How may I help you?\nW: I’d like to buy a mask for my friend.\nM: How about this one with dots?\nW: Well, I like that one with a heart better.\nM: Okay. Here’s the mask.\nW: Great! I’ll take it." },
+          { num: 3, type: "image", q: "다음을 듣고, 내일 오후의 날씨로 가장 적절한 것을 고르시오.", options: ["images/2019_m1_r1/q3_1.jpg", "images/2019_m1_r1/q3_2.jpg", "images/2019_m1_r1/q3_3.jpg", "images/2019_m1_r1/q3_4.jpg", "images/2019_m1_r1/q3_5.jpg"], answer: 5, script: "M: Good morning! Here is the weather report. It’s raining a lot now, but it will stop tomorrow morning. Tomorrow afternoon will be sunny. So, you can enjoy the beautiful weather and outdoor activities." },
+          { num: 4, type: "text", q: "대화를 듣고, 여자가 한 마지막 말의 의도로 가장 적절한 것을 고르시오.", options: ["감사", "사과", "불평", "거절", "승낙"], answer: 1, script: "M: Jessy, how was your violin performance?\nW: It was bad, Dad! I made many mistakes.\nM: Don’t worry. You just need more practice.\nW: Do you think so?\nM: Yes, you’ll do better next time. Cheer up!\nW: Thanks for trying to cheer me up, Dad." },
+          { num: 5, type: "text", q: "다음을 듣고, 남자가 경기에 대해 언급하지 않은 것을 고르시오.", options: ["종목", "상대팀", "날짜", "시작 시간", "장소"], answer: 2, script: "M: Hello, students. Our school basketball team will play its final game. The basketball game will be on May 4th. It’ll start at 10 in the morning. The game will be at Daehan Stadium. Come and enjoy the game. Hope to see you there!" },
+          { num: 6, type: "text", q: "대화를 듣고, 두 사람이 만날 시각을 고르시오.", options: ["1:00p.m.", "1:30p.m.", "2:00p.m.", "2:30p.m.", "3:00p.m."], answer: 2, script: "M: Sora, are you going to the flower festival this Sunday?\nW: Yes, I am. What about you?\nM: Me, too. Let’s go together in the afternoon.\nW: Sure. Why don’t we meet at 2?\nM: I want to get there early. How about 1:30?\nW: Okay. See you then." },
+          { num: 7, type: "text", q: "대화를 듣고, 여자의 장래 희망으로 가장 적절한 것을 고르시오.", options: ["교사", "의사", "변호사", "공무원", "사진 작가"], answer: 5, script: "M: Miranda, what are those pictures?\nW: I took these pictures of trees for my homework.\nM: Wow, they’re so good! You did a great job!\nW: Thanks. I want to be a photographer someday.\nM: Cool! I’m sure you can be a great photographer.\nW: I hope so, too." },
+          { num: 8, type: "text", q: "대화를 듣고, 남자의 고양이에 대한 내용으로 일치하지 않는 것을 고르시오.", options: ["삼촌이 주셨다.", "흰색 털을 가지고 있다.", "작년에 태어났다.", "이름이 Prince이다.", "눈이 갈색이다."], answer: 5, script: "W: Tom, is this your cat?\nM: Yes, my uncle gave him to me.\nW: Oh, his white hair is so soft. How old is he?\nM: Um... He was born last year.\nW: What’s his name?\nM: His name is Prince.\nW: I love his blue eyes." },
+          { num: 9, type: "text", q: "대화를 듣고, 여자가 대화 직후에 할 일로 가장 적절한 것을 고르시오.", options: ["길 안내하기", "방 청소하기", "먹이 구입하기", "동물 사진 찍기", "체험 보고서 쓰기"], answer: 3, script: "M: Mom, I like this zoo!\nW: Me, too. Tom, look at those little rabbits.\nM: Oh, they’re so cute. Can I give them some food?\nW: Let me see. [Pause] Oh, look! There’s a sign.\nM: It says we can feed them.\nW: Great! I’ll buy some food for the rabbits now." },
+          { num: 10, type: "text", q: "대화를 듣고, 무엇에 관한 내용인지 가장 적절한 것을 고르시오.", options: ["응원가 부르기", "미래 집 그리기", "새 학기 계획하기", "요리 영상 만들기", "전통 시장 방문하기"], answer: 2, script: "W: Jamie, what are you doing?\nM: I’m drawing my future house, Mom.\nW: Tell me more about it.\nM: I want a big house with many rooms.\nW: Oh, that’s nice. Is this a swimming pool?\nM: Yes! I want to have a big pool in the future.\nW: Cool!" },
+          { num: 11, type: "text", q: "대화를 듣고, 여자가 이용할 교통수단으로 가장 적절한 것을 고르시오.", options: ["배", "택시", "버스", "지하철", "자전거"], answer: 2, script: "W: Excuse me, which bus goes to City Hall?\nM: Number 61. It comes every 30 minutes.\nW: 30 minutes?\nM: Yes, why don’t you go by taxi? It only takes 10 minutes from here.\nW: That’s good. I’ll take a taxi. Thank you." },
+          { num: 12, type: "text", q: "대화를 듣고, 남자가 기차역에 간 이유로 가장 적절한 것을 고르시오.", options: ["아빠를 만나기 위해서", "분실물을 찾기 위해서", "기차표를 바꾸기 위해서", "가족여행을 가기 위해서", "직업체험을 하기 위해서"], answer: 1, script: "W: Jackson, why do you look so tired?\nM: I went to the train station early this morning.\nW: Why did you go there?\nM: I went there to see my dad. He came back from his business trip.\nW: Wow, how sweet of you!" },
+          { num: 13, type: "text", q: "대화를 듣고, 두 사람이 대화하는 장소로 가장 적절한 곳을 고르시오.", options: ["식당", "공원", "사진관", "경찰서", "동물 병원"], answer: 5, script: "M: Hello, what’s the problem?\nW: Doctor, my dog can’t walk well.\nM: Let me see. What happened to her?\nW: I think she broke her leg.\nM: I need to take an X-ray of it.\nW: Okay.\nM: The X-ray room is right over here. Come this way." },
+          { num: 14, type: "text", q: "대화를 듣고, Dream Bank의 위치로 가장 알맞은 것을 고르시오.", options: ["①", "②", "③", "④", "⑤"], answer: 2, script: "M: Excuse me. Is there a bank nearby?\nW: Yes, Dream Bank isn’t far from here.\nM: Great! How can I get there?\nW: Go straight one block and turn left at Main Street.\nM: Turn left at Main Street?\nW: Yes, it’ll be on your right. It’s next to the church.\nM: Thanks." },
+          { num: 15, type: "text", q: "대화를 듣고, 남자가 여자에게 부탁한 일로 가장 적절한 것을 고르시오.", options: ["책 가져오기", "영화 추천하기", "학교 안내하기", "춤 가르쳐주기", "자전거 빌려오기"], answer: 1, script: "M: Seri, how about making our own class library?\nW: Good idea, Brandon.\nM: I think it’ll be good for everyone to share books.\nW: I agree with you.\nM: Thanks. Then, can you bring one or two books?\nW: Sure, I’ll bring my favorite books." },
+          { num: 16, type: "text", q: "대화를 듣고, 여자가 남자에게 제안한 것으로 가장 적절한 것을 고르시오.", options: ["코딩 배우기", "목공예품 만들기", "손글씨 책 구입하기", "모형 자동차 조립하기", "라디오 방송국 방문하기"], answer: 3, script: "M: Mina, your handwriting is really beautiful.\nW: Thank you, Tom. I practice it every day with this book.\nM: Is it helpful?\nW: Yes, it’s easy to follow.\nM: I want to have better handwriting.\nW: Then, why don’t you buy a handwriting book?\nM: Good idea." },
+          { num: 17, type: "text", q: "대화를 듣고, 여자가 휴일에 한 일로 가장 적절한 것을 고르시오.", options: ["공연 관람하기", "과학 숙제하기", "밴드 연습하기", "가족 농장 가기", "과일 가게 가기"], answer: 4, script: "W: Chris, did you have a good holiday?\nM: Yes, I practiced with my band for a concert. What about you?\nW: I went to the family farm with my parents.\nM: That sounds fun! What vegetables do you grow?\nW: We grow tomatoes and carrots." },
+          { num: 18, type: "text", q: "대화를 듣고, 남자의 직업으로 가장 적절한 것을 고르시오.", options: ["아나운서", "배구 선수", "교통 경찰", "피아니스트", "한식 요리사"], answer: 3, script: "M: Excuse me, ma’am.\nW: Oh, what’s the problem, Officer?\nM: You were driving too fast.\nW: Really? I didn’t know that.\nM: It’s a school zone here. So, you need to slow down.\nW: Sorry, I didn’t see the sign.\nM: Can I see your driver’s license?\nW: Here you are." },
+          { num: 19, type: "dialogue", q: "W: Mike, do you have any plans this evening?", options: ["I like music.", "Don’t give up.", "Congratulations!", "Sure, no problem.", "Long time no see."], answer: 4, script: "M: No, I don’t. Why?\nW: Let’s see the fireworks in Central Park tonight.\nM: Great! What time do you want to meet?\nW: How about 6:30? Let’s go there early and enjoy other fun events.\nM: Okay. Can you bring your camera?\nW: ________________________________________________" },
+          { num: 20, type: "dialogue", q: "W: Hello. May I help you?", options: ["It’s 9 o’clock.", "I enjoy writing.", "It’s in the corner.", "I want a large soda.", "We don’t have your size."], answer: 3, script: "M: Yes, please. I like this T-shirt.\nW: What’s your size?\nM: Do you have this in a small?\nW: Sure. [Pause] Here it is. You can try it on.\nM: Okay, thank you. Where is the fitting room?\nW: ________________________________________________\nANN:" }
+        ]
+      },
+      {
+        id: "2019_m1_r2",
+        title: "2019학년도 제2회",
+        subtitle: "중1 영어듣기능력평가",
+        date: "2019. 9. 10.",
+        audioFile: "https://dfpmpbjhljsyypofpvfu.supabase.co/storage/v1/object/public/listening-audio/2019_m1_r2.m4a",
+        youtubeUrl: "",
+        questions: [
+          { num: 1, type: "image", q: "다음을 듣고, ‘this’가 가리키는 것으로 가장 적절한 것을 고르시오.", options: ["images/2019_m1_r2/q1_1.jpg", "images/2019_m1_r2/q1_2.jpg", "images/2019_m1_r2/q1_3.jpg", "images/2019_m1_r2/q1_4.jpg", "images/2019_m1_r2/q1_5.jpg"], answer: 3, script: "M: This can come in many colors. You need this outdoors. You use this on rainy or snowy days. This keeps your hair and clothes from getting wet.\nWhat is this?" },
+          { num: 2, type: "image", q: "대화를 듣고, 여자가 구입한 양초로 가장 적절한 것을 고르시오.", options: ["images/2019_m1_r2/q2_1.jpg", "images/2019_m1_r2/q2_2.jpg", "images/2019_m1_r2/q2_3.jpg", "images/2019_m1_r2/q2_4.jpg", "images/2019_m1_r2/q2_5.jpg"], answer: 4, script: "M: May I help you?\nW: Yes, I’m looking for a candle for my mother.\nM: How about this one with a heart on it?\nW: It’s okay, but she really likes flowers.\nM: Then, how about this one with a rose on it?\nW: It’s pretty! I’ll take it." },
+          { num: 3, type: "image", q: "다음을 듣고, 일요일의 날씨로 가장 적절한 것을 고르시오.", options: ["images/2019_m1_r2/q3_1.jpg", "images/2019_m1_r2/q3_2.jpg", "images/2019_m1_r2/q3_3.jpg", "images/2019_m1_r2/q3_4.jpg", "images/2019_m1_r2/q3_5.jpg"], answer: 1, script: "M: Good morning, everyone! This is the weekly weather forecast. This week, we’ll have nice autumn weather with mostly sunny skies. However, on\nSunday, it’ll rain across the whole country. Thank you." },
+          { num: 4, type: "text", q: "대화를 듣고, 여자가 한 마지막 말의 의도로 가장 적절한 것을 고르시오.", options: ["위로", "당부", "거절", "칭찬", "감사"], answer: 2, script: "M: Ms. Smith, may I use the English Room during lunchtime?\nW: Yes. Why do you need it?\nM: Mike and I are going to practice storytelling.\nW: I see. How long will it take?\nM: About 30 minutes.\nW: Don’t forget to turn off the lights when you leave." },
+          { num: 5, type: "text", q: "다음을 듣고, 여자가 건물에 대해 언급하지 않은 것을 고르시오.", options: ["이름", "건축가", "지어진 연도", "색상", "높이"], answer: 2, script: "W: Let me introduce a famous building in my town. The name of this beautiful building is Ocean Tower. The building was built in 1987. Its color is bright green. It is 100 meters high." },
+          { num: 6, type: "text", q: "대화를 듣고, 두 사람이 출발할 시각을 고르시오.", options: ["4:30a.m.", "5:00a.m.", "5:30a.m.", "6:00a.m.", "6:30a.m."], answer: 4, script: "M: Nami, are you excited to go see the sunrise tomorrow?\nW: Of course, Dad! What time should we leave?\nM: Maybe 5:30 in the morning?\nW: Oh, that’s too early!\nM: But we need to be there before 6:30.\nW: Then, let’s leave at 6.\nM: Okay. Good night." },
+          { num: 7, type: "text", q: "대화를 듣고, 여자의 장래 희망으로 가장 적절한 것을 고르시오.", options: ["영화 감독", "방송 작가", "로봇 엔지니어", "의상 디자이너", "컴퓨터 프로그래머"], answer: 3, script: "M: Amy, you’re drawing robots again.\nW: Yes, I love robots! I also read a lot of books about them.\nM: Wow, that sounds cool!\nW: My dream is to be a robot engineer.\nM: I hope your dream comes true." },
+          { num: 8, type: "text", q: "대화를 듣고, 남자가 다녀온 여행에 대한 내용으로 일치하지 않는 것을", options: ["제주도에 다녀왔다.", "해산물을 먹었다.", "박물관을 방문했다.", "한라산에 갔다.", "바다에서 수영했다."], answer: 4, script: "W: Minho, I heard you went to Jeju.\nM: Yes, it was wonderful! I ate lots of sea food.\nW: That’s nice. What else did you do there?\nM: I visited many museums.\nW: Did you go to Hallasan?\nM: No, I didn’t.\nW: Then, what did you do?\nM: I swam in the sea." },
+          { num: 9, type: "text", q: "대화를 듣고, 여자가 대화 직후에 할 일로 가장 적절한 것을 고르시오.", options: ["짐 옮기기", "길 물어보기", "장소 검색하기", "요금 지불하기", "안전벨트 매기"], answer: 5, script: "M: Hello, where do you want to go?\nW: Hi, I’d like to go to the bus terminal.\nM: Okay, wear your seatbelt, please.\nW: Excuse me? But I’m sitting in the back of a taxi.\nM: Everyone has to wear their seatbelts these days.\nW: Okay, I will." },
+          { num: 10, type: "text", q: "대화를 듣고, 무엇에 관한 내용인지 가장 적절한 것을 고르시오.", options: ["권장 도서 안내", "공연 관람 규칙", "자원 절약 방법", "식품 안전 교육", "지진 대피 훈련"], answer: 2, script: "W: Scott, what are you looking at?\nM: I’m looking at the rules to follow while watching the show.\nW: Let’s see. [Pause] Oh, we should turn off our phones before the show.\nM: I already turned mine off.\nW: What else?\nM: We shouldn’t take any food inside." },
+          { num: 11, type: "text", q: "대화를 듣고, 남자가 부산에서 이용한 교통수단을 고르시오.", options: ["버스", "택시", "기차", "자전거", "오토바이"], answer: 1, script: "W: Seho, how was your trip to Busan?\nM: It was great!\nW: I heard you can take bicycle tours there.\nM: Right, but I couldn’t because too many people were waiting for the bicycles.\nW: Really? Then, how did you look around?\nM: I took the city tour bus." },
+          { num: 12, type: "text", q: "대화를 듣고, 남자가 옷을 구입한 이유로 가장 적절한 것을 고르시오.", options: ["면접에서 입기 위해서", "여행 가서 입기 위해서", "생일 파티에서 입기 위해서", "공연 의상으로 입기 위해서", "사촌 결혼식에서 입기 위해서"], answer: 5, script: "W: Hi, Kyle. Did you buy something? What’s in the bag?\nM: Hi, Lisa. Yes, I bought a new suit.\nW: Oh, why did you buy it?\nM: I’m going to wear it to my cousin’s wedding.\nW: Can I see it?\nM: Sure. Take a look.\nW: It’s great! I like the color." },
+          { num: 13, type: "text", q: "대화를 듣고, 두 사람의 관계로 가장 적절한 것을 고르시오.", options: ["동요 작곡가－가수", "드라마 작가－연출가", "오디션 참가자－심사 위원", "오케스트라 단원－지휘자", "공원 캠핑장 이용객－관리인"], answer: 5, script: "W: Excuse me, sir. Can I set up my tent here?\nM: No. One of our park rules is that you cannot set up tents here.\nW: Then, where should I go?\nM: Look at this map. The camping zone is on the other side of the park.\nW: Thank you." },
+          { num: 14, type: "text", q: "대화를 듣고, 여자가 찾고 있는 이어폰의 위치로 가장 알맞은 것을 고르시오.", options: ["①", "②", "③", "④", "⑤"], answer: 3, script: "[Cellphone rings.]\nM: Hi, Mom.\nW: Hello, Tony. Where did you put my earphones?\nM: I think they’re on my bed.\nW: Well, I checked your bed, but I couldn’t find them.\nM: Then, did you look on my desk?\nW: Oh, I see them on your desk. Thanks." },
+          { num: 15, type: "text", q: "대화를 듣고, 여자가 남자에게 부탁한 일로 가장 적절한 것을 고르시오.", options: ["설거지 하기", "분리수거 하기", "마스크 사오기", "책 반납 하기", "세탁물 찾아오기"], answer: 3, script: "[Cellphone rings.]\nM: Hello, Suji.\nW: Hi, Dad. Where are you?\nM: I’m on my way home.\nW: Did you hear the news about the bad air tomorrow?\nM: Yes, I did. I’m really worried about it.\nW: Could you buy some masks before you come home?\nM: Sure, no problem." },
+          { num: 16, type: "text", q: "대화를 듣고, 남자가 여자에게 제안한 것으로 가장 적절한 것을 고르시오.", options: ["가족 여행 가기", "컴퓨터 구입하기", "독서 감상문 쓰기", "중국어 함께 배우기", "모형 자동차 만들기"], answer: 4, script: "W: Tim, what are you going to do this vacation?\nM: I’m going to study Chinese in the Community Center.\nW: Oh, that sounds good.\nM: Can you speak Chinese?\nW: No, but I want to learn.\nM: Really? Then, why don’t we learn Chinese together?\nW: That’s a great idea!" },
+          { num: 17, type: "text", q: "대화를 듣고, 남자가 휴일에 한 일로 가장 적절한 것을 고르시오.", options: ["동생 돌보기", "드론 날리기", "케이크 만들기", "거실 청소하기", "가족사진 찍기"], answer: 5, script: "W: Minsu, how was your holiday?\nM: It was nice.\nW: What did you do?\nM: All of my family members dressed up, and we took a family picture together.\nW: Wow! That sounds wonderful.\nM: Yeah, it was my first time to take a picture with my grandparents." },
+          { num: 18, type: "text", q: "대화를 듣고, 남자의 직업으로 가장 적절한 것을 고르시오.", options: ["성우", "화가", "요리사", "소방관", "경찰관"], answer: 1, script: "W: Mr. Wilson, this is today’s script.\nM: Okay. What’s my role today?\nW: You will act as a 7-year-old boy with your voice.\nM: As you know, I can make various voices.\nW: Right. Your voice characters are always amazing!\nM: Thanks.\nW: Let’s start recording in 10 minutes." },
+          { num: 19, type: "dialogue", q: "M: Judy, can you recommend a book for me?", options: ["I like math.", "Sorry, but I can’t.", "Thank you so much.", "Please make yourself at home.", "Don’t worry. You’re doing great!"], answer: 3, script: "W: Sure. What kind of books do you like?\nM: I like stories about families.\nW: Then, you’ll like the book, Three Brothers. It’s really good.\nM: Do you have the book?\nW: Yes. I can lend it to you.\nM: ________________________________________________" },
+          { num: 20, type: "dialogue", q: "M: Did you go to the basketball game yesterday?", options: ["It was 61 to", "It started at 2p.m.", "It lasted almost an hour.", "It was held in the school gym.", "It was against Hankuk Middle School."], answer: 1, script: "W: No, I wanted to, but I couldn’t make it.\nM: You missed a good game.\nW: Really? Which team won?\nM: Our school did. They played well.\nW: That’s good news.\nM: Yeah, it was a close game.\nW: So, what was the score?\nM: ________________________________________________\nANN:" }
+        ]
+      },
+      {
+        id: "2020_m1_r1",
+        title: "2020학년도 제1회",
+        subtitle: "중1 영어듣기능력평가",
+        date: "2020. 6. 23.",
+        audioFile: "https://dfpmpbjhljsyypofpvfu.supabase.co/storage/v1/object/public/listening-audio/2020_m1_r1.m4a",
+        youtubeUrl: "",
+        questions: [
+          { num: 1, type: "image", q: "다음을 듣고, ‘I’가 무엇인지 가장 적절한 것을 고르시오.", options: ["images/2020_m1_r1/q1_1.jpg", "images/2020_m1_r1/q1_2.jpg", "images/2020_m1_r1/q1_3.jpg", "images/2020_m1_r1/q1_4.jpg", "images/2020_m1_r1/q1_5.jpg"], answer: 1, script: "M: I have four legs and large ears. I’m big and heavy. My nose is very long, so I can hold anything with my nose. I eat a lot. What am I?" },
+          { num: 2, type: "image", q: "대화를 듣고, 남자가 만든 열쇠고리로 가장 적절한 것을 고르시오.", options: ["images/2020_m1_r1/q2_1.jpg", "images/2020_m1_r1/q2_2.jpg", "images/2020_m1_r1/q2_3.jpg", "images/2020_m1_r1/q2_4.jpg", "images/2020_m1_r1/q2_5.jpg"], answer: 3, script: "W: Yoonho, what’s that?\nM: It’s my key ring.\nW: The star shape looks pretty. Did you make it?\nM: Yes, I made it after school.\nW: I thought you liked diamond shapes.\nM: No, I like stars more." },
+          { num: 3, type: "image", q: "다음을 듣고, 토요일의 날씨로 가장 적절한 것을 고르시오.", options: ["images/2020_m1_r1/q3_1.jpg", "images/2020_m1_r1/q3_2.jpg", "images/2020_m1_r1/q3_3.jpg", "images/2020_m1_r1/q3_4.jpg", "images/2020_m1_r1/q3_5.jpg"], answer: 1, script: "W: Good morning. This is the weekly weather report. It’ll be cloudy today.\nIt’ll rain from tomorrow morning to Thursday. On Friday, the weather will be warm. On Saturday, there will be strong winds all day, but on Sunday, we can enjoy a beautiful clear sky." },
+          { num: 4, type: "text", q: "대화를 듣고, 남자가 한 마지막 말의 의도로 가장 적절한 것을 고르시오.", options: ["사과", "거절", "위로", "감사", "칭찬"], answer: 3, script: "W: Dad, I heard some bad news.\nM: What is it, Jiwon?\nW: You know my best friend, Sumi? She’s moving to another town.\nM: I’m sorry to hear that. When is she going to move?\nW: Next Wednesday. I feel so sad.\nM: Don’t worry. You can still keep in touch." },
+          { num: 5, type: "text", q: "다음을 듣고, 남자가 장미 축제에 대해 언급하지 않은 것을 고르시오.", options: ["장소", "날짜", "운영 시간", "입장료", "프로그램"], answer: 4, script: "M: Let me tell you about the rose festival at Center Park. It’ll be on May roses. And it’ll also have many interesting programs, like a magic performance." },
+          { num: 6, type: "text", q: "대화를 듣고, 여자가 집을 떠난 시각을 고르시오.", options: ["3:00p.m.", "3:30p.m.", "4:00p.m.", "4:30p.m.", "5:00p.m."], answer: 2, script: "[Cellphonerings.]\nW: Hello, Hojin. Sorry, but I’ll be a little late.\nM: It’s already 4:30p.m. Where are you?\nW: I’m almost there. I’ll be there soon.\nM: Did you leave home late?\nW: No. I left home at 3:30p.m., but I took the wrong bus.\nM: Okay, then I’ll see you soon." },
+          { num: 7, type: "text", q: "대화를 듣고, 남자의 장래 희망으로 가장 적절한 것을 고르시오.", options: ["화가", "모델", "정원사", "성악가", "건축가"], answer: 1, script: "M: Welcome to my house.\nW: Thank you. Oh, the sunflower picture is beautiful. Did you take it?\nM: Actually, I painted it.\nW: Wow, it looks like a photo! You’re really good at painting.\nM: Thanks. I want to be a painter like Van Gogh someday.\nW: I believe you will." },
+          { num: 8, type: "text", q: "대화를 듣고, 여자의 심정으로 가장 적절한 것을 고르시오.", options: ["신남", "행복함", "수줍음", "자랑스러움", "걱정스러움"], answer: 5, script: "M: Stella, what’s wrong?\nW: David, my cat is sick. It couldn’t eat anything yesterday.\nM: How about today?\nW: No, nothing. I’m really worried.\nM: Oh, that’s too bad. Did you go see an animal doctor?\nW: Yes, but my cat’s still sick.\nM: Don’t worry too much. I’m sure it’ll be fine soon." },
+          { num: 9, type: "text", q: "대화를 듣고, 여자가 대화 직후에 할 일로 가장 적절한 것을 고르시오.", options: ["병원 가기", "스트레칭하기", "다른 영화 찾기", "친구에게 전화하기", "휴대 전화 전원 끄기"], answer: 2, script: "W: Dad! My neck really hurts.\nM: Why?\nW: I don’t know. I was just watching movies on my cellphone.\nM: Oh, maybe you looked down too much.\nW: Ow! The pain is so strong.\nM: Then, you should try stretching your neck.\nW: Okay. I’ll do that now." },
+          { num: 10, type: "text", q: "대화를 듣고, 무엇에 관한 내용인지 가장 적절한 것을 고르시오.", options: ["수업 시간표", "축제 일정표", "체험 학습 안내문", "동아리 모집 공고문", "미래 직업 포스터"], answer: 5, script: "W: What are those posters on the wall, Junghoon?\nM: Hi, Mia. We made the posters about future jobs during class.\nW: Wow, there will be a lot of new jobs in the future!\nM: Yes. And this is my group’s poster. It’s about a drone designer.\nW: It looks nice." },
+          { num: 11, type: "text", q: "대화를 듣고, 두 사람이 함께 이용할 교통수단으로 가장 적절한 것을 고르시오.", options: ["기차", "택시", "버스", "자전거", "지하철"], answer: 3, script: "M: Hana, let’s go to the history museum tomorrow.\nW: Okay. Do you want to take the subway?\nM: Hmm... The museum is far from the subway station.\nW: Then, what about taking a bus? It stops near the museum.\nM: Good. We can meet at the bus stop at 8.\nW: Okay. See you then." },
+          { num: 12, type: "text", q: "대화를 듣고, 남자가 야구장에 갈 수 없는 이유로 가장 적절한 것을 고르시오.", options: ["다리를 다쳐서", "숙제를 해야 해서", "야구 경기가 취소되어서", "표를 구하지 못해서", "할머니 댁을 방문해야 해서"], answer: 5, script: "M: Mom, can I go to the baseball stadium this Saturday?\nW: This Saturday? I’m afraid you can’t.\nM: Why not?\nW: We should go to your grandmother’s house for her birthday.\nM: Oh, is it this Saturday? I thought it was next Saturday.\nW: Why don’t you go to the stadium on another day?\nM: Okay." },
+          { num: 13, type: "text", q: "대화를 듣고, 두 사람이 대화하는 장소로 가장 적절한 곳을 고르시오.", options: ["서점", "우체국", "옷가게", "미용실", "체육관"], answer: 4, script: "M: Hello. What can I do for you?\nW: I’d like to get a haircut.\nM: How short do you want it?\nW: I want to cut it about 5centimeters, so it’s just at my shoulder.\nM: Okay. Anything else?\nW: No, that’s all for today." },
+          { num: 14, type: "text", q: "대화를 듣고, 병원의 위치로 가장 알맞은 곳을 고르시오.", options: ["①", "②", "③", "④", "⑤"], answer: 2, script: "W: Hi, Ted. What’s wrong?\nM: I don’t know. I’m not feeling very well. Is there a hospital around here?\nW: Yes, go straight two blocks and turn right on Pine Street.\nM: On Pine Street?\nW: Yes, it’ll be on your left. It’s next to the bank.\nM: Thank you." },
+          { num: 15, type: "text", q: "대화를 듣고, 여자가 남자에게 부탁한 일로 가장 적절한 것을 고르시오.", options: ["화초 물 주기", "책 반납하기", "설거지하기", "숙제 도와주기", "거실 청소하기"], answer: 4, script: "W: Dad, I’m ready to check today’s to-do list.\nM: Okay. Did you water the plants?\nW: Yes. I also did the dishes after that.\nM: Good. What about your homework?\nW: No, I couldn’t do it. Can you help me with it?\nM: Sure. Let’s start right away." },
+          { num: 16, type: "text", q: "대화를 듣고, 남자가 여자에게 제안한 것으로 가장 적절한 것을 고르시오.", options: ["풍선 불기", "수박 자르기", "초대장 만들기", "케이크 사기", "테이블 정리하기"], answer: 4, script: "M: Nancy, what other things do we need for the party?\nW: Something to drink and a dessert.\nM: Okay, I’ll bring some watermelon juice.\nW: Then, we’ll need a cake for dessert.\nM: What about buying one from the bakery?\nW: Yeah, that sounds good." },
+          { num: 17, type: "text", q: "대화를 듣고, 여자가 겨울방학에 한 일로 가장 적절한 것을 고르시오.", options: ["스키 타기", "도자기 만들기", "축제 참가하기", "가족 여행 가기", "아기 모자 만들기"], answer: 5, script: "W: Jinho, how was your winter vacation?\nM: Fantastic! I went skiing with my family. What about you?\nW: I made baby hats for my little brother at home.\nM: Wow! How long did it take to make them?\nW: It took around two days for each hat." },
+          { num: 18, type: "text", q: "대화를 듣고, 남자의 직업으로 가장 적절한 것을 고르시오.", options: ["경찰관", "소방관", "요리사", "미술 교사", "잡지 기자"], answer: 2, script: "W: Hello. I’m Mina, the student reporter. Thank you for this interview.\nM: It’s my pleasure.\nW: Would you tell me about your job?\nM: Sure. I save people from fires.\nW: Great! Could you show me your fire truck?\nM: Okay. Let’s go outside." },
+          { num: 19, type: "dialogue", q: "W: Justin, what do you want to write for our science group report?", options: ["He’s fine.", "Sounds good.", "It’s cold now.", "Long time no see.", "How are you doing?"], answer: 2, script: "M: How about robots?\nW: That’s a good idea.\nM: Let’s write the first part of the report together.\nW: Good. How about tomorrow afternoon?\nM: Actually, I have a club meeting at 2. Let’s meet at 4.\nW: ________________________________________________" },
+          { num: 20, type: "dialogue", q: "W: Paul, what do you want to eat for dinner?", options: ["I like winter.", "My hobby is singing.", "He wants to be a doctor.", "She has a stomachache.", "Let’s go to Min’s Restaurant."], answer: 5, script: "M: I want some noodles.\nW: What about some Vietnamese noodles?\nM: Vietnamese noodles? Are they good?\nW: Yes, you’ll love them just like me. Let’s go get some.\nM: Okay. Where can we go?\nW: ________________________________________________\nANN:" }
+        ]
+      },
+      {
+        id: "2020_m1_r2",
+        title: "2020학년도 제2회",
+        subtitle: "중1 영어듣기능력평가",
+        date: "2020. 9. 8.",
+        audioFile: "https://dfpmpbjhljsyypofpvfu.supabase.co/storage/v1/object/public/listening-audio/2020_m1_r2.m4a",
+        youtubeUrl: "",
+        questions: [
+          { num: 1, type: "image", q: "다음을 듣고, ‘this’가 가리키는 것으로 가장 적절한 것을 고르시오.", options: ["images/2020_m1_r2/q1_1.jpg", "images/2020_m1_r2/q1_2.jpg", "images/2020_m1_r2/q1_3.jpg", "images/2020_m1_r2/q1_4.jpg", "images/2020_m1_r2/q1_5.jpg"], answer: 2, script: "W: This is usually long and thin. You can get this from wood. You can use this when you write something on paper. When you use this a lot, it becomes shorter. What is this?" },
+          { num: 2, type: "image", q: "대화를 듣고, 여자가 구입할 마우스 패드로 가장 적절한 것을 고르시오.", options: ["images/2020_m1_r2/q2_1.jpg", "images/2020_m1_r2/q2_2.jpg", "images/2020_m1_r2/q2_3.jpg", "images/2020_m1_r2/q2_4.jpg", "images/2020_m1_r2/q2_5.jpg"], answer: 1, script: "M: Hello, may I help you?\nW: Hi. I’m looking for a mouse pad.\nM: How about this square one?\nW: It’s okay, but I like this round one better.\nM: I see. And the cat picture on it is very cute.\nW: Yes, I think so, too. I’ll take it." },
+          { num: 3, type: "image", q: "다음을 듣고, 수요일 오후의 날씨로 가장 적절한 것을 고르시오.", options: ["images/2020_m1_r2/q3_1.jpg", "images/2020_m1_r2/q3_2.jpg", "images/2020_m1_r2/q3_3.jpg", "images/2020_m1_r2/q3_4.jpg", "images/2020_m1_r2/q3_5.jpg"], answer: 1, script: "W: Good morning! Here is the weather forecast for this week. We will have clear skies today on Monday, but it will be cloudy tomorrow. On\nWednesday, there will be more clouds in the morning, and it will rain all afternoon." },
+          { num: 4, type: "text", q: "대화를 듣고, 여자가 한 마지막 말의 의도로 가장 적절한 것을 고르시오.", options: ["격려", "동의", "거절", "부탁", "감사"], answer: 3, script: "M: Guess what? A new action movie just came out!\nW: Really? Did you see it?\nM: Not yet. Let’s go watch it together.\nW: Sounds good. When do you want to go see it?\nM: What about tomorrow afternoon?\nW: Sorry, but I can’t. I have to go to my uncle’s wedding." },
+          { num: 5, type: "text", q: "다음을 듣고, 남자가 할 봉사활동에 대해 언급하지 않은 것을 고르시오.", options: ["장소", "요일", "참가자", "활동 내용", "신청 방법"], answer: 5, script: "M: Let me tell you about my plans for volunteer work. I’ll visit the library in my neighborhood. I’ll do the volunteer work every Saturday. My friend,\nSooho and I will go together. We’ll read books to the children and clean the library." },
+          { num: 6, type: "text", q: "대화를 듣고, 현재의 시각을 고르시오.", options: ["7:00p.m.", "7:30p.m.", "8:00p.m.", "8:30p.m.", "9:00p.m."], answer: 2, script: "W: Tom, what are you looking at?\nM: I’m searching for the time for a TV show.\nW: What show?\nM: Middle School Quiz. Oh, here it is! It’ll be on at 8 tonight.\nW: Let’s watch it together. It’s 7:30 now.\nM: Great! We only need to wait 30minutes." },
+          { num: 7, type: "text", q: "대화를 듣고, 남자의 장래 희망으로 가장 적절한 것을 고르시오.", options: ["가수", "발명가", "마술사", "영화감독", "스포츠 기자"], answer: 4, script: "M: Kate, did you see the movie, BigPlan?\nW: Not yet. What’s it about?\nM: It’s about future life.\nW: You really love to watch movies.\nM: Yes, I want to be a movie director someday.\nW: I’m sure your dream will come true." },
+          { num: 8, type: "text", q: "대화를 듣고, 여자의 심정으로 가장 적절한 것을 고르시오.", options: ["happy", "bored", "proud", "relaxed", "nervous"], answer: 5, script: "M: Somi, are you ready for the school festival audition today?\nW: Yes, but I’m afraid I won’t remember all the words to the song.\nM: You practiced a lot, so it’ll be okay.\nW: Right, but my face always turns red when I’m on stage.\nM: You’ll do well.\nW: But my heart is beating so fast!" },
+          { num: 9, type: "text", q: "대화를 듣고, 여자가 대화 직후에 할 일로 가장 적절한 것을 고르시오.", options: ["저녁 먹기", "케이블카 타기", "여행 짐 챙기기", "식당 검색하기", "기차표 예매하기"], answer: 4, script: "M: Cindy, are you ready for our family trip to Yeosu?\nW: Yes, Dad. It’s finally this Saturday!\nM: Right. We’re going to ride a cable car.\nW: Great! What will we eat there?\nM: Well, can you search for some good restaurants on the Internet?\nW: Sure! I’ll do it now." },
+          { num: 10, type: "text", q: "대화를 듣고, 무엇에 관한 내용인지 가장 적절한 것을 고르시오.", options: ["인터넷 사용 예절", "화재 대피 요령", "자전거 안전 수칙", "무선 이어폰 종류", "안전모 착용 방법"], answer: 3, script: "W: Kevin, here are some bicycle safety rules.\nM: What are they, Mom?\nW: First, riders should always wear a helmet.\nM: I already know that. What else?\nW: Also, don’t use earphones when you ride a bicycle.\nM: Why not?\nW: You can’t hear the sounds around you. It’s dangerous.\nM: Okay. I’ll follow the rules." },
+          { num: 11, type: "text", q: "대화를 듣고, 남자가 이용할 교통수단으로 가장 적절한 것을 고르시오.", options: ["기차", "자동차", "지하철", "자전거", "비행기"], answer: 3, script: "W: Steve, how will you get to the amusement park tomorrow?\nM: I’m not sure, but my mom could take me there by car. How about you?\nW: Jessie and I will take the subway.\nM: Really? Can I join you?\nW: Sure. Meet us at the subway station at 9.\nM: Okay. See you then." },
+          { num: 12, type: "text", q: "대화를 듣고, 여자가 영어 캠프에 가지 못하는 이유로 가장 적절한 것을", options: ["팔을 치료해야 해서", "동생을 돌봐야 해서", "콘서트에 가야 해서", "가족 여행을 가야 해서", "다른 캠프에 가야 해서"], answer: 4, script: "M: Sujin, are you going to join the English camp?\nW: I’d like to, but I can’t.\nM: Really? Why not?\nW: My family will travel to Gyeongju during the winter vacation.\nM: That sounds wonderful!\nW: Yes, I’m so excited! I hope you have fun at the camp.\nM: I will. Thanks." },
+          { num: 13, type: "text", q: "대화를 듣고, 두 사람이 대화하는 장소로 가장 적절한 곳을 고르시오.", options: ["식당", "동물원", "사진관", "약국", "과일 가게"], answer: 2, script: "M: Look at the monkeys over there.\nW: They’re cute!\nM: I want to touch them.\nW: No, Jason! It’s dangerous.\nM: Can I give them some bananas?\nW: No. The sign there says, “NO FOOD TO ANIMALS.”\nM: I see. Then, let’s go see the tigers.\nW: Okay. I want to take some pictures of them." },
+          { num: 14, type: "text", q: "대화를 듣고, 두 사람이 찾고 있는 안경의 위치로 가장 적절한 것을 고르시오.", options: ["①", "②", "③", "④", "⑤"], answer: 3, script: "W: Dad, let’s watch this movie.\nM: Okay. Wait! I need my glasses.\nW: I saw them on the bookshelf this afternoon.\nM: They’re not there. Can you look on the sofa?\nW: They aren’t here. Oh! Here they are under the sofa.\nM: Glad you found them. Thanks." },
+          { num: 15, type: "text", q: "대화를 듣고, 여자가 남자에게 부탁한 일로 가장 적절한 것을 고르시오.", options: ["고기 굽기", "야채 씻기", "텐트 설치하기", "캠핑장 청소하기", "할아버지 찾으러 가기"], answer: 5, script: "W: Matthew, where’s your grandpa?\nM: He went to look around the camping site, Mom.\nW: It’s lunch time. Let’s have some barbecue.\nM: That sounds delicious! I’ll wash the vegetables.\nW: I already washed them. Instead, can you go find your grandpa?\nM: No problem. I’ll do that." },
+          { num: 16, type: "text", q: "대화를 듣고, 남자가 여자에게 제안한 것으로 가장 적절한 것을 고르시오.", options: ["일찍 출발하기", "숙소 알아보기", "여행 가방 싸기", "기차역까지 태워 주기", "온라인으로 표 구매하기"], answer: 5, script: "M: Honey, are you going to leave soon?\nW: Yes, I’m packing my bag now.\nM: Did you buy a ticket for Daegu?\nW: Not yet. I’ll do that at the station.\nM: Why don’t you buy it online? You can save some time.\nW: Okay, I will. That’s a good idea." },
+          { num: 17, type: "text", q: "대화를 듣고, 여자가 만들 물건으로 가장 적절한 것을 고르시오.", options: ["양말", "가방", "상자", "스카프", "앞치마"], answer: 4, script: "W: Minho, your T-shirt looks a little old.\nM: I think so, too. Should I put it in the recycling box, Mom?\nW: No, I can make something with it.\nM: Cool! What are you going to make?\nW: Hmm... I already have some bags. So, I’ll make a scarf.\nM: Great idea!" },
+          { num: 18, type: "text", q: "대화를 듣고, 남자의 직업으로 가장 적절한 것을 고르시오.", options: ["작가", "수의사", "요리사", "택시 기사", "게임 개발자"], answer: 1, script: "W: Nice to meet you, Mr. Park. Could you sign this book for my son?\nM: Sure. What’s his name?\nW: His name is Juno, and he’s 10. He loves your book.\nM: Thank you. I actually wrote the book for children around his age.\nW: I liked it, too. Good stories can touch everyone." },
+          { num: 19, type: "dialogue", q: "M: Honey, which restaurant is best for Joon’s birthday?", options: ["Yes, you did.", "Okay, let’s go there.", "Glad to meet you.", "Sorry for being late.", "She had a great time."], answer: 2, script: "W: Joon likes spicy food, right?\nM: Yeah. He really loves it.\nW: Then, what about a Mexican restaurant?\nM: That sounds good. I heard there’s one in Ally Shopping Mall.\nW: Then, why don’t we go there for Joon’s birthday?\nM: ________________________________________________" },
+          { num: 20, type: "dialogue", q: "W: Eric, I have some good news.", options: ["Linda will join us.", "She went to Busan.", "I already read the book.", "I am interested in cooking.", "Why don’t we go see a movie?"], answer: 1, script: "M: What is it?\nW: I can go to the movies with you tomorrow.\nM: Great! But, you said you were going to visit your cousin.\nW: I was, but only my mom will visit her.\nM: Then, come to Star Cinema by 10.\nW: Okay. Who else will come?\nM: ________________________________________________\nANN:" }
+        ]
+      },
+      {
+        id: "2021_m1_r1",
+        title: "2021학년도 제1회",
+        subtitle: "중1 영어듣기능력평가",
+        date: "2021. 4. 6.",
+        audioFile: "https://dfpmpbjhljsyypofpvfu.supabase.co/storage/v1/object/public/listening-audio/2021_m1_r1.m4a",
+        youtubeUrl: "",
+        questions: [
+          { num: 1, type: "image", q: "다음을 듣고, ‘I’가 무엇인지 가장 적절한 것을 고르시오.", options: ["images/2021_m1_r1/q1_1.jpg", "images/2021_m1_r1/q1_2.jpg", "images/2021_m1_r1/q1_3.jpg", "images/2021_m1_r1/q1_4.jpg", "images/2021_m1_r1/q1_5.jpg"], answer: 2, script: "W: I have two short legs and two wings. I can swim, but I cannot fly. I am black and white. I usually live in cold weather. What am I?" },
+          { num: 2, type: "image", q: "대화를 듣고, 남자가 구입할 우산으로 가장 적절한 것을 고르시오.", options: ["images/2021_m1_r1/q2_1.jpg", "images/2021_m1_r1/q2_2.jpg", "images/2021_m1_r1/q2_3.jpg", "images/2021_m1_r1/q2_4.jpg", "images/2021_m1_r1/q2_5.jpg"], answer: 3, script: "W: Can I help you, sir?\nM: Yes. I’m looking for an umbrella for my daughter.\nW: Okay. We have this one with stars.\nM: Hmm... Do you have any others?\nW: Yes. This one with hearts on it.\nM: Oh, good. She loves heart shapes.\nW: Great! Sounds like she’d like it.\nM: Right. I’ll take it." },
+          { num: 3, type: "image", q: "다음을 듣고, 내일의 날씨로 가장 적절한 것을 고르시오.", options: ["images/2021_m1_r1/q3_1.jpg", "images/2021_m1_r1/q3_2.jpg", "images/2021_m1_r1/q3_3.jpg", "images/2021_m1_r1/q3_4.jpg", "images/2021_m1_r1/q3_5.jpg"], answer: 1, script: "M: Good morning, everybody! This is the weather report. It’s raining outside now. So, don’t forget your umbrella. The rain will stop tonight.\nTomorrow, it’ll be sunny and a little bit hot. It’ll be almost like summer." },
+          { num: 4, type: "text", q: "대화를 듣고, 여자의 마지막 말의 의도로 가장 적절한 것을 고르시오.", options: ["충고", "사과", "부탁", "축하", "거절"], answer: 3, script: "M: Tracy, you look unhappy.\nW: Oh, Dad. I have a big problem.\nM: What is it?\nW: My cellphone doesn’t turn on.\nM: Did you check the battery?\nW: Yes, I did. Can you please take a look at it?" },
+          { num: 5, type: "text", q: "다음을 듣고, 남자가 방과 후 미술 수업에 대해 언급하지 않은 것을 고르시오.", options: ["교사 이름", "수업 시간", "준비물", "교실 위치", "수강료"], answer: 5, script: "M: Hello, students. This is your art teacher, Joe Smith. I opened a new after-school art class. It’ll start next week. It’s from 3p.m. to 5p.m. every\nWednesday. You must bring water colors and brushes. The classroom is room 302 on the third floor. Hope to see you there!" },
+          { num: 6, type: "text", q: "대화를 듣고, 두 사람이 이야기를 나누는 현재 시각을 고르시오.", options: ["4:00p.m.", "4:30p.m.", "5:00p.m.", "5:30p.m.", "6:00p.m."], answer: 2, script: "M: Kelly, did you watch Shoot Together on TV last week?\nW: Yes, I did. I love TV shows about basketball.\nM: Me, too. I can’t wait to see the next episode.\nW: It’s tomorrow, right?\nM: No, it’s today at 5p.m.\nW: Really? It starts in 30 minutes!\nM: You mean it’s 4:30p.m. now? We have to hurry up!" },
+          { num: 7, type: "text", q: "대화를 듣고, 남자의 장래 희망으로 가장 적절한 것을 고르시오.", options: ["신발 디자이너", "패션 모델", "영화 배우", "아나운서", "만화가"], answer: 1, script: "W: Louis, what are you drawing?\nM: Look, Genie. It’s a design for a pair of shoes.\nW: It is nice! Are you interested in shoes?\nM: Yes, I want to become a shoe designer in the future.\nW: You have enough talent for it.\nM: Thanks, Genie." },
+          { num: 8, type: "text", q: "대화를 듣고, 여자의 심정으로 가장 적절한 것을 고르시오.", options: ["슬픔", "지루함", "수줍음", "자랑스러움", "실망스러움"], answer: 4, script: "M: Sooyoung, what are you doing?\nW: I’m looking at a picture of my little brother. My parents just sent it to me.\nM: What is he wearing around his neck?\nW: It’s a gold medal.\nM: How did he get it?\nW: He won it in a drawing contest. I’m so proud of him." },
+          { num: 9, type: "text", q: "대화를 듣고, 여자가 대화 직후에 할 일로 가장 적절한 것을 고르시오.", options: ["휴대폰 수리하기", "체육관 방문하기", "온라인 수업 듣기", "학교에 전화하기", "새로운 컴퓨터 사기"], answer: 4, script: "M: Sophie, what are you going to do this weekend?\nW: I’m going to go shopping for a new tablet PC with my parents.\nM: What’s wrong with yours?\nW: It stopped working. I need one to take online classes.\nM: You can borrow a tablet PC from school.\nW: Really? I’ll call the school and ask about it now. Thanks." },
+          { num: 10, type: "text", q: "대화를 듣고, 무엇에 관한 내용인지 가장 적절한 것을 고르시오.", options: ["학교 축제", "등교 날짜", "급식 만족도", "방학 숙제", "교복 디자인"], answer: 5, script: "W: Did you see the new posting on the school website?\nM: Which one are you talking about?\nW: The one about the new school uniform designs.\nM: Yes, I saw it. There are three designs. Which one do you like the most?\nW: I like the number three. I think it’s fashionable.\nM: Me, too. It also looks really comfortable." },
+          { num: 11, type: "text", q: "대화를 듣고, 두 사람이 함께 이용할 교통수단으로 가장 적절한 것을 고르", options: ["택시", "기차", "버스", "지하철", "자전거"], answer: 3, script: "W: Jihoon, how should we go to Jeonju?\nM: Let me check on my phone. [Pause] Look! We can take a train or a bus.\nW: Which one do you want to take?\nM: I’d like to take a train. It’s faster.\nW: But the bus is cheaper.\nM: Good point. Let’s ride the bus, then.\nW: Okay. Let’s do that." },
+          { num: 12, type: "text", q: "대화를 듣고, 콘서트 일정이 변경된 이유로 가장 적절한 것을 고르시오.", options: ["음향시설을 수리하기 위해서", "공연 장소를 찾지 못해서", "티켓 예매율이 저조해서", "기상 상황이 악화되어서", "가수가 다리를 다쳐서"], answer: 5, script: "M: Victoria, you’re going to the K-pop concert tonight, right?\nW: I was going to, but the date changed.\nM: Really? I’m sorry to hear that. What happened?\nW: The singer broke his leg during practice.\nM: That’s too bad. I hope his leg gets better soon.\nW: I hope so, too." },
+          { num: 13, type: "text", q: "대화를 듣고, 두 사람이 대화하는 장소로 가장 적절한 곳을 고르시오.", options: ["병원", "동물원", "옷가게", "우체국", "음식점"], answer: 4, script: "W: Good morning. How can I help you?\nM: Hi. I need to send this package to Sejong.\nW: What’s in it?\nM: Books.\nW: Write the name and address right here on the box.\nM: Okay. [Pause] When will it arrive?\nW: Let me see. [Pause] Within three days." },
+          { num: 14, type: "text", q: "대화를 듣고, 경찰서의 위치로 가장 알맞은 곳을 고르시오.", options: ["①", "②", "③", "④", "⑤"], answer: 1, script: "M: Excuse me. Is there a police station nearby?\nW: Yes, there is one close to here.\nM: Good! Can you tell me how to get there?\nW: Sure. Go straight two blocks and turn left on Union Street.\nM: On Union Street?\nW: Yes, it’ll be on your right. It’s between the fire station and the movie theater.\nM: Thanks." },
+          { num: 15, type: "text", q: "대화를 듣고, 여자가 남자에게 부탁한 일로 가장 적절한 것을 고르시오.", options: ["표 예매하기", "선물 구입하기", "거실 청소하기", "음식 준비하기", "친구 초대하기"], answer: 2, script: "M: Honey, Mike’s birthday is next week.\nW: Right. We should buy a birthday present for him.\nM: What about a baseball cap? He’s really into baseball.\nW: He already has a few. How about a baseball bat?\nM: That’s a good idea. He’ll love it.\nW: So, can you buy it for him?\nM: Of course!" },
+          { num: 16, type: "text", q: "대화를 듣고, 여자가 남자에게 제안한 것으로 가장 적절한 것을 고르시오.", options: ["스트레칭하기", "경기 관람하기", "유니폼 주문하기", "축구공 구입하기", "동아리 가입하기"], answer: 5, script: "M: Wow! Hana, you’re really good at soccer.\nW: Thank you for saying that.\nM: Where did you learn to play?\nW: In the school soccer club.\nM: I want to learn how to play.\nW: Then, how about joining the club?\nM: That sounds great!" },
+          { num: 17, type: "text", q: "대화를 듣고, 여자가 지난 주말에 한 일을 고르시오.", options: ["꽃 심기", "등산하기", "독서하기", "분리수거하기", "봉사활동하기"], answer: 2, script: "W: Jake, what did you do last weekend?\nM: I helped my grandmother to plant flowers. What about you?\nW: I climbed Mt. Seorak with my family.\nM: Wow, that’s cool! Didn’t you get tired?\nW: A little bit. But, it was really fun.\nM: I want to go there with my family sometime." },
+          { num: 18, type: "text", q: "대화를 듣고, 남자의 직업으로 가장 적절한 것을 고르시오.", options: ["요가 강사", "택시 기사", "소방관", "사진사", "요리사"], answer: 4, script: "M: May I help you?\nW: Yes. I want to get a photo of myself.\nM: Okay. I can help you with that. What’s it for?\nW: It’s for my student ID card.\nM: Alright. Come over here and have a seat, please. [Pause] Are you ready?\nW: Yes, I am.\nM: Good. One, two, three. Smile!" },
+          { num: 19, type: "dialogue", q: "M: Are you ready to order?", options: ["He likes running.", "It’s sunny outside.", "An apple juice, please.", "Long time no see.", "The chef is from Italy."], answer: 3, script: "W: I’m still trying to decide.\nM: Sure. Take your time.\nW: Could you please tell me the specials?\nM: Yes. The specials for today are the beefsteak and the tomato pasta.\nW: Hmm... I’ll have the beefsteak.\nM: Okay. Anything else?\nW: ________________________________________________" },
+          { num: 20, type: "dialogue", q: "M: Ellie, we’re moving to a new house next month.", options: ["I want blue.", "It looks delicious.", "It takes 3 hours.", "You are not alone.", "There’s a bus stop nearby."], answer: 1, script: "W: Really? Will I have my own room, Dad?\nM: Yes.\nW: Awesome! And can I get a new chair for my room?\nM: Sure. We’ll buy it after we move in.\nW: Thanks, Dad. What about my room’s wallpaper? Can I choose the color?\nM: Sure. What color do you want?\nW: ________________________________________________\nANN:" }
+        ]
+      },
+      {
+        id: "2021_m1_r2",
+        title: "2021학년도 제2회",
+        subtitle: "중1 영어듣기능력평가",
+        date: "2021. 9. 7.",
+        audioFile: "https://dfpmpbjhljsyypofpvfu.supabase.co/storage/v1/object/public/listening-audio/2021_m1_r2.m4a",
+        youtubeUrl: "",
+        questions: [
+          { num: 1, type: "image", q: "다음을 듣고, ‘this’가 가리키는 것으로 가장 적절한 것을 고르시오.", options: ["images/2021_m1_r2/q1_1.jpg", "images/2021_m1_r2/q1_2.jpg", "images/2021_m1_r2/q1_3.jpg", "images/2021_m1_r2/q1_4.jpg", "images/2021_m1_r2/q1_5.jpg"], answer: 5, script: "M: You can see this in a kitchen. It has one or more doors. You put foods and drinks in it. It keeps foods fresh and drinks cool. What is this?" },
+          { num: 2, type: "image", q: "대화를 듣고, 여자가 구입할 꽃병으로 가장 적절한 것을 고르시오.", options: ["images/2021_m1_r2/q2_1.jpg", "images/2021_m1_r2/q2_2.jpg", "images/2021_m1_r2/q2_3.jpg", "images/2021_m1_r2/q2_4.jpg", "images/2021_m1_r2/q2_5.jpg"], answer: 4, script: "M: May I help you?\nW: Yes, I’m looking for a vase for my mom.\nM: What about this one with a big star on it? It’s our most popular one.\nW: I like the star, but I think it’s too big.\nM: Then, you may like this one. It has many small stars on it.\nW: It’s great! I’ll take it." },
+          { num: 3, type: "image", q: "다음을 듣고, 내일의 날씨로 가장 적절한 것을 고르시오.", options: ["images/2021_m1_r2/q3_1.jpg", "images/2021_m1_r2/q3_2.jpg", "images/2021_m1_r2/q3_3.jpg", "images/2021_m1_r2/q3_4.jpg", "images/2021_m1_r2/q3_5.jpg"], answer: 2, script: "W: Good morning. This is the daily weather report. Yesterday, there were no clouds, with sunny and clear skies. But today, it’ll be cloudy and windy.\nFrom tomorrow, it’ll be rainy for the rest of the week. Have a great day!" },
+          { num: 4, type: "text", q: "대화를 듣고, 남자가 한 마지막 말의 의도로 가장 적절한 것을 고르시오.", options: ["위로", "사과", "축하", "칭찬", "제안"], answer: 5, script: "W: James, what are you going to do this weekend?\nM: Hi, Sarah. I am going to the City Museum to do our history homework.\nW: Oh, I forgot about that.\nM: You have to do it by Monday.\nW: Really? There’s not much time. Can I go with you?\nM: Sure. Let’s go and do the homework together." },
+          { num: 5, type: "text", q: "다음을 듣고, 남자가 앱에 대해 언급하지 않은 것을 고르시오.", options: ["이름", "제작자", "평점", "기능", "가격"], answer: 3, script: "M: Hello. I’m Steve Gates. I’d like to tell you about a new music app. Its name is Music Life. I made it with my friends. You can listen to classical music with this app. You can download the app for free from the application market now." },
+          { num: 6, type: "text", q: "대화를 듣고, 두 사람이 만날 시각을 고르시오.", options: ["1:30p.m.", "2:00p.m.", "2:30p.m.", "3:00p.m.", "3:30p.m."], answer: 1, script: "[Cellphone rings.]\nM: Hey, Sohee! What’s up?\nW: Hey, Jimin! I’m calling to see when we should meet today.\nM: The concert begins at 3p.m., so what about 1:30p.m.?\nW: It’s a bit early, but I’m okay with that.\nM: Okay, then let’s meet at 1:30p.m. in front of the ticket office.\nW: Alright. See you then." },
+          { num: 7, type: "text", q: "대화를 듣고, 여자의 장래 희망으로 가장 적절한 것을 고르시오.", options: ["발레리나", "아나운서", "사진작가", "기타리스트", "패션 디자이너"], answer: 4, script: "M: Subin, why do you have this picture on your desk?\nW: Because the woman in the picture is my role model.\nM: Cool. Who is she?\nW: She is my favorite guitarist, Lisa Wilson.\nM: Wow! So, do you want to be like her in the future?\nW: Yes. I want to be an amazing guitarist someday.\nM: Great!" },
+          { num: 8, type: "text", q: "대화를 듣고, 남자의 심정으로 가장 적절한 것을 고르시오.", options: ["shy", "bored", "angry", "happy", "nervous"], answer: 4, script: "W: Look, Jiwon! The sun is coming up!\nM: It’s beautiful! Happy new year, Mom!\nW: Happy new year! How do you feel?\nM: I feel really good.\nW: That’s great. Did you make a wish?\nM: Yes. I made a wish that our family will always be happy." },
+          { num: 9, type: "text", q: "대화를 듣고, 남자가 대화 직후에 할 일로 가장 적절한 것을 고르시오.", options: ["세차하기", "마트 방문하기", "옷장 정리하기", "영화 예매하기", "핸드크림 가져오기"], answer: 5, script: "W: Dad, I’m looking for the hand cream.\nM: Oh! Your hands are dry?\nW: Yes. But, I can’t find it in the bathroom.\nM: Oh, yeah. I put the hand cream in the car.\nW: Really? I need to use it.\nM: I’ll go get it from the car now.\nW: Thank you, Dad!" },
+          { num: 10, type: "text", q: "대화를 듣고, 무엇에 관한 내용인지 가장 적절한 것을 고르시오.", options: ["설문지 작성", "영화제 방문", "캠페인 참여", "도시락 준비", "봉사활동 신청"], answer: 2, script: "W: Minsoo, are you going to the Korea Movie Festival?\nM: Of course. I love movies.\nW: Me, too. There are going to be good movies there.\nM: Why don’t we go there together?\nW: Sounds great! What about tomorrow?\nM: That works. How about meeting in front of the Grand Theatre?\nW: Okay, see you there." },
+          { num: 11, type: "text", q: "대화를 듣고, 두 사람이 함께 이용할 교통수단으로 가장 적절한 것을 고르", options: ["택시", "버스", "기차", "지하철", "자전거"], answer: 5, script: "[Cellphone rings.]\nM: Hey, Jina!\nW: Hey, Seho! Do you want to go to Green Park?\nM: Sure. How do we get there?\nW: We can just take the bus.\nM: But, it will be very crowded on the bus now.\nW: Right. Then, what about riding bikes?\nM: Sounds good. We can also get some fresh air.\nW: Great. Let’s go now!" },
+          { num: 12, type: "text", q: "대화를 듣고, 여자에게 매트가 필요한 이유로 가장 적절한 것을 고르시오.", options: ["짐을 옮기기 위해서", "소풍을 가기 위해서", "방을 꾸미기 위해서", "물건을 올려두기 위해서", "집에서 운동하기 위해서"], answer: 5, script: "M: Somi, do you need anything from the supermarket?\nW: Yes, Dad. I need a mat.\nM: Okay. What for?\nW: As you know, I just started exercising at home last week. So, I want to have one.\nM: I see. I’ll buy one for you.\nW: Thank you." },
+          { num: 13, type: "text", q: "대화를 듣고, 두 사람이 대화하는 장소로 가장 적절한 곳을 고르시오.", options: ["도서관", "안경점", "영화관", "미용실", "우체국"], answer: 2, script: "M: Have a seat here. [Pause] First, cover your right eye. Can you read this?\nW: Five, two, three.\nM: Good. What about this?\nW: Eight and... I can’t see the next one.\nM: Alright. Now cover your left eye and read this.\nW: Seven, nine, and... [Pause] I’m not sure.\nM: Okay. Now look around and choose the glass frames." },
+          { num: 14, type: "text", q: "대화를 듣고, 여자가 찾는 열쇠의 위치로 가장 알맞은 곳을 고르시오.", options: ["①", "②", "③", "④", "⑤"], answer: 3, script: "W: Hey, Jinho. Can you get my key in the kitchen?\nM: Okay, Mom. Where did you put it?\nW: Maybe on the microwave?\nM: No, it’s not there.\nW: Then, look on the table.\nM: Let me see. Oh, I found it. It’s under the table!" },
+          { num: 15, type: "text", q: "대화를 듣고, 남자가 여자에게 부탁한 일로 가장 적절한 것을 고르시오.", options: ["보고서 출력하기", "프린터 수리하기", "과학 노트 빌려주기", "도서관에 책 반납하기", "선생님께 이메일 보내기"], answer: 1, script: "[Cellphone rings.]\nM: Hello, Jessie.\nW: Hi, Daniel. What’s up?\nM: My printer isn’t working. Can you print out my science report for me?\nW: Sure. Just email me your file.\nM: Okay, just a second. [Typing sound] I sent it to you.\nW: Let me check. [Pause] I got it.\nM: Thanks for your help." },
+          { num: 16, type: "text", q: "대화를 듣고, 여자가 남자에게 제안한 것으로 가장 적절한 것을 고르시오.", options: ["병원 가기", "천천히 먹기", "친구 초대하기", "식사 전 손 씻기", "규칙적으로 운동하기"], answer: 1, script: "W: Jason, are you okay? You look sick.\nM: Mom, I have a stomachache.\nW: But, you were fine at lunch.\nM: I know. This pain started right after lunch.\nW: Maybe you ate too fast?\nM: No, I ate slowly. And, I think I have a fever.\nW: Then, let’s go see a doctor right now.\nM: Okay." },
+          { num: 17, type: "text", q: "대화를 듣고, 두 사람이 오늘 오후에 할 일로 가장 적절한 것을 고르시오.", options: ["공부하기", "산책하기", "배드민턴 치기", "보드게임 하기", "TV 시청하기"], answer: 4, script: "[Cellphone rings.]\nW: Hey, Brian, what are you doing?\nM: Nothing much. What about you?\nW: Just watching TV.\nM: Do you want to go play badminton this afternoon?\nW: That’s a good idea, but it just started raining.\nM: Really? I didn’t know that. I guess we can’t play badminton.\nW: Then, how about playing board games at my house?\nM: Sounds good." },
+          { num: 18, type: "text", q: "대화를 듣고, 여자의 직업으로 가장 적절한 것을 고르시오.", options: ["서예가", "경찰관", "웹툰 작가", "테니스 선수", "비행기 조종사"], answer: 3, script: "M: Naomi, how was the event with your fans?\nW: Fantastic. They were excited about my new webtoons.\nM: That’s wonderful! You worked so hard on this series.\nW: I know. I hope my fans will love reading it.\nM: They will. They’re really going to love your new drawing style.\nW: I hope so." },
+          { num: 19, type: "dialogue", q: "M: Minju, what are you going to do this weekend?", options: ["No, it isn’t.", "Sure, why not?", "She likes singing.", "I think it’s too small.", "What do you do for fun?"], answer: 2, script: "W: I don’t have any plans yet. What about you?\nM: I’m going to volunteer at a nursing home. I do it every Sunday.\nW: What do you do there?\nM: I usually read newspapers to the elderly people.\nW: Oh, that’s nice! Can I go with you?\nM: ________________________________________________" },
+          { num: 20, type: "dialogue", q: "W: Oh, I lost my worksheet for math class.", options: ["How about 5 o’clock?", "I met them yesterday.", "It’s the big green one.", "He is watching a movie.", "She was my homeroom teacher."], answer: 3, script: "M: You can copy mine. Let’s use the copy machine right over there.\nW: Do you know how to use it?\nM: It’s easy. Open the cover and put the paper on the glass.\nW: Alright, and then?\nM: Close the cover and push the start button.\nW: Which one is the start button?\nM: ________________________________________________\nANN:" }
+        ]
+      },
+      {
+        id: "2022_m1_r1",
+        title: "2022학년도 제1회",
+        subtitle: "중1 영어듣기능력평가",
+        date: "2022. 4. 5.",
+        audioFile: "https://dfpmpbjhljsyypofpvfu.supabase.co/storage/v1/object/public/listening-audio/2022_m1_r1.m4a",
+        youtubeUrl: "",
+        questions: [
+          { num: 1, type: "image", q: "다음을 듣고, ‘I’가 무엇인지 가장 적절한 것을 고르시오.", options: ["images/2022_m1_r1/q1_1.jpg", "images/2022_m1_r1/q1_2.jpg", "images/2022_m1_r1/q1_3.jpg", "images/2022_m1_r1/q1_4.jpg", "images/2022_m1_r1/q1_5.jpg"], answer: 2, script: "W: I have four legs. My eyes are very big. I usually have wet skin. I live both in water and on land. I can jump very high. What am I?" },
+          { num: 2, type: "image", q: "대화를 듣고, 여자가 구입할 선물 상자로 가장 적절한 것을 고르시오.", options: ["images/2022_m1_r1/q2_1.jpg", "images/2022_m1_r1/q2_2.jpg", "images/2022_m1_r1/q2_3.jpg", "images/2022_m1_r1/q2_4.jpg", "images/2022_m1_r1/q2_5.jpg"], answer: 4, script: "W: Hello, I’m looking for a gift box.\nM: We have square ones and round ones.\nW: I like round ones more.\nM: Okay, how about this striped box?\nW: Well... Can you show me another one?\nM: We also have this round one with stars on it.\nW: I like stars. I’ll take it." },
+          { num: 3, type: "image", q: "다음을 듣고, 오늘 오후의 날씨로 가장 적절한 것을 고르시오.", options: ["images/2022_m1_r1/q3_1.jpg", "images/2022_m1_r1/q3_2.jpg", "images/2022_m1_r1/q3_3.jpg", "images/2022_m1_r1/q3_4.jpg", "images/2022_m1_r1/q3_5.jpg"], answer: 1, script: "W: Good morning. Here’s the weather news. We have clear blue skies now.\nHowever, we will have rain this afternoon. The rain will continue until tomorrow morning. When you go out in the afternoon, take an umbrella with you." },
+          { num: 4, type: "text", q: "대화를 듣고, 남자가 한 마지막 말의 의도로 가장 적절한 것을 고르시오.", options: ["항의", "거절", "축하", "위로", "허락"], answer: 4, script: "[Cellphonerings.]\nW: Hey, what’s up?\nM: Hi. Do you want to play tennis together?\nW: I’d love to, but I can’t.\nM: Why not?\nW: My mom is sick. So, I should take care of her.\nM: I’m sorry to hear that. I hope she feels better soon." },
+          { num: 5, type: "text", q: "다음을 듣고, 여자가 선생님에 대해 언급하지 않은 것을 고르시오.", options: ["이름", "경력", "과목", "취미", "성격"], answer: 2, script: "W: Hi, class. Let me introduce my favorite teacher to you. Her name is Subin\nShin. She teaches history. I like her lessons very much. Her hobby is swimming. Many students like her because she is kind and gentle." },
+          { num: 6, type: "text", q: "대화를 듣고, 두 사람이 만날 시각을 고르시오.", options: ["1:00p.m.", "1:30p.m.", "2:00p.m.", "2:30p.m.", "3:00p.m."], answer: 3, script: "M: Hi, Susan. There is a free cooking class this afternoon.\nW: Really? Why don’t we go together?\nM: Sounds good. It starts at 3p.m.\nW: Then, I’ll come to your house at 2:30.\nM: We’ll be late. What about 2?\nW: 2 o’clock? Okay. I’ll see you then." },
+          { num: 7, type: "text", q: "대화를 듣고, 남자의 장래 희망으로 가장 적절한 것을 고르시오.", options: ["농부", "배우", "요리사", "성악가", "건축가"], answer: 1, script: "M: Emily, would you like some tomatoes?\nW: I’d love some. They look fresh.\nM: They are. My dad grew them.\nW: Really? He’s good at growing vegetables.\nM: Yes. He’s a farmer. And I want to be a farmer like him.\nW: I believe you can be.\nM: Thanks. I’ll have my own farm someday." },
+          { num: 8, type: "text", q: "대화를 듣고, 여자의 심정으로 가장 적절한 것을 고르시오.", options: ["지루함", "수줍음", "슬픔", "기쁨", "화남"], answer: 4, script: "M: Maria, is this your cellphone?\nW: Oh, that’s mine! I was looking for it everywhere.\nM: I knew it was yours!\nW: I’m so glad you found it. Where was it?\nM: It was in the playground next to the bench.\nW: Thank you! I’m very happy now." },
+          { num: 9, type: "text", q: "대화를 듣고, 남자가 대화 직후에 할 일로 가장 적절한 것을 고르시오.", options: ["과제 제출하기", "선생님 찾아가기", "온라인 강의 듣기", "친구에게 전화하기", "그룹 채팅방 만들기"], answer: 5, script: "W: Minho, we should talk about our group project.\nM: But John is not here today.\nW: Then how can we choose a topic?\nM: Let’s make a group chat room online.\nW: Sounds great! Then, John can also talk with us.\nM: Right. I’ll make a group chat room right away." },
+          { num: 10, type: "text", q: "대화를 듣고, 무엇에 관한 내용인지 가장 적절한 것을 고르시오.", options: ["입학선물", "학교소개", "학급회의", "가족사진", "앨범구입"], answer: 4, script: "M: Wow, you decorated your room with lots of pictures.\nW: Yeah, these are my family pictures.\nM: Cool! Is he your dad?\nW: That’s right. And this is my mom and sister.\nM: I see. And your dog is in almost every family picture.\nW: He likes to take pictures with us, too." },
+          { num: 11, type: "text", q: "대화를 듣고, 남자가 이용할 교통수단으로 가장 적절한 것을 고르시오.", options: ["택시", "비행기", "자전거", "지하철", "셔틀버스"], answer: 5, script: "W: Seho, how will you get to the water park this weekend?\nM: I’m not sure, Mom.\nW: You have to carry a heavy bag. How about taking a taxi?\nM: It may be expensive.\nW: Then, why don’t you take a shuttle bus? It’s cheaper.\nM: A shuttle bus? That sounds good." },
+          { num: 12, type: "text", q: "대화를 듣고, 여행 장소가 변경된 이유로 가장 적절한 것을 고르시오.", options: ["예산이 부족해서", "비 예보가 있어서", "일정이 너무 빠듯해서", "다른 곳에 가보고 싶어서", "입장권을 구매하지 못해서"], answer: 2, script: "W: Jimin, you are going to Seoraksan Mountain next week, right?\nM: I was going to, but the plan changed.\nW: Why? You really wanted to go.\nM: But the news said it would rain a lot next week.\nW: Yeah, hiking can be dangerous when it rains.\nM: Right. So I decided to go to City Museum." },
+          { num: 13, type: "text", q: "대화를 듣고, 두 사람이 대화하는 장소로 가장 적절한 곳을 고르시오.", options: ["서점", "식당", "법원", "편의점", "놀이공원"], answer: 5, script: "M: Wow! Look at the line over there, Somi.\nW: Is that the waiting line for the roller coaster?\nM: Yes. I think we’ll have to wait for more than an hour.\nW: Oh, no. Then, let’s try something else.\nM: I agree. Why don’t we ride bumper cars first?\nW: Good! I like bumper cars, too.\nM: Let’s go!" },
+          { num: 14, type: "text", q: "대화를 듣고, 우체국의 위치로 가장 알맞은 곳을 고르시오.", options: ["①", "②", "③", "④", "⑤"], answer: 3, script: "W: Excuse me. Is there a post office around here?\nM: Yes, there is one nearby.\nW: How can I get there from here?\nM: Hmm... Go straight one block and turn right on Golden Street.\nW: On Golden Street?\nM: Yes, the post office will be on your left. It’s next to the bakery." },
+          { num: 15, type: "text", q: "대화를 듣고, 여자가 남자에게 부탁한 일로 가장 적절한 것을 고르시오.", options: ["책 빌려주기", "짐 옮겨주기", "숙제 도와주기", "영화 예매하기", "사진 찍어주기"], answer: 1, script: "W: Taemin, I watched the movie, LittleWomen.\nM: Did you? It is also a famous novel.\nW: Really? I didn’t know that. Do you have the book?\nM: Of course, it’s my favorite.\nW: Then, can I borrow your book?\nM: Sure, I’ll bring it tomorrow." },
+          { num: 16, type: "text", q: "대화를 듣고, 남자가 여자에게 제안한 것으로 가장 적절한 것을 고르시오.", options: ["봉사활동 하기", "집안 청소하기", "학원 등록하기", "학생증 만들기", "교복 수선하기"], answer: 1, script: "M: Gloria, what are you going to do this Sunday?\nW: I’m going to stay at home. What about you?\nM: I’ll do volunteer work at the animal care center.\nW: Oh, what do you do there?\nM: I usually wash the dogs.\nW: That’s cool!\nM: Will you join me? They need more volunteers.\nW: Okay, I’ll join you." },
+          { num: 17, type: "text", q: "대화를 듣고, 남자가 휴일에 한 일로 가장 적절한 것을 고르시오.", options: ["꽃 심기", "창문 닦기", "그림 그리기", "뮤지컬 보기", "친구 만나기"], answer: 1, script: "W: Good morning, Dongjoon. How was your holiday?\nM: It was great! I planted flowers in my garden.\nW: That’s interesting! What kind of flowers did you plant?\nM: They were roses and sunflowers. I hope they grow well.\nW: Wow, you had a wonderful holiday." },
+          { num: 18, type: "text", q: "대화를 듣고, 여자의 직업으로 가장 적절한 것을 고르시오.", options: ["은행원", "미술 교사", "심리 상담사", "소아과 의사", "옷가게 점원"], answer: 5, script: "W: May I help you?\nM: Yes, I’d like to try that shirt on.\nW: This one? It’s selling very well.\nM: Do you have it in a different size? It looks too small for me.\nW: Sure, we have this shirt in a large size. Here it is.\nM: Thanks. Where’s the fitting room?\nW: It’s over there." },
+          { num: 19, type: "dialogue", q: "M: Jenny, how are you doing these days?", options: ["I got up late.", "You’re welcome.", "I can’t believe it.", "You can swim well.", "You play soccer often."], answer: 2, script: "W: Hi, Mr. Kim. Classes are fine, but I want to make more friends.\nM: Then, would you join my art club? You can make friends there.\nW: But, I’m not good at painting.\nM: Don’t worry. I will help you.\nW: Really? Then I’ll try it. Thank you for helping me.\nM:" },
+          { num: 20, type: "dialogue", q: "[Cellphonerings.]", options: ["See you again.", "It’s not my fault.", "It begins at 5 p.m.", "I’m sorry, but I can’t.", "My hobby is reading books."], answer: 3, script: "W: Hello.\nM: Hello, Christine. This is Ted.\nW: Hey, what’s up?\nM: Are you busy this Sunday?\nW: No, I’m free this weekend.\nM: Good. I’m going to have a birthday party on Sunday. Can you come?\nW: Of course, I can. What time does the party start?\nM:\nANN:" }
+        ]
+      },
+      {
+        id: "2022_m1_r2",
+        title: "2022학년도 제2회",
+        subtitle: "중1 영어듣기능력평가",
+        date: "2022. 9. 6.",
+        audioFile: "https://dfpmpbjhljsyypofpvfu.supabase.co/storage/v1/object/public/listening-audio/2022_m1_r2.m4a",
+        youtubeUrl: "",
+        questions: [
+          { num: 1, type: "image", q: "다음을 듣고, ‘this’가 가리키는 것으로 가장 적절한 것을 고르시오.", options: ["images/2022_m1_r2/q1_1.jpg", "images/2022_m1_r2/q1_2.jpg", "images/2022_m1_r2/q1_3.jpg", "images/2022_m1_r2/q1_4.jpg", "images/2022_m1_r2/q1_5.jpg"], answer: 2, script: "W: Most people use this every day. This is a small brush. You clean your teeth with this. You use this after you eat breakfast, lunch, and dinner.\nWhat is this?" },
+          { num: 2, type: "image", q: "대화를 듣고, 남자가 구입할 컵으로 가장 적절한 것을 고르시오.", options: ["images/2022_m1_r2/q2_1.jpg", "images/2022_m1_r2/q2_2.jpg", "images/2022_m1_r2/q2_3.jpg", "images/2022_m1_r2/q2_4.jpg", "images/2022_m1_r2/q2_5.jpg"], answer: 5, script: "W: May I help you?\nM: I want to buy a cup.\nW: What about this one with grapes on it?\nM: No, I don’t like it. Also, I want a cup with a handle.\nW: How about this one? It has a handle. Isn’t this strawberry cute?\nM: I like strawberries. I’ll take it." },
+          { num: 3, type: "image", q: "다음을 듣고, 서울의 날씨로 가장 적절한 것을 고르시오.", options: ["images/2022_m1_r2/q3_1.jpg", "images/2022_m1_r2/q3_2.jpg", "images/2022_m1_r2/q3_3.jpg", "images/2022_m1_r2/q3_4.jpg", "images/2022_m1_r2/q3_5.jpg"], answer: 1, script: "M: Good morning. It’s time for the world weather report. In Washington D.C., there will be heavy rain. In Paris, it’ll be very windy. Seoul will be sunny today. The sun will be very strong, so don’t forget to drink a lot of water." },
+          { num: 4, type: "text", q: "대화를 듣고, 여자가 한 마지막 말의 의도로 가장 적절한 것을 고르시오.", options: ["당부", "거절", "사과", "초대", "칭찬"], answer: 1, script: "W: Sam, can I talk to you for a second?\nM: Yes, Mom. What’s going on?\nW: You didn’t close the refrigerator door again.\nM: Uh... I thought that I closed it. I’m sorry, Mom.\nW: Make sure to check it well next time." },
+          { num: 5, type: "text", q: "다음을 듣고, 남자가 카페에 대해 언급하지 않은 것을 고르시오.", options: ["이름", "위치", "판매 상품", "할인 행사", "분위기"], answer: 4, script: "M: I want to introduce my favorite cafe in our town. The name is Jackson’s\nDesserts.It is on Fifth Avenue next to the Sky Tower. It sells desserts like cakes, cookies, and ice cream. I love this place because it is lively and cheerful." },
+          { num: 6, type: "text", q: "대화를 듣고, 두 사람이 이야기를 나누는 현재 시각을 고르시오.", options: ["6:30a.m.", "7:00a.m.", "7:30a.m.", "8:00a.m.", "8:30a.m."], answer: 1, script: "M: Did you pack everything?\nW: Yes, Dad. How long will it take to get there?\nM: It’ll take about 1 hour to get to the camping site.\nW: What time will we arrive?\nM: It’s 6:30 a.m. now, so we’ll be there by 7:30.\nW: Oh, it’s only 6:30? It’s still early!" },
+          { num: 7, type: "text", q: "대화를 듣고, 남자의 장래 희망으로 가장 적절한 것을 고르시오.", options: ["수의사", "건축가", "피아니스트", "광고 제작자", "컴퓨터 프로그래머"], answer: 5, script: "W: Mark, are you playing computer games again?\nM: Mom, I’m not playing. I’m making a program.\nW: Oh, is it part of your school homework?\nM: Yes. And it’s really fun. I want to be a computer programmer someday.\nW: Yes, I believe you can be.\nM: Thanks, Mom. I’ll do my best." },
+          { num: 8, type: "text", q: "대화를 듣고, 여자의 심정으로 가장 적절한 것을 고르시오.", options: ["설렘", "즐거움", "부러움", "실망스러움", "자랑스러움"], answer: 4, script: "M: Becky, are you okay? You look different today.\nW: Well, it’s because of the audition.\nM: You mean, the singing audition?\nW: Yeah, I didn’t pass it.\nM: Really? I’m sorry to hear that. You practiced a lot.\nW: I did. I tried my best, but I failed it." },
+          { num: 9, type: "text", q: "대화를 듣고, 여자가 대화 직후에 할 일로 가장 적절한 것을 고르시오.", options: ["방 청소하기", "이불 정리하기", "과일 구입하기", "샌드위치 만들기", "남편에게 전화하기"], answer: 4, script: "M: Mom, I’m hungry.\nW: Already? Would you like some fruit?\nM: Hmm... Do we have anything else?\nW: Then, what do you want to eat?\nM: Can I have a sandwich, please?\nW: Okay. I’ll make one for you right now.\nM: Thanks, Mom. You’re the best!" },
+          { num: 10, type: "text", q: "대화를 듣고, 무엇에 관한 내용인지 가장 적절한 것을 고르시오.", options: ["동아리 홍보", "공연 팀 모집", "교복 구매 공지", "급식 메뉴 안내", "댄스 대회 취소"], answer: 5, script: "[Cellphonerings.]\nW: Hey, did you hear the news? The dance contest was canceled.\nM: What happened?\nW: There were not enough teams in the contest.\nM: Oh, no. My friends and I were planning to do a hip-hop dance.\nW: Sorry to hear that. I know you practiced a lot.\nM: We did. We have to wait until next year, then.\nW: That’s right." },
+          { num: 11, type: "text", q: "대화를 듣고, 두 사람이 함께 이용할 교통수단으로 가장 적절한 것을", options: ["버스", "택시", "비행기", "자전거", "지하철"], answer: 5, script: "M: Jane, would you like to go shopping today?\nW: Sure. Where do you want to go?\nM: I’m thinking of City Mall near our school.\nW: Alright. Should we take a bus?\nM: The traffic is heavy. Why don’t we take the subway?\nW: The subway sounds good. See you later." },
+          { num: 12, type: "text", q: "대화를 듣고, 남자가 미술관에 가지 못하는 이유로 가장 적절한 것을", options: ["다리를 다쳐서", "강아지가 아파서", "날씨가 좋지 않아서", "가족 모임이 있어서", "숙제를 끝내지 못해서"], answer: 2, script: "W: Ben, are you going to the art museum this afternoon?\nM: I really want to, but I can’t.\nW: Why not? You were so excited.\nM: My puppy is sick.\nW: What’s wrong with her?\nM: I don’t know. I have to take her to the animal doctor.\nW: I’m sorry. I hope she’s going to be okay." },
+          { num: 13, type: "text", q: "대화를 듣고, 두 사람이 대화하는 장소로 가장 적절한 곳을 고르시오.", options: ["공원", "극장", "기차역", "도서관", "경찰서"], answer: 3, script: "M: Hello, how can I help you?\nW: I’d like three tickets to Busan, please.\nM: There is a train leaving at 7 p.m.\nW: When is the next train leaving?\nM: It’s at 8 o’clock.\nW: 8 o’clock sounds good to me.\nM: It’ll be 30 dollars. Cash or credit card?\nW: Here’s my credit card." },
+          { num: 14, type: "text", q: "대화를 듣고, 남자가 찾고 있는 명찰의 위치로 가장 알맞은 곳을 고르시오.", options: ["①", "②", "③", "④", "⑤"], answer: 3, script: "W: What are you doing, Jian? You are late.\nM: Mom, I can’t find my name tag. Did you see it?\nW: Isn’t it on the table?\nM: No, I already checked. It isn’t on the sofa, either.\nW: Then, did you look under the chair?\nM: [Pause] Oh, I found it. It’s under the chair." },
+          { num: 15, type: "text", q: "대화를 듣고, 여자가 남자에게 부탁한 일로 가장 적절한 것을 고르시오.", options: ["우산 챙기기", "날씨 검색하기", "입장권 예매하기", "도시락 준비하기", "교통편 찾아보기"], answer: 2, script: "M: Honey, let’s go to the beach this weekend.\nW: That sounds good. But we should check the weather first.\nM: You’re right. It rained so much last time.\nW: That was really terrible.\nM: I hope the sky is clear this time.\nW: Can you look up the weather on the Internet now?\nM: Sure!" },
+          { num: 16, type: "text", q: "대화를 듣고, 남자가 여자에게 제안한 것으로 가장 적절한 것을 고르시오.", options: ["병원 예약하기", "준비운동 하기", "두꺼운 옷 입기", "가습기 구입하기", "따뜻한 물 마시기"], answer: 5, script: "M: Tina, are you okay?\nW: No, I’m not. I didn’t bring my jacket. It’s so cold in here.\nM: You’re right. And I think the heater is not working again.\nW: I feel so cold. What can I do?\nM: Why don’t you drink some warm water?\nW: Good idea. Warm water will help me." },
+          { num: 17, type: "text", q: "대화를 듣고, 여자가 지난 토요일에 한 일로 가장 적절한 것을 고르시오.", options: ["축구 연습", "오디션 참가", "야구 경기 관람", "할머니 댁 방문", "다큐멘터리 시청"], answer: 3, script: "W: Did you watch the baseball game last Saturday?\nM: No, I missed it. How was it?\nW: It was so exciting. I watched it at the stadium with my dad.\nM: You must really like baseball.\nW: Yeah. And I was happy because my team won.\nM: Good for you!" },
+          { num: 18, type: "text", q: "대화를 듣고, 여자의 직업으로 가장 적절한 것을 고르시오.", options: ["사회복지사", "우체국 직원", "뮤지컬 배우", "테니스 코치", "자동차 정비사"], answer: 3, script: "M: Monica, I just saw your performance in the musical.\nW: I’m glad you came, Hosung.\nM: I loved your acting. Your fans will love it, too.\nW: I hope they like it!\nM: Your singing and dancing were also amazing.\nW: Thanks. I practiced a lot for this musical.\nM: I see. Good luck with your next performance." },
+          { num: 19, type: "dialogue", q: "W: What did you do last weekend, Alex?", options: ["He has to see a doctor.", "Yes, I’ll be there soon.", "I can’t wait to see him.", "Thanks for saying that.", "No, I didn’t ride a bike."], answer: 4, script: "M: I went to Lake Park and rode a bike.\nW: Lake Park? I was there, too!\nM: Really? What did you do there?\nW: I took pictures of the nature. Look! Here are my photos.\nM: Wow! All your photos are amazing. You’re a good photographer.\nW: ________________________________________________" },
+          { num: 20, type: "dialogue", q: "W: Hello, Mr. Lee.", options: ["It’s my pleasure.", "It will be sunny today.", "I’ll go fishing with my dad.", "I can finish it by tomorrow.", "I usually wake up at 7 o’clock."], answer: 4, script: "M: Hello, Molly. What’s the matter?\nW: I couldn’t finish my math homework yet.\nM: Do you need more time?\nW: Yes, please. I didn’t have much time because I was sick.\nM: Oh, are you okay now?\nW: Yes, I’m fine now.\nM: Good. Then, when can you finish it?\nW: ________________________________________________\nANN:" }
+        ]
+      },
+      {
+        id: "2023_m1_r1",
+        title: "2023학년도 제1회",
+        subtitle: "중1 영어듣기능력평가",
+        date: "2023. 4. 4.",
+        audioFile: "https://dfpmpbjhljsyypofpvfu.supabase.co/storage/v1/object/public/listening-audio/2023_m1_r1.m4a",
+        youtubeUrl: "",
+        questions: [
+          { num: 1, type: "image", q: "다음을 듣고, ‘I’가 무엇인지 가장 적절한 것을 고르시오.", options: ["images/2023_m1_r1/q1_1.jpg", "images/2023_m1_r1/q1_2.jpg", "images/2023_m1_r1/q1_3.jpg", "images/2023_m1_r1/q1_4.jpg", "images/2023_m1_r1/q1_5.jpg"], answer: 1, script: "W: I have four legs. I have big, long ears. I can jump well and run fast. I eat plants, and I have big front teeth. I usually dig a hole and live in there.\nWhat am I?" },
+          { num: 2, type: "image", q: "대화를 듣고, 남자가 만든 오븐 장갑으로 가장 적절한 것을 고르시오.", options: ["images/2023_m1_r1/q2_1.jpg", "images/2023_m1_r1/q2_2.jpg", "images/2023_m1_r1/q2_3.jpg", "images/2023_m1_r1/q2_4.jpg", "images/2023_m1_r1/q2_5.jpg"], answer: 2, script: "W: Yoonwoo, what’s that?\nM: It’s an oven glove for my mother. I made it myself.\nW: Why did you draw dots on it? I thought you like stripes.\nM: I do, but my mom likes dots more.\nW: I see. I hope she likes it." },
+          { num: 3, type: "image", q: "다음을 듣고, 로스앤젤레스의 날씨로 가장 적절한 것을 고르시오.", options: ["images/2023_m1_r1/q3_1.jpg", "images/2023_m1_r1/q3_2.jpg", "images/2023_m1_r1/q3_3.jpg", "images/2023_m1_r1/q3_4.jpg", "images/2023_m1_r1/q3_5.jpg"], answer: 4, script: "W: Good morning! It’s time for the US weather report. In Boston, there will be heavy rain. It will be windy in Chicago. Los Angeles will be hot and sunny. If you’re in Los Angeles, don’t forget to put on sun cream." },
+          { num: 4, type: "text", q: "대화를 듣고, 남자가 한 마지막 말의 의도로 가장 적절한 것을 고르시오.", options: ["승낙", "거절", "위로", "사과", "항의"], answer: 1, script: "[Cellphonerings.]\nW: Hey, Richard. What are you going to do this Sunday?\nM: Nothing much. I’ll just take a rest.\nW: Jungmin and I are riding bikes together. Why don’t you join us?\nM: Oh, I can’t. My bicycle is broken.\nW: You can ride my brother’s bike.\nM: Really? Okay, I’ll join you." },
+          { num: 5, type: "text", q: "다음을 듣고, 남자가 학교 밴드에 대해 언급하지 않은 것을 고르시오.", options: ["이름", "인원수", "지도 교사", "연습 시간", "연습 장소"], answer: 3, script: "M: Let me introduce our school band. Its name is TheMemories. There are ten members. We practice from 4 p.m. to 5 p.m. every day. We practice in the music room on the second floor next to the cafeteria. If you are interested, come to the music room." },
+          { num: 6, type: "text", q: "대화를 듣고, 두 사람이 이야기를 나누는 현재 시각을 고르시오.", options: ["5:00p.m.", "5:30p.m.", "6:00p.m.", "6:30p.m.", "7:00p.m."], answer: 3, script: "W: Sorry, I’m late. Did the baseball game start?\nM: It started at 5:30 p.m. What happened?\nW: I took the wrong subway. I’m really sorry.\nM: That’s okay. We can still enjoy the game.\nW: Thanks. Look! The main gate is over there.\nM: It’s 6 p.m. now. Let’s hurry." },
+          { num: 7, type: "text", q: "대화를 듣고, 여자의 장래 희망으로 가장 적절한 것을 고르시오.", options: ["교사", "경호원", "변호사", "제빵사", "영화감독"], answer: 4, script: "W: Hello, Mr. Lee. Would you like some muffins?\nM: Oh, thank you. [Pause] Wow, these are really good!\nW: I’m glad you like them. I baked them myself in class.\nM: That’s amazing!\nW: Thanks. I want to become a baker when I grow up.\nM: I think you’ll be an excellent baker." },
+          { num: 8, type: "text", q: "대화를 듣고, 여자의 심정으로 가장 적절한 것을 고르시오.", options: ["설렘", "평온함", "지루함", "자랑스러움", "당황스러움"], answer: 5, script: "M: What’s wrong, Katie?\nW: I can’t find my bag. What should I do?\nM: Where did you put it?\nW: I think I left it on the bus. I don’t know what to do.\nM: How about calling the bus company?\nW: Oh, no! I can’t. My phone is in the bag." },
+          { num: 9, type: "text", q: "대화를 듣고, 남자가 대화 직후에 할 일로 가장 적절한 것을 고르시오.", options: ["창문 열기", "전등 끄기", "물 갖다주기", "약 찾아보기", "인터넷 검색하기"], answer: 1, script: "M: What’s wrong, Mina?\nW: I have a terrible headache.\nM: I’m sorry to hear that. Did you take medicine?\nW: Yeah, but it’s not getting better.\nM: Well, then, how about getting some fresh air?\nW: That sounds good. Could you open the window for me?\nM: Sure. I’ll open it right now." },
+          { num: 10, type: "text", q: "대화를 듣고, 무엇에 관한 내용인지 가장 적절한 것을 고르시오.", options: ["수학 시험", "음악 방송", "수업 준비물", "시간표 변경", "교무실 위치"], answer: 4, script: "W: Tom, let’s go to the science classroom.\nM: The science classroom? Isn’t it math class now, Yumi?\nW: No, today’s timetable changed. It’s science class now.\nM: Really? I didn’t know that.\nW: Mr. Yoon told us this morning.\nM: Thank you for telling me." },
+          { num: 11, type: "text", q: "대화를 듣고, 두 사람이 함께 이동할 방법으로 가장 적절한 것을 고르시오.", options: ["택시", "도보", "기차", "버스", "자전거"], answer: 3, script: "M: Amy, how do we get to Seoul this weekend?\nW: Why don’t we take a bus?\nM: But I always feel sick on a bus.\nW: Oh, I’m sorry. I forgot.\nM: How about taking a train?\nW: That sounds better. Let’s take a train, then.\nM: Okay. I’ll check the schedule." },
+          { num: 12, type: "text", q: "대화를 듣고, 여자가 우산을 찾는 이유로 가장 적절한 것을 고르시오.", options: ["반품하기 위해서", "햇볕을 가리기 위해서", "비를 맞지 않기 위해서", "준비물로 챙기기 위해서", "친구에게 돌려주기 위해서"], answer: 5, script: "W: Dad, did you see the blue umbrella in my room?\nM: Yes. I put it at the front door. Is it going to rain today?\nW: No. I borrowed it from my friend the other day.\nM: Oh, you did?\nW: Yeah. I’m going to give it back to her today.\nM: Ah, I see." },
+          { num: 13, type: "text", q: "대화를 듣고, 두 사람이 대화하는 장소로 가장 적절한 곳을 고르시오.", options: ["경찰서", "도서관", "소방서", "영화관", "수족관"], answer: 2, script: "M: Lina, do you want some snacks?\nW: Dongjoon, you can’t eat here!\nM: Really? I didn’t know that.\nW: Also, you have to be quiet. People are reading books here.\nM: I got it. I’ll keep that in mind.\nW: Anyway, I found a book. I’m going to borrow it.\nM: Okay. Let’s go to the front desk." },
+          { num: 14, type: "text", q: "대화를 듣고, 꽃가게의 위치로 가장 알맞은 곳을 고르시오.", options: ["①", "②", "③", "④", "⑤"], answer: 3, script: "M: Excuse me. Is there a flower shop nearby?\nW: Yes, there’s one near here.\nM: Could you tell me how to get there?\nW: Sure. Go straight one block and turn left on Main Street.\nM: Turn left on Main Street?\nW: Yes. The flower shop will be on your right. It’s between the bank and the hospital." },
+          { num: 15, type: "text", q: "대화를 듣고, 여자가 남자에게 부탁한 일로 가장 적절한 것을 고르시오.", options: ["설거지하기", "집 정리하기", "옷 수선하기", "숙소 예약하기", "수리점에 전화하기"], answer: 5, script: "W: Oh, the washing machine is not working!\nM: Not again! What’s the problem?\nW: I can’t turn it on. I think the button is broken.\nM: Really? We have many clothes to wash.\nW: Can you call a repair shop to make a reservation?\nM: Sure, I’ll do it right now." },
+          { num: 16, type: "text", q: "대화를 듣고, 여자가 남자에게 제안한 것으로 가장 적절한 것을 고르시오.", options: ["쪽지 쓰기", "강아지 키우기", "음악 감상하기", "귀마개 구입하기", "경찰서에 문의하기"], answer: 1, script: "W: Arthur, you look so tired.\nM: Well, I didn’t sleep well.\nW: Why?\nM: My neighbor’s dogs barked loudly last night, so I couldn’t sleep.\nW: I’m sorry to hear that. How about writing a note to your neighbor?\nM: Yeah, writing a note sounds good." },
+          { num: 17, type: "text", q: "대화를 듣고, 남자가 일요일에 할 일로 가장 적절한 것을 고르시오.", options: ["세차하기", "캠핑 가기", "병문안 가기", "뮤지컬 보기", "열쇠고리 만들기"], answer: 2, script: "M: What do you think of this key ring?\nW: It’s so cute! Did you buy it?\nM: No, I didn’t. I made it for my cousin. He’ll come to my house this weekend.\nW: Do you have any plans with him?\nM: We are planning to go camping together this Sunday.\nW: Sounds fun. Enjoy camping." },
+          { num: 18, type: "text", q: "대화를 듣고, 여자의 직업으로 가장 적절한 것을 고르시오.", options: ["화가", "작가", "마술사", "요리사", "택배기사"], answer: 3, script: "W: Is there anything in the box?\nM: No, there’s nothing in it.\nW: Now, look at this picture in my hand. What is it?\nM: It’s a bird.\nW: I’ll put this picture in the box. Please count to three.\nM: One, two, three...\nW: Ta-da! Surprise! [Birdflyingsound]\nM: Wow! It’s a real bird!" },
+          { num: 19, type: "dialogue", q: "[Telephonerings.]", options: ["No, thanks.", "Credit card, please.", "Let’s go see my uncle.", "The salad is 10 dollars.", "I’m writing Mom a Christmas card."], answer: 2, script: "W: Uncle Ben’s Pizza. How can I help you?\nM: Hi, I’d like to order a large cheese pizza, please.\nW: That’ll be 20 dollars. May I take your address?\nM: It’s 15 Wilson Street, across from the City Hall.\nW: Okay. Will you pay by cash or credit card?\nM:" },
+          { num: 20, type: "dialogue", q: "W: June, which after-school class do you want to join?", options: ["I love exercise.", "Long time no see.", "It’s raining outside.", "That’s a great idea.", "Don’t try this at home."], answer: 4, script: "M: I’m not sure. How about you?\nW: I’m thinking of joining the robot coding class.\nM: Wow! A robot coding class?\nW: Yeah. Every member gets the chance to make a robot.\nM: I want to try that, too.\nW: Why don’t we join this class together?\nM:\nANN:" }
+        ]
+      },
+      {
+        id: "2023_m1_r2",
+        title: "2023학년도 제2회",
+        subtitle: "중1 영어듣기능력평가",
+        date: "2023. 9. 5.",
+        audioFile: "https://dfpmpbjhljsyypofpvfu.supabase.co/storage/v1/object/public/listening-audio/2023_m1_r2.m4a",
+        youtubeUrl: "",
+        questions: [
+          { num: 1, type: "image", q: "다음을 듣고, ‘this’가 가리키는 것으로 가장 적절한 것을 고르시오.", options: ["images/2023_m1_r2/q1_1.jpg", "images/2023_m1_r2/q1_2.jpg", "images/2023_m1_r2/q1_3.jpg", "images/2023_m1_r2/q1_4.jpg", "images/2023_m1_r2/q1_5.jpg"], answer: 2, script: "M: You usually use this in summer. It has three or more wings. You can turn this on when you feel hot. It makes wind and cools you down. What is this?" },
+          { num: 2, type: "image", q: "대화를 듣고, 여자가 구입할 티셔츠로 가장 적절한 것을 고르시오.", options: ["images/2023_m1_r2/q2_1.jpg", "images/2023_m1_r2/q2_2.jpg", "images/2023_m1_r2/q2_3.jpg", "images/2023_m1_r2/q2_4.jpg", "images/2023_m1_r2/q2_5.jpg"], answer: 1, script: "M: What can I do for you?\nW: I want to buy a T-shirt for my daughter.\nM: How about this one with a big heart on it?\nW: I don’t like it. I want a T-shirt with no pattern on it.\nM: Okay. What about this one with a pocket? It has no pattern.\nW: I love it! I’ll take it." },
+          { num: 3, type: "image", q: "다음을 듣고, 금요일의 날씨로 가장 적절한 것을 고르시오.", options: ["images/2023_m1_r2/q3_1.jpg", "images/2023_m1_r2/q3_2.jpg", "images/2023_m1_r2/q3_3.jpg", "images/2023_m1_r2/q3_4.jpg", "images/2023_m1_r2/q3_5.jpg"], answer: 2, script: "M: Good evening. This is the weekly weather report. Today, we had clear sunny skies. However, Thursday will be a rainy day. It will snow on\nFriday. The snow will continue until Saturday. So, be careful when you drive." },
+          { num: 4, type: "text", q: "대화를 듣고, 남자가 한 마지막 말의 의도로 가장 적절한 것을 고르시오.", options: ["사과", "충고", "감사", "불평", "위로"], answer: 3, script: "W: Hi, Jason. What are you doing here?\nM: I want to move this box, but it is too heavy.\nW: Oh, let me help you. Where are you going?\nM: I need to take it to the classroom.\nW: Alright. Let’s carry it together.\nM: Thank you for helping me." },
+          { num: 5, type: "text", q: "다음을 듣고, 여자가 화가에 대해 언급하지 않은 것을 고르시오.", options: ["이름", "출생지", "가족 관계", "나이", "대표작"], answer: 3, script: "W: Hi, everyone. Today, I will tell you about an amazing painter. Her name is\nRosa Sanchez. She was born in Mexico, but now she lives in France. She is only 20 years old, but she is already a very successful artist. Her most famous painting is called TheSmilingMountain." },
+          { num: 6, type: "text", q: "대화를 듣고, 두 사람이 만날 시각을 고르시오.", options: ["3:00p.m.", "4:00p.m.", "5:00p.m.", "6:00p.m.", "7:00p.m."], answer: 2, script: "[Telephonerings.]\nW: Hey, Stephen.\nM: Hey, Kim. What time should I pick you up?\nW: Well, when do we have to get to the airport?\nM: Our flight is at 7 p.m., so we have to get there by 5 p.m.\nW: Hmm... Then, can you come to my house by 4 p.m.?\nM: Sure. I’ll pick you up at 4.\nW: See you soon!" },
+          { num: 7, type: "text", q: "대화를 듣고, 남자의 장래 희망으로 가장 적절한 것을 고르시오.", options: ["가수", "작곡가", "안무가", "드럼 연주자", "영상 제작자"], answer: 4, script: "W: Jacob, what are you watching?\nM: I’m watching a video clip of John Grey.\nW: Oh, he’s playing the drums.\nM: He’s one of the greatest drummers of all time.\nW: Wow, he’s amazing. I can’t see his hands.\nM: That’s what I’m saying. I want to be a drummer like him.\nW: I’m sure you will be." },
+          { num: 8, type: "text", q: "대화를 듣고, 여자의 심정으로 가장 적절한 것을 고르시오.", options: ["sad", "shy", "bored", "proud", "excited"], answer: 5, script: "M: Look at this! This is the schedule for the field trip.\nW: Oh! We’re finally leaving next week.\nM: Wow! There are lots of fun activities.\nW: Yeah. We will go to a water park on the second day of the trip.\nM: Right. I’ll ride the water slide many times.\nW: Me, too. I can’t wait!" },
+          { num: 9, type: "text", q: "대화를 듣고, 두 사람이 대화 직후에 할 일로 가장 적절한 것을 고르시오.", options: ["김밥 만들기", "샌드위치 먹기", "휴대폰 충전하기", "햄버거 재료 사기", "식당 가는 길 검색하기"], answer: 5, script: "W: Oh, look! Bob’s Sandwich Store is closed, Mike.\nM: That’s too bad. What do you want to eat, then?\nW: How about a hamburger?\nM: I like hamburgers, too. Do you know any good restaurant?\nW: Yes. But I’m not sure how to get there.\nM: Let’s search on my phone." },
+          { num: 10, type: "text", q: "대화를 듣고, 무엇에 관한 내용인지 가장 적절한 것을 고르시오.", options: ["민속 놀이", "상품 주문", "가족 여행", "컴퓨터 게임", "방과후 수업"], answer: 4, script: "M: Tina, that looks fun!\nW: It is. This is my favorite computer game.\nM: What’s it about?\nW: You play as a hero, and you have to save the world.\nM: Sounds interesting. Can I play it with you?\nW: Yes. We can play together online.\nM: That’s great!" },
+          { num: 11, type: "text", q: "대화를 듣고, 두 사람이 함께 이동할 방법으로 가장 적절한 것을 고르시오.", options: ["기차", "도보", "자동차", "자전거", "지하철"], answer: 3, script: "W: What time does your basketball lesson start today?\nM: It starts at 3 o’clock.\nW: But it’s already 3. You’re late!\nM: Oh, no! It takes more than 30 minutes to get there by bike.\nW: I’ll take you there by car. Hurry!\nM: Thank you, Mom. Let’s go!" },
+          { num: 12, type: "text", q: "대화를 듣고, 여자가 편지를 쓰는 이유로 가장 적절한 것을 고르시오.", options: ["동생과 다투어서", "할아버지 생신이어서", "영어 선생님이 떠나셔서", "친구가 상을 받게 되어서", "부모님의 결혼기념일이어서"], answer: 3, script: "M: Hayoon, what are you writing?\nW: I’m writing a letter to Ms. Johnson, Dad.\nM: You mean your English teacher?\nW: Yes. She is leaving Korea next month, so I’m writing her a letter.\nM: Why is she leaving?\nW: She is going back to her family in the US." },
+          { num: 13, type: "text", q: "대화를 듣고, 두 사람이 대화하는 장소로 가장 적절한 곳을 고르시오.", options: ["보건소", "볼링장", "미술관", "관광 안내소", "야외 공연장"], answer: 4, script: "W: May I help you?\nM: I need information about famous places around here.\nW: Here’s the city tour map. You can see the popular places.\nM: Oh, thank you.\nW: How about taking the city tour bus? It goes to all the good places.\nM: Great. Where can I buy a ticket?\nW: You can buy one online. I’ll show you how." },
+          { num: 14, type: "text", q: "대화를 듣고, 두 사람이 램프를 둘 위치로 가장 알맞은 곳을 고르시오.", options: ["①", "②", "③", "④", "⑤"], answer: 4, script: "W: What a beautiful lamp!\nM: I’m glad you like it. I bought this for your birthday.\nW: Thank you, honey. Where should we put it?\nM: We can put it next to the TV.\nW: I don’t think that’s a good idea. How about on the round table?\nM: That’ll be nice." },
+          { num: 15, type: "text", q: "대화를 듣고, 남자가 여자에게 부탁한 일로 가장 적절한 것을 고르시오.", options: ["금붕어 먹이 주기", "미술학원 등록하기", "수제 요거트 만들기", "겨울방학 계획 짜기", "신문 기사 스크랩하기"], answer: 1, script: "W: Did you pack everything?\nM: Yes, Mom. I can’t wait to go on a trip to Busan.\nW: Have a great time with Dad, sweetie.\nM: Okay, I will. Please don’t forget to feed my goldfish.\nW: Don’t worry. Feed your goldfish twice a day, right?\nM: Perfect. Thanks a lot." },
+          { num: 16, type: "text", q: "대화를 듣고, 여자가 남자에게 제안한 것으로 가장 적절한 것을 고르시오.", options: ["포스터 제작하기", "참가자 명단 작성하기", "동아리 회원 모집하기", "배드민턴 수업 등록하기", "지구의 날 행사 참여하기"], answer: 5, script: "W: Gary, what are you going to do next Monday?\nM: I don’t have any plans yet. Is there anything happening?\nW: Would you like to join the Earth Day event with me?\nM: Earth Day event?\nW: We can learn how to protect the environment at this event.\nM: That’ll be nice. Let’s go together." },
+          { num: 17, type: "text", q: "대화를 듣고, 두 사람이 주말에 할 일로 가장 적절한 것을 고르시오.", options: ["쇼핑하기", "요리하기", "산책하기", "축제 가기", "공연 보기"], answer: 1, script: "M: Mom, let’s go to the amusement park this Sunday.\nW: I don’t think it’s a good idea.\nM: Why?\nW: It’s too crowded on weekends, and we have to wait in long lines.\nM: I see. Then, how about going shopping instead?\nW: Okay. You said you need new clothes." },
+          { num: 18, type: "text", q: "대화를 듣고, 여자의 직업으로 가장 적절한 것을 고르시오.", options: ["의사", "가수", "군인", "경찰", "농부"], answer: 1, script: "W: What’s the matter today?\nM: I have a fever and a sore throat.\nW: Let’s see. Open your mouth wide. [Pause] Your throat is very red.\nM: Is it serious?\nW: Not really. Just take this medicine and get some rest.\nM: Should I come again?\nW: If you still feel sick in three days, you should come back." },
+          { num: 19, type: "dialogue", q: "M: Do you have children?", options: ["Don’t worry.", "It looks pretty.", "This is my dad.", "His name is Sam.", "He is 9 years old."], answer: 5, script: "W: Yes, I have two, a boy and a girl. This is a picture of them.\nM: Oh, how lovely! Who’s this?\nW: This is Gina, my first child. She is 15 years old.\nM: Is she in middle school?\nW: Yes, she is. And this is my son, Sam.\nM: How old is he?\nW: ________________________________________________" },
+          { num: 20, type: "dialogue", q: "W: Here is a little present for you.", options: ["What’s wrong?", "That’s too bad.", "He’s from Canada.", "I’m glad you like it.", "This is a nice pencil."], answer: 4, script: "M: Thank you very much. Can I open it right now?\nW: Sure, you can. I hope you like it.\nM: What a nice belt!\nW: I remember you needed a new one.\nM: How kind! It’s just what I wanted.\nW: ________________________________________________\nANN:" }
+        ]
+      },
+      {
+        id: "2024_m1_r1",
+        title: "2024학년도 제1회",
+        subtitle: "중1 영어듣기능력평가",
+        date: "2024. 4. 2.",
+        audioFile: "https://dfpmpbjhljsyypofpvfu.supabase.co/storage/v1/object/public/listening-audio/2024_m1_r1.m4a",
+        youtubeUrl: "",
+        questions: [
+          { num: 1, type: "image", q: "다음을 듣고, ‘I’가 무엇인지 가장 적절한 것을 고르시오.", options: ["images/2024_m1_r1/q1_1.jpg", "images/2024_m1_r1/q1_2.jpg", "images/2024_m1_r1/q1_3.jpg", "images/2024_m1_r1/q1_4.jpg", "images/2024_m1_r1/q1_5.jpg"], answer: 1, script: "W: I’m a small insect. I have 6 legs. I usually make homes under the ground or inside a tree. I live in large groups with a queen. I work together with others to get food. What am I?" },
+          { num: 2, type: "image", q: "대화를 듣고, 여자가 구입할 코트로 가장 적절한 것을 고르시오.", options: ["images/2024_m1_r1/q2_1.jpg", "images/2024_m1_r1/q2_2.jpg", "images/2024_m1_r1/q2_3.jpg", "images/2024_m1_r1/q2_4.jpg", "images/2024_m1_r1/q2_5.jpg"], answer: 5, script: "M: How can I help you?\nW: I’m looking for a coat for my daughter.\nM: How about this one with the big heart?\nW: Not bad, but she likes small dots more.\nM: What about this one with dots? It has pockets, too.\nW: I love it. I’ll buy that." },
+          { num: 3, type: "image", q: "다음을 듣고, 독도의 오늘 오후 날씨로 가장 적절한 것을 고르시오.", options: ["images/2024_m1_r1/q3_1.jpg", "images/2024_m1_r1/q3_2.jpg", "images/2024_m1_r1/q3_3.jpg", "images/2024_m1_r1/q3_4.jpg", "images/2024_m1_r1/q3_5.jpg"], answer: 1, script: "W: Hello! This is Dokdo Weather News. Yesterday, it rained, and it stopped at midnight. It’s windy this morning. But, this afternoon, it will be clear and sunny. You can enjoy the pretty sunshine in Dokdo." },
+          { num: 4, type: "text", q: "대화를 듣고, 남자가 한 마지막 말의 의도로 가장 적절한 것을 고르시오.", options: ["감사", "거절", "격려", "사과", "항의"], answer: 4, script: "W: Excuse me.\nM: Good evening, ma’am. What can I do for you?\nW: Well, the air conditioner in my room doesn’t work.\nM: I see. Can you tell me your room number, please?\nW: I’m in room 301.\nM: I will check it out right away. Sorry for the trouble." },
+          { num: 5, type: "text", q: "다음을 듣고, 여자가 마라톤 행사에 대해 언급하지 않은 것을 고르시오.", options: ["행사 날짜", "달리는 거리", "출발 지점", "도착 지점", "신청 방법"], answer: 4, script: "W: This spring we’ll have the School Marathon Event. It will take place on\nApril 14th. We will run for 5 kilometers. The starting point will be the school front gate. We will run along the river. You can sign up for the marathon on the school website." },
+          { num: 6, type: "text", q: "대화를 듣고, 두 사람이 만날 시각을 고르시오.", options: ["12:30p.m.", "1:00p.m.", "1:30p.m.", "2:00p.m.", "2:30p.m."], answer: 4, script: "M: Hey, Alex. Do you want to watch a movie together?\nW: Sure. I like science-fiction movies.\nM: Then, how about Spaceship12?\nW: Great. What time should we meet?\nM: The movie starts at 2:30 p.m., so how about 1:30 p.m.?\nW: That’s a bit early. How about 2 p.m.?\nM: Okay. Let’s meet at 2 p.m. in front of the theater." },
+          { num: 7, type: "text", q: "대화를 듣고, 남자의 장래 희망으로 가장 적절한 것을 고르시오.", options: ["성악가", "작곡가", "지휘자", "피아노 연주자", "바이올린 연주자"], answer: 5, script: "[Orchestrasound]\nW: Wow! It’s a wonderful orchestra.\nM: Yeah, different musical instruments come together to make a beautiful sound.\nW: What are those instruments? They all have strings.\nM: They are violins, violas, and cellos.\nW: Wow! How did you know that?\nM: I’m interested in classical music. I want to be a violinist.\nW: That’s great." },
+          { num: 8, type: "text", q: "대화를 듣고, 남자의 심정으로 가장 적절한 것을 고르시오.", options: ["설렘", "지루함", "평화로움", "자랑스러움", "당황스러움"], answer: 5, script: "M: Oh, my smartphone is off. The battery is dead.\nW: You didn’t check your battery?\nM: No, I didn’t. Can I borrow your phone? I need to call my dad.\nW: Here it is.\nM: Oh, no. I can’t remember my dad’s phone number!\nW: That’s too bad." },
+          { num: 9, type: "text", q: "대화를 듣고, 여자가 대화 직후에 할 일로 가장 적절한 것을 고르시오.", options: ["그림 그리기", "도서관 가기", "학생증 신청하기", "미술관 관람하기", "인터넷 검색하기"], answer: 2, script: "M: What are you going to draw for your Korean art project?\nW: I have no idea.\nM: Did you search for some famous Korean paintings on the Internet?\nW: I did, but I didn’t like any of them.\nM: How about going to the library? There are many Korean art books.\nW: That’s a good idea. I’ll go now." },
+          { num: 10, type: "text", q: "대화를 듣고, 무엇에 관한 내용인지 가장 적절한 것을 고르시오.", options: ["물건 나눔", "실내 환기", "우편 발송", "온라인 수업", "장난감 주문"], answer: 1, script: "W: Jake, what are these toys on the floor?\nM: They’re my old toys, Mom. I don’t play with them anymore.\nW: What are you going to do with them?\nM: I’m going to give them away for free. Will you help me post about them online?\nW: That’s great. I’ll help you.\nM: Thanks, Mom." },
+          { num: 11, type: "text", q: "대화를 듣고, 두 사람이 함께 이동할 방법으로 가장 적절한 것을 고르시오.", options: ["배", "기차", "버스", "비행기", "자동차"], answer: 4, script: "W: Dad, how are we going to get to Gwangju for uncle’s wedding?\nM: Well, I’m not sure. Maybe we’ll go by car or by bus.\nW: Why don’t we take an airplane instead?\nM: Really? Do you want to fly to Gwangju?\nW: Yes, I want to get there fast.\nM: Okay. Let’s go by plane." },
+          { num: 12, type: "text", q: "대화를 듣고, 여자가 시청에 가는 이유로 가장 적절한 것을 고르시오.", options: ["봉사활동을 하려고", "서류를 발급하려고", "자료를 검색하려고", "그림책을 대출하려고", "무료 강좌를 수강하려고"], answer: 1, script: "M: Sumin, where are you going?\nW: I’m going to City Hall to take part in the Reading Friend Program.\nM: What’s it about?\nW: It’s a volunteer program. I read English picture books to kids.\nM: That’s cool! I know you like children and English.\nW: Yes. I’m so excited to volunteer." },
+          { num: 13, type: "text", q: "대화를 듣고, 두 사람이 대화하는 장소로 가장 적절한 곳을 고르시오.", options: ["약국", "우체국", "체육관", "미용실", "신발 가게"], answer: 5, script: "M: May I help you?\nW: I bought these black slippers yesterday, but I’d like to exchange them for another color.\nM: Okay, which color do you like?\nW: Do you have any slippers in bright colors?\nM: We have white ones in the same size.\nW: Can I try them on?\nM: Sure." },
+          { num: 14, type: "table", q: "대화를 듣고, 휴대폰 매장의 위치로 가장 알맞은 곳을 고르시오.", tableTitle: "Store Store\nIce\nCream\nStore", tableData: [{ label: "①", key: "Toy", value: "" }, { label: "②", key: "Bakery", value: "" }, { label: "③", key: "Book", value: "" }, { label: "④", key: "Jewelry Clothes", value: "" }, { label: "⑤", key: "Bank", value: "" }], options: ["①", "②", "③", "④", "⑤"], answer: 3, script: "M: I’m looking for the cellphone store. Do you know where it is?\nW: Sure. Can you see the ice cream store over there?\nM: Yes.\nW: Go straight to the ice cream store and turn right.\nM: Go straight and turn right?\nW: Yes. It’s on your left. It’s between the bakery and the book store.\nM: Thank you." },
+          { num: 15, type: "text", q: "대화를 듣고, 남자가 여자에게 부탁한 일로 가장 적절한 것을 고르시오.", options: ["사진 찍어주기", "선크림 가져오기", "카메라 빌려주기", "유니폼 주문하기", "음료수 가져오기"], answer: 2, script: "[Cellphonerings.]\nW: Hey, James.\nM: Hi, Do-young. Today is the School’s Sports Day.\nW: Yes, I got my sports uniform and a camera.\nM: I’ll bring a few bottles of water. But I don’t have sun cream.\nW: Sun cream? I have one.\nM: Would you bring it for me? It’s really sunny outside.\nW: Sure, I’ll bring it to school." },
+          { num: 16, type: "text", q: "대화를 듣고, 여자가 남자에게 제안한 것으로 가장 적절한 것을 고르시오.", options: ["프로그램 홍보하기", "댄스 수업 신청하기", "탁구 경기 관람하기", "수영 강습 등록하기", "태권도 경기 참가하기"], answer: 2, script: "W: The community center is starting new classes. Are you interested?\nM: What kind of classes do they have?\nW: There are swimming, table tennis, taekwondo, and dance classes.\nM: Dance class sounds cool. I really want to learn.\nW: Let’s sign up for the dance class. It’ll be fun.\nM: That’s a great idea." },
+          { num: 17, type: "text", q: "대화를 듣고, 여자가 오늘 오후에 한 일로 가장 적절한 것을 고르시오.", options: ["꽃다발 사기", "파티 참석하기", "음식 주문하기", "케이크 만들기", "식당 예약하기"], answer: 3, script: "[Cellphonerings.]\nM: Hey, Seong-eun.\nW: Hello, Uncle Tim. Grandma’s birthday party is this Saturday. Are you coming?\nM: Of course. Do you want me to bring some food?\nW: You don’t need to. I ordered all the food this afternoon.\nM: Already? What did you order?\nW: I ordered her favorite Korean dishes.\nM: Great! Then, I’ll bring some flowers." },
+          { num: 18, type: "text", q: "대화를 듣고, 남자의 직업으로 가장 적절한 것을 고르시오.", options: ["기상 캐스터", "환경미화원", "과학 교사", "영화배우", "농부"], answer: 2, script: "W: How was your day, honey?\nM: I’m a bit tired.\nW: Was there a lot of trash on the streets?\nM: No, but there were lots of leaves because it’s fall. It was hard to clean them up.\nW: I’m proud of you. Thanks to you, our streets are always clean.\nM: Thanks. I like my job, too." },
+          { num: 19, type: "dialogue", q: "W: I’m looking for a new hobby. Any ideas?", options: ["Be careful.", "I’ll tell her.", "That would be great.", "This forest is beautiful.", "You should eat healthy."], answer: 3, script: "M: What about gardening? You can grow plants at home.\nW: Well, what kind of plants can I grow?\nM: You can grow vegetables like tomatoes or cucumbers.\nW: That might be interesting. I’ll think about it.\nM: You can ask me if you need any help.\nW: _____________________________" },
+          { num: 20, type: "dialogue", q: "W: Did you hear about the school festival next month? There will be a lot of", options: ["No problem.", "That’s okay.", "I’ll make pasta.", "I don’t like cooking.", "There is the restaurant."], answer: 3, script: "M: Yes, I did. Are you interested in anything?\nW: I’m thinking of joining the cooking contest. I love cooking.\nM: That’s a good idea. You’re a great cook.\nW: Thanks!\nM: What will you cook?\nW: _____________________________\nANN:" }
+        ]
+      },
+      {
+        id: "2024_m1_r2",
+        title: "2024학년도 제2회",
+        subtitle: "중1 영어듣기능력평가",
+        date: "2024. 9. 3.",
+        audioFile: "https://dfpmpbjhljsyypofpvfu.supabase.co/storage/v1/object/public/listening-audio/2024_m1_r2.m4a",
+        youtubeUrl: "",
+        questions: [
+          { num: 1, type: "image", q: "다음을 듣고, ‘this’가 가리키는 것으로 가장 적절한 것을 고르시오.", options: ["images/2024_m1_r2/q1_1.jpg", "images/2024_m1_r2/q1_2.jpg", "images/2024_m1_r2/q1_3.jpg", "images/2024_m1_r2/q1_4.jpg", "images/2024_m1_r2/q1_5.jpg"], answer: 5, script: "M: This is usually long and made of plastic. On one side, numbers are written in order. We use this to know how long or short something is. What is this?" },
+          { num: 2, type: "image", q: "대화를 듣고, 두 사람이 주문할 캠핑 의자로 가장 적절한 것을 고르시오.", options: ["images/2024_m1_r2/q2_1.jpg", "images/2024_m1_r2/q2_2.jpg", "images/2024_m1_r2/q2_3.jpg", "images/2024_m1_r2/q2_4.jpg", "images/2024_m1_r2/q2_5.jpg"], answer: 4, script: "W: Honey, we need to buy a camping chair.\nM: I think so, too. Let’s search online.\nW: [Typingsound] Look at this chair. It has a lot of heart shapes on it.\nM: Hmm... I want something simple.\nW: Then, how about this one with a big four-leaf clover?\nM: Oh, that one’s pretty. I like it.\nW: Great. I will order it right away." },
+          { num: 3, type: "image", q: "다음을 듣고, 현재 울산의 날씨로 가장 적절한 것을 고르시오.", options: ["images/2024_m1_r2/q3_1.jpg", "images/2024_m1_r2/q3_2.jpg", "images/2024_m1_r2/q3_3.jpg", "images/2024_m1_r2/q3_4.jpg", "images/2024_m1_r2/q3_5.jpg"], answer: 3, script: "M: Good afternoon. This is the national weather report. In Daejeon, it’s raining heavily now. It’s not raining in Daegu, but very windy. Ulsan is very cloudy right now, but the clouds will disappear later tonight." },
+          { num: 4, type: "text", q: "대화를 듣고, 여자가 한 마지막 말의 의도로 가장 적절한 것을 고르시오.", options: ["감사", "충고", "칭찬", "거절", "축하"], answer: 2, script: "M: Oh, no! Mom, help!\nW: What’s the matter?\nM: I can’t find my wallet. It’s gone!\nW: Don’t panic, sweetie. Did you check your backpack?\nM: I looked inside the backpack, but it’s not there.\nW: Then how about your school uniform?\nM: My school uniform? [Rustlingsound] Oh, I found it!\nW: See? Next time, you should look carefully." },
+          { num: 5, type: "text", q: "다음을 듣고, 남자가 급식실에 대해 언급하지 않은 것을 고르시오.", options: ["이름", "위치", "크기", "수용 인원", "이용 시간"], answer: 5, script: "M: Hello, students. Let me tell you about the new cafeteria. The school cafeteria is named Soora. This means king’s meal. It is on the second floor of the main building. It is as large as the school gym. About 500 people can use it at the same time." },
+          { num: 6, type: "text", q: "대화를 듣고, 두 사람이 이야기를 나누는 현재 시각을 고르시오.", options: ["5:00p.m.", "5:30p.m.", "6:00p.m.", "6:30p.m.", "7:00p.m."], answer: 3, script: "[Cellphonerings.]\nW: Lewis, are you on your way here?\nM: Yeah. I left the office at 5:30 p.m.\nW: It’s 6 p.m. How long will it take to get here?\nM: Well, the traffic is heavy. I think it’ll take one more hour.\nW: Then, you mean you can get here by 7? It’s 6 p.m. now.\nM: That’s right." },
+          { num: 7, type: "text", q: "대화를 듣고, 여자의 장래 희망으로 가장 적절한 것을 고르시오.", options: ["역사 교사", "환경 운동가", "건축 설계사", "관광 가이드", "패션 디자이너"], answer: 4, script: "M: Hey, what are you doing?\nW: I’m reading about Gyeongju’s famous buildings and their history.\nM: Is it your homework?\nW: No. My family is taking a trip to Gyeongju this winter. I want to be their guide.\nM: That’s nice. Are you interested in guiding travelers?\nW: Yeah. I want to be a tour guide in the future." },
+          { num: 8, type: "text", q: "대화를 듣고, 여자의 심정으로 가장 적절한 것을 고르시오.", options: ["worried", "excited", "proud", "bored", "calm"], answer: 1, script: "M: Hey, Miji. Do you want to go skating with me?\nW: Skating? But I don’t know how.\nM: It’s okay. I’ll teach you!\nW: Hmm... but I think I’ll fall down. I don’t want to get hurt.\nM: Don’t worry. If you wear knee pads and a helmet, you’ll be okay.\nW: Well, I’m still afraid." },
+          { num: 9, type: "text", q: "대화를 듣고, 여자가 대화 직후에 할 일로 가장 적절한 것을 고르시오.", options: ["병원 방문하기", "택시 호출하기", "부모님께 전화하기", "구급상자 가져오기", "보건 선생님 모셔오기"], answer: 5, script: "M: Ouch! My ankle!\nW: Are you okay? The floor is so slippery.\nM: My ankle hurts a lot.\nW: Oh, no. Can you walk to the nurse’s office?\nM: No, I don’t think I can walk now.\nW: Hold on. I’ll go and get the school nurse right away.\nM: Thank you. I’ll wait here." },
+          { num: 10, type: "text", q: "대화를 듣고, 무엇에 관한 내용인지 가장 적절한 것을 고르시오.", options: ["인터넷 연결", "교통카드 충전", "전자 칠판 수리", "도서 대출기 사용", "공기청정기 필터 교환"], answer: 4, script: "M: Excuse me? I want to borrow this book, but the librarian isn’t here.\nW: You can use this machine.\nM: It is new to me. How do I use it?\nW: First, scan your library card here.\nM: Like this? [Beepsound]\nW: Perfect. Now, put the book on the scanner and press “OK.”\nM: [Beepsound] Got it." },
+          { num: 11, type: "text", q: "대화를 듣고, 남자가 이동할 방법으로 가장 적절한 것을 고르시오.", options: ["버스", "택시", "도보", "지하철", "자전거"], answer: 2, script: "M: Mom, it’s snowing a lot. I can’t ride my bicycle to school today. Can you give me a ride?\nW: I’m sorry, but I have to take your grandma to the hospital.\nM: What should I do? I don’t want to be late.\nW: How about taking a taxi?\nM: Well, okay. I’ll call a taxi with my phone." },
+          { num: 12, type: "text", q: "대화를 듣고, 남자가 공원에 가는 이유로 가장 적절한 것을 고르시오.", options: ["운동을 하려고", "책을 읽으려고", "버스킹을 보려고", "그림을 그리려고", "개를 산책시키려고"], answer: 3, script: "W: Hi, Sean! Where are you going?\nM: Hi! I’m going to Central Park.\nW: Are you going there to exercise?\nM: Not exactly. Today, there’s busking, and I’m going to see it.\nW: Oh, that sounds interesting! Can I go with you?\nM: Why not?" },
+          { num: 13, type: "text", q: "대화를 듣고, 두 사람이 대화하는 장소로 가장 적절한 곳을 고르시오.", options: ["식당", "동물원", "수영장", "스키장", "박물관"], answer: 3, script: "W: Hello, Mr. Kim.\nM: Hello, Ms. Lee. Did you warm up?\nW: Yes, I did. What are we going to learn today?\nM: I’m going to give you a diving lesson. Let’s go to the deep water pool.\nW: That sounds fun!\nM: You’ll enjoy swimming more after you learn diving." },
+          { num: 14, type: "text", q: "대화를 듣고, 남자가 찾는 필통의 위치로 가장 알맞은 곳을 고르시오.", options: ["①", "②", "③", "④", "⑤"], answer: 2, script: "M: Mom, I can’t find my pencil case.\nW: Maybe it’s in your room. I think it’s under the desk.\nM: I already checked, but it’s not there.\nW: How about on your bed?\nM: I can’t find it on my bed.\nW: Try checking on the piano.\nM: Ah, here it is! It was on top of the piano. Thanks!\nW: No problem!" },
+          { num: 15, type: "text", q: "대화를 듣고, 여자가 남자에게 부탁한 일로 가장 적절한 것을 고르시오.", options: ["인사말 쓰기", "출석 확인하기", "학교 신문 편집하기", "신문 표지 사진 찍기", "사과 메시지 전달하기"], answer: 1, script: "[Knockknock]\nM: Come in.\nW: Hello, Mr. Choi.\nM: Hello, Min-sun. What brings you here?\nW: I have a favor to ask. It’s for the first school newspaper.\nM: That’s lovely. How can I help you?\nW: Can you write a greeting message?\nM: Sure. I’d be happy to do that.\nW: Thank you. It will be on the cover of our newspaper." },
+          { num: 16, type: "text", q: "대화를 듣고, 남자가 여자에게 제안한 것으로 가장 적절한 것을 고르시오.", options: ["조깅하기", "장화 신기", "옷 세탁하기", "우산 챙기기", "운동화 사기"], answer: 2, script: "M: Scarlet, are you going out?\nW: Yes, Dad. I’m wearing new sneakers. How do I look?\nM: They look good on you. But it’s raining right now. They might get wet.\nW: Oh, I didn’t know it’s raining.\nM: How about wearing your rain boots?\nW: That’s a good idea." },
+          { num: 17, type: "text", q: "대화를 듣고, 두 사람이 주말에 할 일로 가장 적절한 것을 고르시오.", options: ["영화 관람하기", "과학 축제 가기", "프린터 주문하기", "문구류 구입하기", "친구 집 방문하기"], answer: 2, script: "W: Hi, Mark. I like your cup.\nM: Thanks, Yeri. I made it at the science festival. They have a 3-D printer.\nW: A 3-D printer? That sounds fantastic!\nM: You can make things like cups, toys, and vases.\nW: Wow, I want to go and make something.\nM: I will go to the festival again this weekend. Would you join me?\nW: Of course." },
+          { num: 18, type: "text", q: "대화를 듣고, 남자의 직업으로 가장 적절한 것을 고르시오.", options: ["사진작가", "수필가", "항해사", "화가", "광부"], answer: 4, script: "W: Danny, I heard you’ll go on a trip.\nM: Right. I’ll go to Gangwon State.\nW: Why? Are you going on a family trip?\nM: No, I’m going alone. I need to sketch mountains.\nW: Oh, is it for your new painting?\nM: That’s right. The theme of my new work is nature.\nW: I can’t wait to see your new painting." },
+          { num: 19, type: "dialogue", q: "W: Hi, Minho. How was your weekend?", options: ["Sure, I’d love to.", "No, I’m not sick.", "Yes, it’ll be raining.", "No, I don’t like apples.", "Well, I’m not good at farming."], answer: 1, script: "M: Very nice. I went to the apple farm.\nW: Sounds interesting. Did you pick a lot of apples?\nM: Yes, and they were so delicious. How about you?\nW: I took a candle making class.\nM: That’s cool.\nW: Do you want to see my candle?\nM: ________________________________________________" },
+          { num: 20, type: "dialogue", q: "M: Mom, I have to do Korean homework with my friends.", options: ["3 of my friends will come.", "We’ll start around 8 o’clock.", "Sorry, I’m busy on Saturday.", "I need to write 2 English essays.", "We’ll do our homework at the library."], answer: 1, script: "W: Oh, is it group work?\nM: Yes. Can I invite my friends over?\nW: Of course, you can. When will they come?\nM: They’re coming this Friday after school.\nW: I see. I’ll prepare some snacks. How many of them will come?\nM: ________________________________________________\nANN:" }
+        ]
+      },
+      {
+        id: "2025_m1_r2",
+        title: "2025학년도 제2회",
+        subtitle: "중1 영어듣기능력평가",
+        date: "2025. 9.",
+        audioFile: "https://dfpmpbjhljsyypofpvfu.supabase.co/storage/v1/object/public/listening-audio/2025_m1_r2.m4a",
+        youtubeUrl: "",
+        questions: [
+          { num: 1, type: "image", q: "다음을 듣고, ‘this’가 가리키는 것으로 가장 적절한 것을 고르시오.", options: ["images/2025_m1_r2/q1_1.jpg", "images/2025_m1_r2/q1_2.jpg", "images/2025_m1_r2/q1_3.jpg", "images/2025_m1_r2/q1_4.jpg", "images/2025_m1_r2/q1_5.jpg"], answer: 4, script: "W: People use this every day. This often has four legs and a back. Usually, this is made of wood or plastic. This is something you sit on. This is often used with a table or a desk. What is this?" },
+          { num: 2, type: "image", q: "대화를 듣고, 남자가 구입할 접시로 가장 적절한 것을 고르시오.", options: ["images/2025_m1_r2/q2_1.jpg", "images/2025_m1_r2/q2_2.jpg", "images/2025_m1_r2/q2_3.jpg", "images/2025_m1_r2/q2_4.jpg", "images/2025_m1_r2/q2_5.jpg"], answer: 5, script: "W: Hello. How can I help you?\nM: Hi. I’m looking for a dish.\nW: How about this one? This strawberry patterned dish is popular.\nM: The pattern is pretty, but I don’t want a square dish.\nW: We have a round one with the same pattern.\nM: Good. I’ll take the round one with the strawberry pattern." },
+          { num: 3, type: "image", q: "다음을 듣고, 오늘 오후의 날씨로 가장 적절한 것을 고르시오.", options: ["images/2025_m1_r2/q3_1.jpg", "images/2025_m1_r2/q3_2.jpg", "images/2025_m1_r2/q3_3.jpg", "images/2025_m1_r2/q3_4.jpg", "images/2025_m1_r2/q3_5.jpg"], answer: 1, script: "M: Here’s the weather report. It was sunny and warm yesterday, but it started raining early this morning. The rain will stop before noon. In the afternoon, it’ll be sunny again. The sun will come out, so be prepared for a hot day." },
+          { num: 4, type: "text", q: "대화를 듣고, 남자가 한 마지막 말의 의도로 가장 적절한 것을 고르시오.", options: ["승낙", "거절", "요청", "위로", "항의"], answer: 3, script: "W: Roy, you don’t look well. Are you okay?\nM: Well, my back hurts.\nW: Oh, no. That sounds terrible. I also hurt my back before.\nM: Really? Did it get better?\nW: Yes, I’m fine now. I know a very good doctor. She helped me a lot.\nM: Then, can you give me her phone number?" },
+          { num: 5, type: "text", q: "다음을 듣고, 여자가 사하 공원에 대해 언급하지 않은 것을 고르시오.", options: ["위치", "개장 연도", "디자이너", "내부 시설", "개방 시간"], answer: 4, script: "W: Let me tell you about Sahah Park. It’s between City Hall and Sahah Bus\nTerminal. It’s popular among tourists. It opened in 2015. It was designed by a famous park designer, Noah Philip. It’s open every day from 9a.m. to 10p.m." },
+          { num: 6, type: "text", q: "대화를 듣고, 회의가 시작되는 시각을 고르시오.", options: ["9:15a.m.", "9:30a.m.", "9:45a.m.", "10:00a.m.", "10:15a.m."], answer: 4, script: "W: Robert, did you copy the reports? It’s already 9:30a.m.\nM: Sorry, Anna. The copy machine still isn’t working.\nW: Really? When will it be fixed?\nM: I heard that it’ll take about 15 more minutes.\nW: Okay. The meeting starts at 10a.m. We still have some time.\nM: That’s right. I’ll copy them before the meeting." },
+          { num: 7, type: "text", q: "대화를 듣고, 남자의 장래 희망으로 가장 적절한 것을 고르시오.", options: ["탐험가", "역사학자", "프로그래머", "곤충 사육사", "장난감 제작자"], answer: 2, script: "W: Wow. You have many history books.\nM: Yes, I love reading about history.\nW: Really? Why do you like history?\nM: I like to learn about past events. They’re so interesting.\nW: That’s why you want to become a historian.\nM: That’s right. I’ll study history all over the world someday." },
+          { num: 8, type: "text", q: "대화를 듣고, 여자의 심정으로 가장 적절한 것을 고르시오.", options: ["부러움", "지루함", "뿌듯함", "두려움", "아쉬움"], answer: 3, script: "W: Dad, look! I’m drawing a cat.\nM: That’s good. But Sweetie, can you make the eyes bigger?\nW: Okay. [Drawingsound] Like this?\nM: Yes. And draw triangles for its ears, not circles.\nW: [Drawingsound] Wow! Now it looks more like a cat. I did it!\nM: Good job!\nW: Now I can draw a cat myself!" },
+          { num: 9, type: "text", q: "대화를 듣고, 여자가 대화 직후에 할 일로 가장 적절한 것을 고르시오.", options: ["병문안 가기", "수강 신청하기", "경제 공부하기", "체육복 구입하기", "드라마 시청하기"], answer: 5, script: "W: Mike, learning Korean isn’t easy.\nM: How do you study?\nW: I use my textbook, but it’s a bit boring.\nM: Why don’t you try watching Korean dramas?\nW: Dramas? Do you know any good ones?\nM: How about Kim’sFamily? They use easy Korean.\nW: Oh, thanks. I’ll go watch it now!" },
+          { num: 10, type: "text", q: "대화를 듣고, 무엇에 관한 내용인지 가장 적절한 것을 고르시오.", options: ["스마트폰 수리", "로봇 조립 과정", "종이비행기 접기", "보고서 제출 장소", "가습기 사용 시간"], answer: 1, script: "[Telephonerings.]\nM: Good afternoon. How may I help you?\nW: Hi. My smartphone speaker is broken. I need to fix it.\nM: Then, you’ll have to bring your phone to our center.\nW: How long will it take to fix my phone?\nM: We’ll have to check it first, but it usually takes an hour.\nW: Okay. I’ll visit there soon." },
+          { num: 11, type: "text", q: "대화를 듣고, 두 사람이 함께 이동할 방법으로 가장 적절한 것을 고르시오.", options: ["도보", "버스", "택시", "지하철", "자전거"], answer: 2, script: "M: Somin, how can we get to the concert hall?\nW: It’s not too far away from here. Why don’t we just walk?\nM: It’s so hot. I don’t want to walk.\nW: Then, how about taking a bus or subway?\nM: Sounds like a good idea! Let’s take the bus.\nW: Great. Let’s go." },
+          { num: 12, type: "text", q: "대화를 듣고, 남자가 서두르는 이유로 가장 적절한 것을 고르시오.", options: ["기차 시간이 촉박해서", "밀린 숙제를 해야 해서", "농구 경기를 봐야 해서", "할머니와 외출을 해야 해서", "아빠의 생신 케이크를 사야 해서"], answer: 5, script: "W: Josh, we finally finished our group homework!\nM: Yeah, it’s done. Now, can I leave?\nW: Why are you in a hurry?\nM: I have to buy a birthday cake for my dad.\nW: Oh, I hope you find a good birthday cake.\nM: Thanks. See you in class tomorrow!" },
+          { num: 13, type: "text", q: "대화를 듣고, 두 사람이 대화하는 장소로 가장 적절한 곳을 고르시오.", options: ["수족관", "미용실", "목공예 스튜디오", "버스 정류장", "아이스 링크"], answer: 3, script: "W: Hello, Mr. Wayne.\nM: Hi. Welcome to the course. Are you ready to make a wood pencil case?\nW: Yes, but I’m a little worried. I never made anything out of wood before.\nM: It’s okay. This is a beginner course. Let’s start with cutting some wood.\nW: Okay. Let me get my tools first." },
+          { num: 14, type: "table", q: "SG Future Star Audition에 관한 다음 내용을 듣고, 표에서 일치하지 않는", tableTitle: "SG Future Star Audition", tableData: [{ label: "①", key: "대상 연령", value: "older than 10" }, { label: "②", key: "날짜", value: "September 6th" }, { label: "③", key: "분야", value: "singing or dancing" }, { label: "④", key: "제한 시간", value: "3 minutes" }, { label: "⑤", key: "장소", value: "SG Star Training Center" }], options: ["①", "②", "③", "④", "⑤"], answer: 4, script: "M: Do you want to be a star? Come to SG Future Star Audition if you’re older than 10. It’s on September 6th. We’re looking for people good at singing or dancing. But you’ll get only 5 minutes. It’ll be at the SG Star\nTraining Center." },
+          { num: 15, type: "text", q: "대화를 듣고, 여자가 남자에게 부탁한 일로 가장 적절한 것을 고르시오.", options: ["책 빌려주기", "티켓 취소하기", "팝콘 구매하기", "건전지 교체하기", "버스 카드 충전하기"], answer: 3, script: "[Cellphonerings.]\nM: Hello, Katie.\nW: Hi, Daniel. I’m sorry, but I’ll be a little late to the movie.\nM: Really? What happened?\nW: I missed the bus. Can I ask you a favor?\nM: Sure. What is it?\nW: Could you buy my popcorn for me? I’m hungry.\nM: Okay. I’ll do it now." },
+          { num: 16, type: "text", q: "대화를 듣고, 남자가 여자에게 제안한 것으로 가장 적절한 것을 고르시오.", options: ["빵 먹기", "병원 가기", "차 끓이기", "공원 산책하기", "쓰레기 버리기"], answer: 1, script: "M: Yunha, you don’t look well.\nW: I just had noodles for lunch. But they were really hot and spicy, Dad.\nM: Oh, that’s too bad. Does your stomach hurt?\nW: No, just my lips are hurting.\nM: Why don’t you eat some bread? It’ll help.\nW: That’s a good idea. I’ll eat some bread." },
+          { num: 17, type: "text", q: "대화를 듣고, 여자가 통화 후에 할 일로 가장 적절한 것을 고르시오.", options: ["집 청소하기", "치킨 주문하기", "우산 가져다주기", "자전거 수리하기", "보드게임 구매하기"], answer: 2, script: "[Cellphonerings.]\nM: Hi, Mom.\nW: Jack, it’s raining. Are you home?\nM: Yes. I’m with my friend Minsoo now. I invited him to play a board game.\nW: I see. Aren’t you hungry? Is there anything you want to eat?\nM: Yes. We want to eat fried chicken.\nW: Okay. Let me order it for you right away.\nM: Thanks, Mom!" },
+          { num: 18, type: "text", q: "대화를 듣고, 남자의 직업으로 가장 적절한 것을 고르시오.", options: ["의사", "경찰", "정원사", "사진 기자", "축구 코치"], answer: 5, script: "M: Diana, I need to tell you something.\nW: Yes, Mr. Johnson.\nM: I know you have the strongest kick on our soccer team. But we’re losing now.\nW: Then, what should I do?\nM: Do you remember our practice? You need to pass the ball. Soccer is a team sport.\nW: Okay, I’ll do that." },
+          { num: 19, type: "dialogue", q: "M: Mia, this restaurant looks great.", options: ["Thanks for your answer.", "The steak here is great.", "I wake up at 7 o’clock.", "There’s snow all over.", "I’m not good at math."], answer: 2, script: "W: It’s one of the most popular restaurants in Seoul right now.\nM: Did you come here before?\nW: Yeah, I came here once with my friends.\nM: You really know many great restaurants.\nW: I love trying new food. Now, let’s look at the menu and order.\nM: Everything looks good. What should I eat?\nW: ________________________________________________" },
+          { num: 20, type: "dialogue", q: "W: Oh, no. David, I think I’m in trouble.", options: ["Right. I enjoyed her gift.", "Great. I’ll send it to you.", "Thanks. I love your teacup.", "Good. I like the yellow one.", "Okay. I’ll tell her right now."], answer: 5, script: "M: What’s the matter? What happened?\nW: You know mom’s favorite yellow teacup, right? I broke it.\nM: Really? You should tell her right away.\nW: But I’m a little worried she’ll get upset.\nM: Don’t worry. I’m sure she’ll understand.\nW: ________________________________________________\nANN:" }
+        ]
+      },
+      {
+        id: "2025_m1_r1",
+        title: "2025학년도 제1회",
+        subtitle: "중1 영어듣기능력평가",
+        date: "2025. 4. 1.",
+        audioFile: "https://dfpmpbjhljsyypofpvfu.supabase.co/storage/v1/object/public/listening-audio/2025_m1_r1.m4a",
+        youtubeUrl: "https://youtu.be/s7ducw2gpB0",
+        questions: [
+          {
+            num: 1, type: "image", q: "다음을 듣고, 'I'가 무엇인지 가장 적절한 것을 고르시오.",
+            options: ["images/2025_m1_r1/q1_1.jpg", "images/2025_m1_r1/q1_2.jpg", "images/2025_m1_r1/q1_3.jpg", "images/2025_m1_r1/q1_4.jpg", "images/2025_m1_r1/q1_5.jpg"],
+            answer: 4, script: "M: I live under the sea, but I don't look like other fish. Usually, I'm very small. I swim slowly in the water. My head looks like a horse. I have a tail, but I don't have legs. What am I?"
+          },
+          {
+            num: 2, type: "image", q: "대화를 듣고, 남자가 구입할 인형으로 가장 적절한 것을 고르시오.",
+            options: ["images/2025_m1_r1/q2_1.jpg", "images/2025_m1_r1/q2_2.jpg", "images/2025_m1_r1/q2_3.jpg", "images/2025_m1_r1/q2_4.jpg", "images/2025_m1_r1/q2_5.jpg"],
+            answer: 3, script: "M: Excuse me. I want to buy a doll for my son.\nW: Okay, look at these. Firefighters and police officers are popular.\nM: I think he'll like a firefighter.\nW: Then, how about this one with a fire hose?\nM: Good. The firefighter with a fire hose looks nice. I'll buy it."
+          },
+          {
+            num: 3, type: "image", q: "다음을 듣고, 현재 강릉의 날씨로 가장 적절한 것을 고르시오.",
+            options: ["images/2025_m1_r1/q3_1.jpg", "images/2025_m1_r1/q3_2.jpg", "images/2025_m1_r1/q3_3.jpg", "images/2025_m1_r1/q3_4.jpg", "images/2025_m1_r1/q3_5.jpg"],
+            answer: 4, script: "W: Good afternoon. This is Gangneung's weather report. The heavy rain stopped this morning, but now we have strong winds. It'll be windy until this evening. So, be careful when you're outside. But it'll be sunny tomorrow. Thanks for watching the weather report."
+          },
+          { num: 4, type: "text", q: "대화를 듣고, 여자가 한 마지막 말의 의도로 가장 적절한 것을 고르시오.", options: ["칭찬", "사과", "거절", "부탁", "항의"], answer: 1, script: "W: Shaun, you look busy.\nM: Ms. Kim, I'm cleaning the classroom.\nW: But it's break time. We can clean the classroom after school.\nM: It looks a little dirty. And I want to do something good for the class.\nW: That's really nice of you. You're doing a great job." },
+          { num: 5, type: "text", q: "다음을 듣고, 남자가 자신의 형에 대해 언급하지 않은 것을 고르시오.", options: ["이름", "나이", "직업", "성격", "취미"], answer: 4, script: "M: Hello, everyone. I'd like to introduce my older brother. His name is Chris Jackson. He's 20 years old. It was his birthday yesterday. He's a pianist. I like his music very much. His hobby is playing soccer with his friends on Sundays." },
+          { num: 6, type: "text", q: "대화를 듣고, 두 사람이 만날 시각을 고르시오.", options: ["4:00 p.m.", "4:30 p.m.", "5:00 p.m.", "5:30 p.m.", "6:00 p.m."], answer: 5, script: "[Cell phone rings.]\nM: Hey, Jessica.\nW: Hi, John. Let's go to Costlo Shopping Mall. I have to buy a watch.\nM: Okay. When do you want to meet?\nW: It's 4 p.m. now. Why don't we meet at 6 p.m. at the shopping mall?\nM: 6 p.m. sounds good.\nW: See you then!" },
+          { num: 7, type: "text", q: "대화를 듣고, 여자의 장래 희망으로 가장 적절한 것을 고르시오.", options: ["약사", "작가", "요리사", "승무원", "통역사"], answer: 2, script: "M: Sarah, it seems you always carry a notebook.\nW: Yes. I love writing stories, so I need it.\nM: What kind of stories do you write?\nW: I write about exciting events and mysteries.\nM: That's interesting. Do you want to become a writer?\nW: Yes, I want to be a famous writer someday." },
+          { num: 8, type: "text", q: "대화를 듣고, 남자의 심정으로 가장 적절한 것을 고르시오.", options: ["실망", "설렘", "걱정", "안도", "슬픔"], answer: 2, script: "W: Kevin, look! Isn't that your favorite singer?\nM: Yeah, it is! Wow! Am I dreaming?\nW: I didn't think we'd see your favorite singer here.\nM: I know. My heart is beating so fast.\nW: You look so surprised to see him.\nM: Yeah, I can't believe this is happening." },
+          { num: 9, type: "text", q: "대화를 듣고, 여자가 대화 직후에 할 일로 가장 적절한 것을 고르시오.", options: ["선크림 구매하기", "전기 매트 반품하기", "급식 메뉴 확인하기", "과일 바구니 준비하기", "피크닉 테이블 가져오기"], answer: 5, script: "M: It's a perfect day for a picnic, honey.\nW: Yes. I'm so excited.\nM: Did you pack the picnic basket?\nW: Yes, I did.\nM: What about the picnic mat?\nW: It's in the car.\nM: Great. Oh, maybe we'll need to bring our picnic table.\nW: Good idea. I'll go get the table right now." },
+          { num: 10, type: "text", q: "대화를 듣고, 무엇에 관한 내용인지 가장 적절한 것을 고르시오.", options: ["인터넷 교체 비용", "정원 조성 계획", "동영상 촬영 장소", "교문 공사 일정", "악기 보관 방법"], answer: 3, script: "W: Jaeho, are we ready to make a film of our guitar performance?\nM: Almost. But we need to find a good place to shoot it.\nW: How about at the school front gate?\nM: It'll be noisy out there. What about the school garden?\nW: Sounds nice! We can make a good video there.\nM: Right. Let's go!" },
+          { num: 11, type: "text", q: "대화를 듣고, 두 사람이 함께 이동할 방법으로 가장 적절한 것을 고르시오.", options: ["버스", "도보", "택시", "자전거", "지하철"], answer: 2, script: "M: Sally, what would you like to have for dinner?\nW: I want a hamburger, Dad. I know a good place.\nM: Sounds great. Do we need to take a taxi?\nW: No, it's only a ten-minute walk from here.\nM: Oh, it's really close. Let's walk, then.\nW: Good. Let's go." },
+          { num: 12, type: "text", q: "대화를 듣고, 남자가 시립 공원에 가는 이유로 가장 적절한 것을 고르시오.", options: ["나무를 심기 위해서", "자전거를 타기 위해서", "그림을 그리기 위해서", "자원봉사를 하기 위해서", "곤충을 채집하기 위해서"], answer: 3, script: "W: Hey, David. Where are you going?\nM: Hi, Emma. I'm going to the city park.\nW: Oh, are you going to ride a bike there?\nM: No, I'll draw a picture of the park. I need it for the school newspaper.\nW: I see. I hope you draw a nice picture." },
+          { num: 13, type: "text", q: "대화를 듣고, 두 사람이 대화하는 장소로 가장 적절한 곳을 고르시오.", options: ["서점", "방송국", "야구장", "백화점", "편의점"], answer: 3, script: "W: Jack, this is my first time at a baseball game!\nM: Are you excited to see our favorite baseball team?\nW: Yes, I am! There're so many fans, but the field looks smaller than on TV.\nM: That's right. Maybe we can catch a home run ball from our seats.\nW: Really? That'll be great!" },
+          {
+            num: 14, type: "table", q: "One-Day Baking Class에 관한 다음 내용을 듣고, 표에서 일치하지 않는 것을 고르시오.",
+            tableTitle: "One-Day Baking Class",
+            tableData: [
+              { label: "①", key: "일시", value: "this Friday, 5 p.m." },
+              { label: "②", key: "주제", value: "how to make apple pies" },
+              { label: "③", key: "수업 시간", value: "3 hours" },
+              { label: "④", key: "참가비", value: "$20" },
+              { label: "⑤", key: "장소", value: "community center" }
+            ],
+            options: ["①", "②", "③", "④", "⑤"], answer: 2,
+            script: "W: Hello, everyone in Petertown Village. Let me introduce our One-Day Baking Class. It'll be this Friday at 5 p.m. In this class, you'll learn how to make cookies. The class will take 3 hours. You need to pay 20 dollars to join. It'll be at the community center. Thanks."
+          },
+          { num: 15, type: "text", q: "대화를 듣고, 여자가 남자에게 부탁한 일로 가장 적절한 것을 고르시오.", options: ["마스크 주문하기", "택배 물품 맡기기", "친구에게 전화하기", "생일 선물 구입하기", "식당 예약 변경하기"], answer: 3, script: "W: Honey, our daughter's first birthday party is coming soon.\nM: You're right. Did you tell everyone to come?\nW: Yes. But I couldn't find someone to take photos yet.\nM: Actually, one of my friends is a photographer. She's very good.\nW: Really? Then, can you call your friend?\nM: No problem." },
+          { num: 16, type: "text", q: "대화를 듣고, 남자가 여자에게 제안한 것으로 가장 적절한 것을 고르시오.", options: ["영화 보러 가기", "마라톤 참가하기", "캠핑장 예약하기", "체육관에서 운동하기", "호수에서 보트 타기"], answer: 5, script: "M: The exam is finally over, Christine.\nW: Yeah, I'm so happy.\nM: Me, too. I really want to do something fun. Do you have any plans?\nW: No. I don't have any plans yet.\nM: How about riding a boat on the lake in town?\nW: That sounds great. Let's do it." },
+          { num: 17, type: "text", q: "대화를 듣고, 여자가 주말에 할 일로 가장 적절한 것을 고르시오.", options: ["서점 들르기", "해외여행 가기", "전시회 관람하기", "초콜릿 공장 가기", "친척 집 방문하기"], answer: 4, script: "M: Cindy, what are you going to do this weekend?\nW: I'm going to the chocolate factory.\nM: You mean the one in the city?\nW: Right. I can make chocolate there. I'm so excited.\nM: You can also taste a lot of chocolate there.\nW: Really? That would be wonderful." },
+          { num: 18, type: "text", q: "대화를 듣고, 남자의 직업으로 가장 적절한 것을 고르시오.", options: ["수의사", "건축가", "영양사", "택배 기사", "우주 비행사"], answer: 1, script: "M: Hello. How can I help you?\nW: Hi. My rabbit can't open her left eye. Can you look at her eye?\nM: Of course. When did it start?\nW: It started this morning. I'm so worried.\nM: Okay, I'll check your rabbit's eye and give her the right medicine.\nW: Thank you." },
+          {
+            num: 19, type: "dialogue", q: "대화를 듣고, 여자의 마지막 말에 이어질 남자의 말로 가장 적절한 것을 고르시오.",
+            dialogueLines: [
+              { spk: "M", text: "Mom, when is our train coming?" },
+              { spk: "W", text: "Sweetheart. We have to wait. The train will come soon." },
+              { spk: "M", text: "Really?" },
+              { spk: "W", text: "The screen above says that it'll be a few minutes late." },
+              { spk: "M", text: "I see. But I'm getting a little tired." },
+              { spk: "W", text: "I know. [Pause] Oh! I see it coming now." },
+              { spk: "M", text: "___", blank: true }
+            ],
+            options: ["You're welcome.", "I like swimming.", "That's a good idea.", "You can't watch TV.", "I'm glad it's finally here."],
+            answer: 5,
+            script: "M: Mom, when is our train coming?\nW: Sweetheart. We have to wait. The train will come soon.\nM: Really?\nW: The screen above says that it'll be a few minutes late.\nM: I see. But I'm getting a little tired.\nW: I know. [Pause] Oh! I see it coming now.\nM: I'm glad it's finally here."
+          },
+          {
+            num: 20, type: "dialogue", q: "대화를 듣고, 여자의 마지막 말에 이어질 남자의 말로 가장 적절한 것을 고르시오.",
+            dialogueLines: [
+              { spk: "W", text: "Hi, Brian. Where are you going?" },
+              { spk: "M", text: "Hi, Jane. I'm going to the town library." },
+              { spk: "W", text: "The town library is not open today. It's closed every Monday." },
+              { spk: "M", text: "Oh, no. I have to return these books today." },
+              { spk: "W", text: "Don't worry. You can put them in the return box. It's in front of the library." },
+              { spk: "M", text: "___", blank: true }
+            ],
+            options: ["Thanks for telling me.", "I don't have any books.", "Don't open the window.", "Let's go to the mountain.", "You're already late for school."],
+            answer: 1,
+            script: "W: Hi, Brian. Where are you going?\nM: Hi, Jane. I'm going to the town library.\nW: The town library is not open today. It's closed every Monday.\nM: Oh, no. I have to return these books today.\nW: Don't worry. You can put them in the return box. It's in front of the library.\nM: Thanks for telling me."
+          }
+        ]
+      }
+      /* 추가 회차: { id, title, subtitle, date, audioFile: "https://dfpmpbjhljsyypofpvfu.supabase.co/storage/v1/object/public/listening-audio/{id}.m4a", youtubeUrl, questions:[...] } */
+    ];
+
+    /* ══════════════════════════════════════════
+       STATE
+    ══════════════════════════════════════════ */
+    const STORE_KEY = 'listen_v2';
+    let state = { currentSessionId: null, answers: {}, submitted: {}, dark: false, speed: 1 };
+
+    function loadState() {
+      try { const s = JSON.parse(localStorage.getItem(STORE_KEY)); if (s) Object.assign(state, s); } catch (e) { }
+    }
+    function saveState() {
+      try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch (e) { }
+    }
+    function getSessionAnswers(sid) {
+      if (!state.answers[sid]) state.answers[sid] = {};
+      return state.answers[sid];
+    }
+
+    /* ══════════════════════════════════════════
+       DARK MODE
+    ══════════════════════════════════════════ */
+    function applyDark() {
+      document.body.classList.toggle('dark', !!state.dark);
+      document.getElementById('dark-icon').className = state.dark ? 'ri-sun-line' : 'ri-moon-line';
+    }
+    function toggleDark() { state.dark = !state.dark; applyDark(); saveState(); }
+
+    /* ══════════════════════════════════════════
+       NAVIGATION
+    ══════════════════════════════════════════ */
+    function showPage(id) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.getElementById('page-' + id).classList.add('active');
+      const nav = document.getElementById('app-nav');
+      if (nav) nav.style.display = (id === 'home') ? '' : 'none';
+    }
+    function goHome() {
+      pauseAudio();
+      state.currentSessionId = null;
+      showPage('home');
+      renderHome();
+    }
+
+    /* ══════════════════════════════════════════
+       HOME
+    ══════════════════════════════════════════ */
+    function renderHome() {
+      const list = document.getElementById('session-list');
+      list.innerHTML = '';
+      SESSIONS.forEach(s => {
+        const ans = getSessionAnswers(s.id);
+        const answeredCount = Object.keys(ans).length;
+        let cCount = 0;
+        s.questions.forEach(q => { if (ans[q.num] === q.answer) cCount++; });
+        const pct = s.questions.length > 0 ? Math.round(answeredCount / s.questions.length * 100) : 0;
+        const card = document.createElement('div');
+        card.className = 'session-card';
+        card.innerHTML = `
+      <div class="session-card-header">
+        <div>
+          <div class="session-card-title">${s.title}</div>
+          <div class="session-card-subtitle">${s.subtitle}</div>
+        </div>
+        <div class="session-card-date">${s.date}</div>
+      </div>
+      <div class="session-card-footer">
+        <div class="session-prog-bar"><div class="session-prog-fill" style="width:${pct}%"></div></div>
+        <div class="session-prog-label">${answeredCount > 0 ? cCount + '/' + s.questions.length + ' 정답' : '미시작'}</div>
+        <button class="session-start-btn" onclick="openSession('${s.id}');event.stopPropagation()" style="${state.submitted[s.id] ? 'background:var(--success)' : ''}">
+          <i class="${state.submitted[s.id] ? 'ri-bar-chart-line' : 'ri-play-large-fill'}"></i>${state.submitted[s.id] ? '결과 보기' : answeredCount > 0 ? '계속하기' : '시작'}
+        </button>
+      </div>`;
+        card.addEventListener('click', () => openSession(s.id));
+        list.appendChild(card);
+      });
+    }
+
+    /* ══════════════════════════════════════════
+       SESSION OPEN
+    ══════════════════════════════════════════ */
+    function openSession(sid) {
+      const session = SESSIONS.find(s => s.id === sid);
+      if (!session) return;
+      state.currentSessionId = sid;
+      saveState();
+
+      if (state.submitted[sid]) {
+        renderResult(session);
+        return;
+      }
+
+      document.getElementById('session-title-text').textContent = session.title;
+      document.getElementById('session-subtitle-text').textContent = session.subtitle;
+      document.getElementById('score-total').textContent = session.questions.length;
+
+      showPage('session');
+      initAudioPlayer(session);
+      renderSession(session);
+      updateScore(session);
+    }
+
+    /* ══════════════════════════════════════════
+       AUDIO PLAYER
+    ══════════════════════════════════════════ */
+    const audio = document.getElementById('main-audio');
+    let audioReady = false;
+
+    function initAudioPlayer(session) {
+      audioReady = false;
+      audio.src = '';
+      document.getElementById('player-ui').classList.remove('ready');
+      document.getElementById('player-error').style.display = 'none';
+      document.getElementById('play-icon').className = 'ri-play-large-fill';
+      document.getElementById('seek-fill').style.width = '0';
+      document.getElementById('seek-thumb').style.left = '0';
+      document.getElementById('seek-input').value = 0;
+      document.getElementById('time-cur').textContent = '0:00';
+      document.getElementById('time-dur').textContent = '0:00';
+
+      // Set speed from state
+      audio.playbackRate = state.speed || 1;
+      document.querySelectorAll('.speed-btn').forEach(btn => {
+        const sp = parseFloat(btn.dataset.speed);
+        btn.classList.toggle('active', sp === (state.speed || 1));
+      });
+
+      // Load audio
+      audio.src = session.audioFile;
+      audio.load();
+
+      audio.oncanplaythrough = () => {
+        audioReady = true;
+        document.getElementById('player-ui').classList.add('ready');
+        document.getElementById('player-error').style.display = 'none';
+        document.getElementById('time-dur').textContent = fmtTime(audio.duration);
+      };
+      audio.onerror = () => {
+        document.getElementById('player-ui').classList.remove('ready');
+        document.getElementById('player-error').style.display = 'block';
+        const cmd = `yt-dlp -x --audio-format m4a \\\n  -o "audio/${session.id}.m4a" \\\n  "${session.youtubeUrl}"`;
+        document.getElementById('error-cmd').textContent = cmd;
+      };
+      audio.ontimeupdate = updateSeekBar;
+      audio.onended = () => {
+        document.getElementById('play-icon').className = 'ri-play-large-fill';
+      };
+      audio.onplay = () => {
+        document.getElementById('play-icon').className = 'ri-pause-large-fill';
+      };
+      audio.onpause = () => {
+        document.getElementById('play-icon').className = 'ri-play-large-fill';
+      };
+    }
+
+    function togglePlay() {
+      if (!audioReady) return;
+      audio.paused ? audio.play() : audio.pause();
+    }
+    function pauseAudio() {
+      if (!audio.paused) audio.pause();
+    }
+    function skipTime(sec) {
+      if (!audioReady) return;
+      audio.currentTime = Math.max(0, Math.min(audio.duration, audio.currentTime + sec));
+    }
+    function setSpeed(sp) {
+      state.speed = sp;
+      audio.playbackRate = sp;
+      saveState();
+      document.querySelectorAll('.speed-btn').forEach(btn => {
+        btn.classList.toggle('active', parseFloat(btn.dataset.speed) === sp);
+      });
+    }
+    function updateSeekBar() {
+      if (!audio.duration) return;
+      const pct = audio.currentTime / audio.duration;
+      const pctStr = (pct * 100).toFixed(2) + '%';
+      document.getElementById('seek-fill').style.width = pctStr;
+      document.getElementById('seek-thumb').style.left = pctStr;
+      document.getElementById('seek-input').value = Math.round(pct * 1000);
+      document.getElementById('time-cur').textContent = fmtTime(audio.currentTime);
+    }
+    function fmtTime(s) {
+      if (!isFinite(s)) return '0:00';
+      const m = Math.floor(s / 60), sec = Math.floor(s % 60);
+      return m + ':' + String(sec).padStart(2, '0');
+    }
+
+    // Seek input
+    document.getElementById('seek-input').addEventListener('input', function () {
+      if (!audioReady) return;
+      const pct = parseInt(this.value) / 1000;
+      audio.currentTime = pct * audio.duration;
+    });
+
+    // Speed buttons (event delegation)
+    document.getElementById('speed-selector').addEventListener('click', function (e) {
+      const btn = e.target.closest('.speed-btn');
+      if (!btn) return;
+      setSpeed(parseFloat(btn.dataset.speed));
+    });
+
+    // Keyboard: space = play/pause
+    document.addEventListener('keydown', function (e) {
+      if (e.code === 'Space' && document.getElementById('page-session').classList.contains('active')) {
+        const tag = document.activeElement.tagName;
+        if (tag !== 'INPUT' && tag !== 'BUTTON') {
+          e.preventDefault();
+          togglePlay();
+        }
+      }
+    });
+
+    /* ══════════════════════════════════════════
+       SESSION RENDER
+    ══════════════════════════════════════════ */
+    function renderSession(session) {
+      renderQGrid(session);
+      renderQuestions(session);
+    }
+    function renderQGrid(session) {
+      const grid = document.getElementById('q-grid');
+      grid.innerHTML = '';
+      const ans = getSessionAnswers(session.id);
+      session.questions.forEach(q => {
+        const selected = ans[q.num];
+        const btn = document.createElement('button');
+        btn.className = 'q-grid-btn';
+        btn.id = 'qgrid-' + q.num;
+        btn.textContent = q.num;
+        if (selected !== undefined) btn.classList.add('answered');
+        btn.addEventListener('click', () => document.getElementById('qcard-' + q.num).scrollIntoView({ behavior: 'smooth', block: 'start' }));
+        grid.appendChild(btn);
+      });
+    }
+    function renderQuestions(session) {
+      const list = document.getElementById('questions-list');
+      list.innerHTML = '';
+      const ans = getSessionAnswers(session.id);
+      session.questions.forEach(q => list.appendChild(buildQCard(q, ans[q.num], session.id)));
+    }
+
+    /* ══════════════════════════════════════════
+       QUESTION CARD
+    ══════════════════════════════════════════ */
+    const TYPE_LABELS = { image: '그림 선택', text: '5지선다', table: '표 일치', dialogue: '대화 완성', dictation: '받아쓰기' };
+    const NUM_LABELS = ['①', '②', '③', '④', '⑤'];
+
+    function buildQCard(q, selected, sessionId) {
+      // EXAM MODE: no feedback, no correct/wrong colors, no script
+      const answered = selected !== undefined;
+      const card = document.createElement('div');
+      card.className = 'q-card'; card.id = 'qcard-' + q.num;
+
+      // Head
+      const head = document.createElement('div'); head.className = 'q-card-head';
+      const badge = document.createElement('div');
+      badge.className = 'q-num-badge' + (answered ? ' answered-badge' : '');
+      badge.textContent = q.num;
+      const typeBadge = document.createElement('div'); typeBadge.className = 'q-type-badge';
+      typeBadge.textContent = TYPE_LABELS[q.type] || q.type;
+      head.appendChild(badge); head.appendChild(typeBadge);
+      if (answered) {
+        const dot = document.createElement('div'); dot.style.cssText = 'margin-left:auto;font-size:18px;color:var(--primary);';
+        dot.innerHTML = '<i class="ri-check-line"></i>';
+        head.appendChild(dot);
+      }
+      card.appendChild(head);
+
+      // Body
+      const body = document.createElement('div'); body.className = 'q-card-body';
+      const qText = document.createElement('div'); qText.className = 'q-text'; qText.textContent = q.q;
+      body.appendChild(qText);
+
+      if (q.type === 'image') body.appendChild(buildImageOptions(q, selected, sessionId));
+      else if (q.type === 'table') { body.appendChild(buildTableContent(q)); body.appendChild(buildTableOptions(q, selected, sessionId)); }
+      else if (q.type === 'dialogue') { if (q.dialogueLines) body.appendChild(buildDialogueContext(q)); body.appendChild(buildTextOptions(q, selected, sessionId)); }
+      else body.appendChild(buildTextOptions(q, selected, sessionId));
+
+      card.appendChild(body);
+      return card;
+    }
+
+    function buildImageOptions(q, selected, sessionId) {
+      // EXAM MODE: only show which option was selected (neutral blue)
+      const wrap = document.createElement('div');
+      const row = document.createElement('div'); row.className = 'img-opts-row';
+      const answered = selected !== undefined;
+
+      q.options.forEach((imgSrc, i) => {
+        const idx = i + 1;
+        const btn = document.createElement('button'); btn.className = 'img-opt-btn'; btn.disabled = answered;
+
+        const img = document.createElement('img');
+        img.src = imgSrc; img.alt = NUM_LABELS[i]; img.loading = 'lazy';
+        btn.appendChild(img);
+
+        const num = document.createElement('span'); num.className = 'opt-num';
+        num.textContent = NUM_LABELS[i];
+        btn.appendChild(num);
+
+        if (answered && idx === selected) btn.classList.add('exam-selected');
+
+        if (!answered) btn.addEventListener('click', () => selectAnswer(sessionId, q.num, idx));
+        row.appendChild(btn);
+      });
+      wrap.appendChild(row); return wrap;
+    }
+
+    function buildTextOptions(q, selected, sessionId) {
+      // EXAM MODE: only show which option was selected (neutral blue)
+      const wrap = document.createElement('div'); wrap.className = 'text-opts';
+      const answered = selected !== undefined;
+      q.options.forEach((opt, i) => {
+        const idx = i + 1;
+        const btn = document.createElement('button'); btn.className = 'text-opt-btn'; btn.disabled = answered;
+        if (answered && idx === selected) btn.classList.add('exam-selected');
+        btn.innerHTML = `<span class="opt-label">${NUM_LABELS[i]}</span><span class="opt-text">${escHtml(opt)}</span>`;
+        if (!answered) btn.addEventListener('click', () => selectAnswer(sessionId, q.num, idx));
+        wrap.appendChild(btn);
+      });
+      return wrap;
+    }
+
+    function buildTableContent(q) {
+      const wrap = document.createElement('div');
+      const title = document.createElement('div');
+      title.style.cssText = 'font-size:14px;font-weight:700;color:var(--fg);margin-bottom:6px;';
+      title.textContent = q.tableTitle; wrap.appendChild(title);
+      const table = document.createElement('table'); table.className = 'q-table';
+      q.tableData.forEach(row => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td class="row-label">${row.label}</td><td>${escHtml(row.key)}</td><td>${escHtml(row.value)}</td>`;
+        table.appendChild(tr);
+      });
+      wrap.appendChild(table); return wrap;
+    }
+
+    function buildTableOptions(q, selected, sessionId) {
+      // EXAM MODE: only show which option was selected (neutral blue)
+      const answered = selected !== undefined;
+      const wrap = document.createElement('div'); wrap.className = 'text-opts';
+      q.tableData.forEach((row, i) => {
+        const idx = i + 1;
+        const btn = document.createElement('button'); btn.className = 'text-opt-btn'; btn.disabled = answered;
+        if (answered && idx === selected) btn.classList.add('exam-selected');
+        btn.innerHTML = `<span class="opt-label">${row.label}</span><span class="opt-text">${escHtml(row.key + (row.value ? ' — ' + row.value : ''))}</span>`;
+        if (!answered) btn.addEventListener('click', () => selectAnswer(sessionId, q.num, idx));
+        wrap.appendChild(btn);
+      });
+      return wrap;
+    }
+
+    function buildDialogueContext(q) {
+      const box = document.createElement('div'); box.className = 'dialogue-context';
+      if (q.dialogueLines) {
+        // 구조화된 포맷 (2025_m1_r1)
+        q.dialogueLines.forEach(line => {
+          const div = document.createElement('div'); div.className = 'dialogue-line';
+          if (line.blank) div.innerHTML = `<strong>${line.spk}:</strong> <span class="dialogue-blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>`;
+          else div.innerHTML = `<strong>${line.spk}:</strong> ${escHtml(line.text)}`;
+          box.appendChild(div);
+        });
+      } else {
+        // 일반 포맷: q.q(첫 줄) + q.script(나머지)
+        const scriptLines = (q.script || '').split('\n').filter(l => l.trim() && !l.startsWith('ANN:'));
+        const allLines = [q.q, ...scriptLines];
+        allLines.forEach(line => {
+          const div = document.createElement('div'); div.className = 'dialogue-line';
+          if (/_{4,}/.test(line)) {
+            const before = line.replace(/_{4,}.*$/, '').trim();
+            div.innerHTML = (before ? escHtml(before) + ' ' : '') + '<span class="dialogue-blank">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>';
+          } else {
+            div.textContent = line;
+          }
+          box.appendChild(div);
+        });
+      }
+      return box;
+    }
+
+    /* ══════════════════════════════════════════
+       ANSWER
+    ══════════════════════════════════════════ */
+    function selectAnswer(sessionId, qNum, selectedIdx) {
+      const session = SESSIONS.find(s => s.id === sessionId);
+      if (!session) return;
+      const q = session.questions.find(q => q.num === qNum);
+      if (!q) return;
+      const ans = getSessionAnswers(sessionId);
+      if (ans[qNum] !== undefined) return;
+      ans[qNum] = selectedIdx; saveState();
+      const oldCard = document.getElementById('qcard-' + qNum);
+      oldCard.replaceWith(buildQCard(q, selectedIdx, sessionId));
+      const gridBtn = document.getElementById('qgrid-' + qNum);
+      if (gridBtn) gridBtn.className = 'q-grid-btn answered';
+      updateScore(session);
+    }
+
+    function updateScore(session) {
+      const ans = getSessionAnswers(session.id);
+      let answered = 0;
+      session.questions.forEach(q => { if (ans[q.num] !== undefined) answered++; });
+      const total = session.questions.length;
+      const el = document.getElementById('score-answered-count');
+      if (el) el.textContent = answered;
+      document.getElementById('score-answered').textContent = answered + '/' + total + ' 완료';
+      document.getElementById('score-fill').style.width = (total > 0 ? Math.round(answered / total * 100) : 0) + '%';
+    }
+
+    /* ══════════════════════════════════════════
+       SCRIPT TOGGLE
+    ══════════════════════════════════════════ */
+    function toggleScript(qNum) {
+      const block = document.getElementById('script-block-' + qNum);
+      const btn = document.getElementById('script-btn-' + qNum);
+      const open = block.classList.toggle('open');
+      btn.innerHTML = open ? '<i class="ri-file-text-fill"></i>대본 숨기기' : '<i class="ri-file-text-line"></i>대본 보기';
+    }
+
+    /* ══════════════════════════════════════════
+       RESET
+    ══════════════════════════════════════════ */
+    function confirmReset() {
+      if (!confirm('이 회차의 모든 답변을 초기화할까요?')) return;
+      const sid = state.currentSessionId;
+      if (!sid) return;
+      state.answers[sid] = {};
+      delete state.submitted[sid];
+      saveState();
+      const session = SESSIONS.find(s => s.id === sid);
+      if (session) {
+        document.getElementById('session-title-text').textContent = session.title;
+        document.getElementById('session-subtitle-text').textContent = session.subtitle;
+        document.getElementById('score-total').textContent = session.questions.length;
+        showPage('session');
+        initAudioPlayer(session);
+        renderSession(session);
+        updateScore(session);
+      }
+    }
+
+    /* ══════════════════════════════════════════
+       SUBMIT → RESULT
+    ══════════════════════════════════════════ */
+    function submitSession() {
+      const sid = state.currentSessionId;
+      const session = SESSIONS.find(s => s.id === sid);
+      if (!session) return;
+      const ans = getSessionAnswers(sid);
+      const answered = Object.keys(ans).length;
+      if (answered < session.questions.length) {
+        const remaining = session.questions.length - answered;
+        if (!confirm(`아직 ${remaining}문제가 남아 있습니다. 완료 처리할까요?`)) return;
+      }
+      pauseAudio();
+      state.submitted[sid] = true;
+      saveState();
+      renderResult(session);
+    }
+
+    function retrySession() {
+      const sid = state.currentSessionId;
+      if (!sid) return;
+      if (!confirm('모든 답변을 초기화하고 다시 풀까요?')) return;
+      state.answers[sid] = {};
+      delete state.submitted[sid];
+      saveState();
+      const session = SESSIONS.find(s => s.id === sid);
+      if (session) {
+        document.getElementById('session-title-text').textContent = session.title;
+        document.getElementById('session-subtitle-text').textContent = session.subtitle;
+        document.getElementById('score-total').textContent = session.questions.length;
+        showPage('session');
+        initAudioPlayer(session);
+        renderSession(session);
+        updateScore(session);
+      }
+    }
+
+    function renderResult(session) {
+      state.currentSessionId = session.id;
+      document.getElementById('result-title').textContent = session.title;
+      document.getElementById('result-sub').textContent = session.subtitle;
+
+      // Score
+      const ans = getSessionAnswers(session.id);
+      let correct = 0;
+      session.questions.forEach(q => { if (ans[q.num] === q.answer) correct++; });
+      const total = session.questions.length;
+      const pct = total > 0 ? Math.round(correct / total * 100) : 0;
+
+      document.getElementById('result-score-num').textContent = correct;
+      document.getElementById('result-score-denom').textContent = '/' + total;
+      document.getElementById('result-score-pct').textContent = pct + '% 정답';
+      document.getElementById('result-progress-fill').style.width = pct + '%';
+
+      // Question cards
+      const list = document.getElementById('result-questions-list');
+      list.innerHTML = '';
+      session.questions.forEach(q => list.appendChild(buildResultQCard(q, ans[q.num])));
+
+      showPage('result');
+      window.scrollTo(0, 0);
+    }
+
+    function buildResultQCard(q, selected) {
+      const answered = selected !== undefined;
+      const isCorrect = answered && selected === q.answer;
+      const card = document.createElement('div'); card.className = 'result-q-card';
+
+      // Head
+      const head = document.createElement('div'); head.className = 'result-q-head';
+      const badge = document.createElement('div');
+      badge.className = 'q-num-badge' + (answered ? (isCorrect ? ' correct' : ' wrong') : '');
+      badge.textContent = q.num;
+      const typeBadge = document.createElement('div'); typeBadge.className = 'q-type-badge';
+      typeBadge.textContent = TYPE_LABELS[q.type] || q.type;
+      const statusIcon = document.createElement('div'); statusIcon.style.cssText = 'margin-left:auto;font-size:18px;';
+      if (answered) {
+        statusIcon.innerHTML = isCorrect
+          ? '<i class="ri-checkbox-circle-fill" style="color:var(--success)"></i>'
+          : '<i class="ri-close-circle-fill" style="color:var(--fail)"></i>';
+      } else {
+        statusIcon.innerHTML = '<i class="ri-minus-circle-line" style="color:var(--hint)"></i>';
+      }
+      head.appendChild(badge); head.appendChild(typeBadge); head.appendChild(statusIcon);
+      card.appendChild(head);
+
+      // Body
+      const body = document.createElement('div'); body.className = 'result-q-body';
+      const qText = document.createElement('div'); qText.className = 'q-text'; qText.textContent = q.q;
+      body.appendChild(qText);
+
+      // Options with feedback
+      if (q.type === 'image') body.appendChild(buildResultImageOptions(q, selected));
+      else if (q.type === 'table') { body.appendChild(buildTableContent(q)); body.appendChild(buildResultTextOptions(q, selected, true)); }
+      else if (q.type === 'dialogue') { body.appendChild(buildDialogueContext(q)); body.appendChild(buildResultTextOptions(q, selected, false)); }
+      else body.appendChild(buildResultTextOptions(q, selected, false));
+
+      // Feedback bar
+      if (answered) {
+        const fb = document.createElement('div');
+        fb.className = 'feedback-bar ' + (isCorrect ? 'correct' : 'wrong');
+        fb.innerHTML = isCorrect
+          ? '<i class="ri-checkbox-circle-fill"></i><span>정답입니다!</span>'
+          : `<i class="ri-close-circle-fill"></i><span>오답 — 정답은 <strong>${NUM_LABELS[q.answer - 1]}</strong>입니다.</span>`;
+        body.appendChild(fb);
+      } else {
+        const fb = document.createElement('div');
+        fb.className = 'feedback-bar wrong';
+        fb.innerHTML = `<i class="ri-question-line"></i><span>미응답 — 정답은 <strong>${NUM_LABELS[q.answer - 1]}</strong>입니다.</span>`;
+        body.appendChild(fb);
+      }
+
+      // Script (always visible in result)
+      const scriptBlock = document.createElement('div'); scriptBlock.className = 'result-script';
+      scriptBlock.innerHTML = `<div class="result-script-title">Script</div><div class="result-script-text">${escHtml(q.script || '')}</div>`;
+      body.appendChild(scriptBlock);
+
+      card.appendChild(body);
+      return card;
+    }
+
+    function buildResultImageOptions(q, selected) {
+      const wrap = document.createElement('div');
+      const row = document.createElement('div'); row.className = 'img-opts-row';
+      q.options.forEach((imgSrc, i) => {
+        const idx = i + 1;
+        const btn = document.createElement('button'); btn.className = 'img-opt-btn'; btn.disabled = true;
+        const img = document.createElement('img'); img.src = imgSrc; img.alt = NUM_LABELS[i]; img.loading = 'lazy';
+        btn.appendChild(img);
+        const num = document.createElement('span'); num.className = 'opt-num'; num.textContent = NUM_LABELS[i];
+        btn.appendChild(num);
+        const fbIcon = document.createElement('i'); fbIcon.className = 'img-fb-icon';
+        if (selected !== undefined) {
+          if (idx === q.answer && idx === selected) { btn.classList.add('selected-correct'); fbIcon.className = 'img-fb-icon ri-checkbox-circle-fill'; }
+          else if (idx === q.answer) { btn.classList.add('correct-answer'); fbIcon.className = 'img-fb-icon ri-checkbox-circle-fill'; }
+          else if (idx === selected) { btn.classList.add('selected-wrong'); fbIcon.className = 'img-fb-icon ri-close-circle-fill'; }
+        } else {
+          if (idx === q.answer) { btn.classList.add('correct-answer'); fbIcon.className = 'img-fb-icon ri-checkbox-circle-fill'; }
+        }
+        btn.appendChild(fbIcon);
+        row.appendChild(btn);
+      });
+      wrap.appendChild(row); return wrap;
+    }
+
+    function buildResultTextOptions(q, selected, isTable) {
+      const wrap = document.createElement('div'); wrap.className = 'text-opts';
+      const opts = isTable ? q.tableData : q.options;
+      opts.forEach((opt, i) => {
+        const idx = i + 1;
+        const btn = document.createElement('button'); btn.className = 'text-opt-btn'; btn.disabled = true;
+        if (selected !== undefined) {
+          if (idx === q.answer && idx === selected) btn.classList.add('selected-correct');
+          else if (idx === q.answer) btn.classList.add('correct-answer');
+          else if (idx === selected) btn.classList.add('selected-wrong');
+        } else {
+          if (idx === q.answer) btn.classList.add('correct-answer');
+        }
+        const label = isTable ? opt.label : NUM_LABELS[i];
+        const text = isTable ? escHtml(opt.key + (opt.value ? ' — ' + opt.value : '')) : escHtml(opt);
+        btn.innerHTML = `<span class="opt-label">${label}</span><span class="opt-text">${text}</span>`;
+        wrap.appendChild(btn);
+      });
+      return wrap;
+    }
+
+    /* ══════════════════════════════════════════
+       UTIL
+    ══════════════════════════════════════════ */
+    function escHtml(str) {
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    /* ══════════════════════════════════════════
+       INIT
+    ══════════════════════════════════════════ */
+    loadState();
+    applyDark();
+    renderHome();
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,22 @@
+# 교재 원본 PDF (교재 저작권 파일 - 앱에서 직접 사용 안 함)
+02.단어/
+
+# 리스닝 원본 시험지 PDF (데이터 추출 완료, 앱에서 직접 사용 안 함)
+03.리스닝/data/
+
+# 오디오 파일 (Supabase Storage로 이전 완료)
+03.리스닝/audio/
+
+# Claude 설정 파일
+.claude/
+03.리스닝/.claude/
+
+# 업로드 스크립트 (배포 후 불필요)
+upload_audio.mjs
+node_modules/
+package.json
+package-lock.json
+
+# OS 파일
+.DS_Store
+Thumbs.db

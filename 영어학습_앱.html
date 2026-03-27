@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>중1 영어 학습 앱</title>
+    <link href="https://cdn.jsdelivr.net/npm/pretendard@3.3.5/dist/web/static/pretendard.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        :root {
+            --background: #F1EFE8;
+            --foreground: #2C2C2A;
+            --card: #FFFFFF;
+            --primary: #378ADD;
+            --primary-fg: #FFFFFF;
+            --secondary: #E6F1FB;
+            --secondary-fg: #185FA5;
+            --muted: #E8E6DF;
+            --muted-fg: #5F5E5A;
+            --accent: #FAEEDA;
+            --accent-fg: #633806;
+            --ring: #85B7EB;
+            --border: #D3D1C7;
+            --input: #E8E6DF;
+            --success: #639922;
+            --success-fg: #FFFFFF;
+            --radius-base: 4px;
+            --sh-xs: 0 1px 3px 0 hsl(0 0% 0%/.05);
+            --sh: 0 1px 3px 0 hsl(0 0% 0%/.10), 0 1px 2px -1px hsl(0 0% 0%/.10);
+            --sh-md: 0 1px 3px 0 hsl(0 0% 0%/.10), 0 2px 4px -1px hsl(0 0% 0%/.10);
+            --font: 'Pretendard', ui-sans-serif, system-ui, -apple-system, sans-serif;
+        }
+
+        .dark {
+            --background: #1E1D1A;
+            --foreground: #D3D1C7;
+            --card: #2A2926;
+            --primary: #85B7EB;
+            --primary-fg: #0C447C;
+            --secondary: #2C2C2A;
+            --secondary-fg: #D3D1C7;
+            --muted: #1A1918;
+            --muted-fg: #888780;
+            --accent: #2C2413;
+            --accent-fg: #FAEEDA;
+            --ring: #378ADD;
+            --border: #3A3835;
+            --input: #3A3835;
+            --success: #4A7A1A;
+            --success-fg: #D3D1C7;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font);
+            font-size: 17px;
+            line-height: 1.6;
+            background-color: var(--background);
+            color: var(--foreground);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        header {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 2rem;
+            padding: 1rem 1rem 0.75rem;
+            background: var(--card);
+            border-radius: 4px;
+            box-shadow: var(--sh);
+        }
+
+        .header-top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .header-title-section {
+            text-align: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .header-main-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--foreground);
+        }
+
+        .header-sub-title {
+            font-size: 14px;
+            color: var(--muted-fg);
+            margin-top: 4px;
+        }
+
+        .nav {
+            display: flex;
+            gap: 0.25rem;
+            width: 100%;
+            padding: 0.25rem;
+            margin-top: 0.5rem;
+            background: var(--muted);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .detail-header {
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .detail-header.visible { display: flex; }
+
+        .detail-back-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2rem;
+            height: 2rem;
+            background: none;
+            border: none;
+            border-radius: 4px;
+            font-size: 1.1rem;
+            color: var(--foreground);
+            cursor: pointer;
+        }
+
+        .detail-back-btn:hover { background: var(--muted); }
+
+        .detail-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .nav-btn {
+            flex: 1;
+            padding: 0.45rem 0.5rem;
+            background: transparent;
+            color: var(--muted-fg);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: var(--font);
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+            text-align: center;
+        }
+
+        .nav-btn:hover:not(.active) {
+            color: var(--foreground);
+            background: rgba(255,255,255,0.5);
+        }
+
+        .nav-btn.active {
+            background: var(--card);
+            color: var(--primary);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+            border: 1px solid var(--border);
+            font-weight: 600;
+        }
+
+
+
+
+
+        .dark-toggle {
+            background: var(--muted);
+            color: var(--muted-fg);
+            border: none;
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+        }
+
+        .dark-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .gate-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2rem;
+            height: 2rem;
+            background: var(--secondary);
+            color: var(--secondary-fg);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+            transition: background .2s, color .2s;
+        }
+
+        .gate-btn:hover {
+            background: var(--primary);
+            color: var(--primary-fg);
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .lesson-card {
+            background: var(--card);
+            padding: 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: var(--sh);
+            border: 2px solid transparent;
+        }
+
+        .lesson-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--sh-md);
+            border-color: var(--primary);
+        }
+
+        .lesson-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--foreground);
+        }
+
+        .lesson-progress {
+            font-size: 0.85rem;
+            color: var(--muted-fg);
+            margin-bottom: 0.5rem;
+        }
+
+        .small-progress-bar {
+            height: 4px;
+            background: var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .xp-float {
+            position: fixed;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--primary);
+            pointer-events: none;
+            z-index: 1000;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            animation: xpFloatUp 0.9s ease forwards;
+        }
+
+        @keyframes xpFloatUp {
+            from { opacity: 1; transform: translateX(-50%) translateY(0); }
+            to   { opacity: 0; transform: translateX(-50%) translateY(-40px); }
+        }
+
+        .small-progress-fill {
+            height: 100%;
+            background: var(--primary);
+            transition: width 0.3s;
+        }
+
+        .tabs-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 2px solid var(--border);
+            margin-bottom: 1.5rem;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 0;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            font-family: var(--font);
+            font-size: 0.95rem;
+            color: var(--muted-fg);
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .script-line {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: var(--card);
+            border-radius: 4px;
+            box-shadow: var(--sh);
+        }
+
+        .script-speaker {
+            font-weight: 700;
+            color: var(--primary);
+            min-width: 40px;
+        }
+
+        .script-text {
+            flex: 1;
+        }
+
+        .script-en {
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .script-ko {
+            font-size: 0.95rem;
+            color: var(--muted-fg);
+            transition: all 0.3s;
+        }
+
+        .script-ko.hidden {
+            display: none;
+        }
+
+        .toggle-ko-btn {
+            background: none;
+            color: var(--muted-fg);
+            border: none;
+            padding: 0.4rem 0.75rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: var(--font);
+            font-size: 0.875rem;
+        }
+        .toggle-ko-btn:hover { background: var(--muted); }
+
+        .grammar-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .grammar-card {
+            background: var(--card);
+            padding: 1.5rem;
+            border-radius: 4px;
+            box-shadow: var(--sh);
+            border-left: 4px solid var(--primary);
+        }
+
+        .grammar-title {
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .grammar-pattern {
+            background: var(--muted);
+            color: var(--muted-fg);
+            padding: 0.75rem;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+        }
+
+        .grammar-rule {
+            font-size: 0.9rem;
+            color: var(--foreground);
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+
+        .grammar-examples {
+            border-top: 1px solid var(--border);
+            padding-top: 1rem;
+        }
+
+        .grammar-example {
+            margin-bottom: 0.75rem;
+            font-size: 0.9rem;
+        }
+
+        .grammar-ex-en {
+            font-style: italic;
+            color: var(--primary);
+            margin-bottom: 0.2rem;
+        }
+
+        .grammar-ex-ko {
+            color: var(--muted-fg);
+        }
+
+        .flashcard {
+            background: var(--card);
+            padding: 2rem;
+            border-radius: 4px;
+            box-shadow: var(--sh-md);
+            text-align: center;
+            margin-bottom: 2rem;
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .flashcard-tag {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: var(--primary);
+            color: var(--primary-fg);
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .flashcard-front {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .flashcard-example {
+            font-size: 0.9rem;
+            color: var(--muted-fg);
+            margin-top: 1rem;
+            font-style: italic;
+        }
+
+        .rating-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .rating-btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: var(--font);
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-hard {
+            background: var(--accent);
+            color: var(--accent-fg);
+        }
+
+        .btn-hard:hover {
+            transform: scale(1.05);
+        }
+
+        .btn-medium {
+            background: var(--secondary);
+            color: var(--secondary-fg);
+        }
+
+        .btn-medium:hover {
+            transform: scale(1.05);
+        }
+
+        .btn-easy {
+            background: var(--success);
+            color: var(--primary-fg);
+        }
+
+        .btn-easy:hover {
+            transform: scale(1.05);
+        }
+
+        .quiz-container {
+            background: var(--card);
+            padding: 2rem;
+            border-radius: 4px;
+            box-shadow: var(--sh-md);
+            margin-bottom: 2rem;
+        }
+
+        .quiz-type-badge {
+            display: inline-block;
+            padding: 0.35rem 0.85rem;
+            background: var(--primary);
+            color: var(--primary-fg);
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .quiz-question {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--foreground);
+            margin-bottom: 1.5rem;
+            white-space: pre-wrap;
+        }
+
+        .quiz-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+        }
+
+        .option-btn {
+            padding: 1rem;
+            background: var(--secondary);
+            color: var(--secondary-fg);
+            border: 2px solid transparent;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: var(--font);
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .option-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .option-btn.correct {
+            background: #EAF3DE;
+            color: #27500A;
+            border-color: #639922;
+        }
+
+        .option-btn.incorrect {
+            background: #FCEBEB;
+            color: #791F1F;
+            border-color: #E24B4A;
+        }
+
+        .quiz-input {
+            width: 100%;
+            padding: 1rem;
+            font-family: var(--font);
+            border: 2px solid var(--border);
+            border-radius: 4px;
+            background: var(--input);
+            color: var(--foreground);
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .quiz-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .quiz-explanation {
+            background: var(--accent);
+            color: var(--accent-fg);
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .quiz-explanation.show {
+            display: block;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--primary-fg);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: var(--font);
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.05);
+            box-shadow: var(--sh-md);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+            color: var(--secondary-fg);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: var(--font);
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-secondary:hover {
+            transform: scale(1.05);
+            box-shadow: var(--sh-md);
+        }
+
+        .score-summary {
+            text-align: center;
+            padding: 2rem;
+            background: var(--accent);
+            color: var(--accent-fg);
+            border-radius: 4px;
+            margin-bottom: 2rem;
+        }
+
+        .score-number {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #27500A;
+            margin-bottom: 0.5rem;
+        }
+
+        .score-label {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .score-xp {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--card);
+            padding: 1.5rem;
+            border-radius: 4px;
+            box-shadow: var(--sh);
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--muted-fg);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .achievement-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .achievement-badge {
+            background: var(--card);
+            padding: 1rem;
+            border-radius: 4px;
+            box-shadow: var(--sh);
+            text-align: center;
+            border: 2px solid transparent;
+        }
+
+        .achievement-badge.unlocked {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, var(--accent), var(--card));
+        }
+
+        .achievement-badge.locked {
+            opacity: 0.5;
+        }
+
+        .achievement-emoji {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .achievement-name {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--foreground);
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            background: var(--muted);
+            color: var(--muted-fg);
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .calendar-day.studied {
+            background: var(--success);
+            color: var(--primary-fg);
+        }
+
+        .calendar-day.today {
+            border: 2px solid var(--primary);
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--primary);
+            color: var(--primary-fg);
+            padding: 1rem 1.5rem;
+            border-radius: 4px;
+            box-shadow: var(--sh-md);
+            animation: slideIn 0.3s ease-out;
+            z-index: 1000;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+            }
+
+            to {
+                transform: translateX(0);
+            }
+        }
+
+        .lesson-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .lesson-select-card {
+            background: var(--card);
+            padding: 1.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: var(--sh);
+            border: 2px solid transparent;
+            text-align: center;
+        }
+
+        .lesson-select-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--primary);
+            box-shadow: var(--sh-md);
+        }
+
+        .lesson-select-title {
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .lesson-select-desc {
+            font-size: 0.85rem;
+            color: var(--muted-fg);
+        }
+
+        .back-btn {
+            background: var(--secondary);
+            color: var(--secondary-fg);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: var(--font);
+            margin-bottom: 1.5rem;
+        }
+
+        .progress-label {
+            font-size: 0.85rem;
+            color: var(--muted-fg);
+            margin-bottom: 0.5rem;
+        }
+
+        @media (max-width: 600px) {
+            .grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .lesson-selector {
+                grid-template-columns: 1fr;
+            }
+
+            .quiz-options {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header id="main-header">
+            <div class="header-top-row">
+                <a class="gate-btn" href="./index.html" title="학습 홈"><i class="ri-home-4-line"></i></a>
+                <button class="dark-toggle" id="darkToggleBtn" aria-label="다크모드 전환"><i id="darkIcon" class="ri-moon-line"></i></button>
+            </div>
+            <div class="header-title-section">
+                <div class="header-main-title"><i class="ri-book-open-line"></i> 교과 본문</div>
+                <div class="header-sub-title">교과서 내용을 학습하세요</div>
+            </div>
+            <nav class="nav">
+                <button class="nav-btn active" data-page="vocab"><i class="ri-english-input"></i> 단어</button>
+                <button class="nav-btn" data-page="script"><i class="ri-book-2-line"></i> 본문</button>
+                <button class="nav-btn" data-page="test"><i class="ri-file-edit-line"></i> 시험</button>
+            </nav>
+        </header>
+
+        <div class="detail-header" id="detail-header">
+            <button class="detail-back-btn" id="detail-back-btn"><i class="ri-arrow-left-line"></i></button>
+            <span class="detail-title" id="detail-title"></span>
+        </div>
+
+        <div id="home" class="page">
+
+            <h2 style="margin-bottom: 1rem;"><i class="ri-book-open-line"></i> 각 단원별 진도</h2>
+            <div class="grid" id="lessonGrid"></div>
+
+            <h2 style="margin: 2rem 0 1.5rem;"><i class="ri-dashboard-2-line"></i> 학습 현황</h2>
+            <div class="stats-grid" id="statsGrid"></div>
+            <h3 style="margin: 2rem 0 1rem;"><i class="ri-trophy-line"></i> 성취도</h3>
+            <div class="achievement-grid" id="achievementGrid"></div>
+            <h3 style="margin: 2rem 0 1rem;"><i class="ri-calendar-todo-fill"></i> 주간 학습</h3>
+            <div class="calendar-grid" id="calendarGrid"></div>
+        </div>
+
+        <div id="vocab" class="page active">
+            <div id="vocabLessonSelect" class="lesson-selector"></div>
+            <div id="flashcardArea" style="display: none;">
+                <div class="progress-label" id="flashcardProgress"></div>
+                <div class="small-progress-bar" style="margin-bottom: 1.25rem;">
+                    <div class="small-progress-fill" id="flashcardProgressBar" style="width: 0%"></div>
+                </div>
+                <div id="flashcardContainer"></div>
+            </div>
+        </div>
+
+        <div id="script" class="page">
+            <div id="scriptLessonSelect" class="lesson-selector"></div>
+            <div id="scriptArea" style="display: none;">
+                <div class="tabs-bar">
+                    <div class="tabs">
+                        <button class="tab-btn active" data-tab="script-tab"><i class="ri-table-view"></i> 스크립트</button>
+                        <button class="tab-btn" data-tab="grammar-tab"><i class="ri-file-text-line"></i> 문법</button>
+                    </div>
+                    <button class="toggle-ko-btn" onclick="app.toggleKorean()">한국어 숨기기</button>
+                </div>
+                <div id="script-tab" class="tab-content active"></div>
+                <div id="grammar-tab" class="tab-content"></div>
+            </div>
+        </div>
+
+        <div id="test" class="page">
+            <div id="testLessonSelect" class="lesson-selector"></div>
+            <div id="quizArea" style="display: none;">
+                <div id="quizContainer"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'jy_english_v3'; const LESSONS = [{ id: 'L1', title: 'Unit 1', subtitle: '인사와 과목' }, { id: 'L2', title: 'Unit 2', subtitle: '운동 습관' }, { id: 'L3', title: 'Unit 3', subtitle: '감정 표현' }, { id: 'L4', title: 'Unit 4', subtitle: '미래 계획' }, { id: 'L5', title: 'Unit 5', subtitle: '허락/금지' }, { id: 'L6', title: 'Unit 6', subtitle: '환경 보호' }, { id: 'L7', title: 'Unit 7', subtitle: '미래 직업' }, { id: 'L8', title: 'Unit 8', subtitle: '온라인 토론' }]; const WORDS = { L1: [{ en: 'subject', ko: '과목', ex: 'Math is my favorite subject.' }, { en: 'favorite', ko: '가장 좋아하는', ex: 'What is your favorite food?' }, { en: 'science', ko: '과학', ex: 'I love science class.' }, { en: 'music', ko: '음악', ex: 'She plays music every day.' }, { en: 'history', ko: '역사', ex: 'History is interesting.' }, { en: 'math', ko: '수학', ex: 'Math is difficult.' }, { en: 'P.E.', ko: '체육', ex: 'P.E. class is fun.' }, { en: 'art', ko: '미술', ex: 'She draws art.' }, { en: 'band', ko: '악단', ex: 'He is in the school band.' }, { en: 'meet', ko: '만나다', ex: 'Nice to meet you!' }, { en: 'nice', ko: '좋은, 멋진', ex: 'That is nice.' }, { en: 'grade', ko: '학년, 성적', ex: 'What grade are you in?' }], L2: [{ en: 'always', ko: '항상', ex: 'I always eat breakfast.' }, { en: 'usually', ko: '보통, 대개', ex: 'I usually wake up at 7.' }, { en: 'often', ko: '자주', ex: 'I often go to the park.' }, { en: 'sometimes', ko: '때때로, 가끔', ex: 'Sometimes I read books.' }, { en: 'never', ko: '절대 하지 않다', ex: 'I never skip breakfast.' }, { en: 'exercise', ko: '운동하다', ex: 'I exercise three times a week.' }, { en: 'healthy', ko: '건강한', ex: 'Exercise is healthy.' }, { en: 'breakfast', ko: '아침식사', ex: 'I eat breakfast every morning.' }, { en: 'vegetable', ko: '채소', ex: 'Vegetables are healthy.' }, { en: 'suggestion', ko: '제안', ex: 'He made a good suggestion.' }, { en: 'tired', ko: '피곤한', ex: 'I am tired after school.' }, { en: 'join', ko: '참가하다', ex: 'Do you want to join our team?' }], L3: [{ en: 'nervous', ko: '긴장한', ex: 'I feel nervous before the test.' }, { en: 'excited', ko: '신나는', ex: 'I am excited about the trip.' }, { en: 'worried', ko: '걱정되는', ex: 'You look worried.' }, { en: 'surprised', ko: '놀란', ex: 'She was surprised by the gift.' }, { en: 'scared', ko: '무서운', ex: 'I am scared of spiders.' }, { en: 'proud', ko: '자랑스러운', ex: 'I am proud of my work.' }, { en: 'feeling', ko: '느낌', ex: 'How is your feeling?' }, { en: 'positive', ko: '긍정적인', ex: 'Be positive!' }, { en: 'cheer', ko: '응원하다', ex: 'Cheer up!' }, { en: 'worry', ko: '걱정', ex: 'Do not worry about it.' }, { en: 'hope', ko: '희망, 바라다', ex: 'I hope you feel better.' }, { en: 'trouble', ko: '문제, 고민', ex: 'What is the trouble?' }], L4: [{ en: 'travel', ko: '여행하다', ex: 'I like to travel.' }, { en: 'visit', ko: '방문하다', ex: 'I will visit Jeju Island.' }, { en: 'museum', ko: '박물관', ex: 'Let us go to the museum.' }, { en: 'palace', ko: '궁전', ex: 'The palace is beautiful.' }, { en: 'traditional', ko: '전통적인', ex: 'Traditional food is delicious.' }, { en: 'expect', ko: '기대하다', ex: 'I expect a good result.' }, { en: 'plan', ko: '계획', ex: 'What is your plan?' }, { en: 'island', ko: '섬', ex: 'Jeju is a beautiful island.' }, { en: 'mountain', ko: '산', ex: 'The mountain is very high.' }, { en: 'market', ko: '시장', ex: 'Let us go to the market.' }, { en: 'souvenir', ko: '기념품', ex: 'I bought a souvenir.' }, { en: 'fun', ko: '재미있는', ex: 'The trip will be fun!' }], L5: [{ en: 'clue', ko: '단서', ex: 'This is an important clue.' }, { en: 'mystery', ko: '미스터리', ex: 'The mystery is interesting.' }, { en: 'solve', ko: '풀다', ex: 'Can you solve this puzzle?' }, { en: 'observe', ko: '관찰하다', ex: 'Observe the animal.' }, { en: 'deduce', ko: '추론하다', ex: 'We can deduce the answer.' }, { en: 'permission', ko: '허락', ex: 'Do you have permission?' }, { en: 'allow', ko: '허용하다', ex: 'Parents allow me to play.' }, { en: 'forbidden', ko: '금지된', ex: 'That is forbidden.' }, { en: 'rule', ko: '규칙', ex: 'Follow the rule.' }, { en: 'careful', ko: '조심스러운', ex: 'Be careful!' }, { en: 'sure', ko: '확실한', ex: 'Are you sure?' }, { en: 'inside', ko: '내부, 안쪽', ex: 'It is inside the box.' }], L6: [{ en: 'environment', ko: '환경', ex: 'We protect the environment.' }, { en: 'recycle', ko: '재활용하다', ex: 'Let us recycle plastic.' }, { en: 'pollution', ko: '오염', ex: 'Air pollution is bad.' }, { en: 'energy', ko: '에너지', ex: 'Solar energy is clean.' }, { en: 'trash', ko: '쓰레기', ex: 'Please pick up the trash.' }, { en: 'volunteer', ko: '자원봉사', ex: 'I volunteer on weekends.' }, { en: 'campaign', ko: '캠페인', ex: 'We started a campaign.' }, { en: 'help', ko: '도움', ex: 'Can I help you?' }, { en: 'refuse', ko: '거절하다', ex: 'She refused the offer.' }, { en: 'global', ko: '세계적인', ex: 'This is a global issue.' }, { en: 'earth', ko: '지구', ex: 'We love our earth.' }, { en: 'future', ko: '미래', ex: 'Think about the future.' }], L7: [{ en: 'dream', ko: '꿈', ex: 'What is your dream?' }, { en: 'interested', ko: '관심 있는', ex: 'I am interested in science.' }, { en: 'scientist', ko: '과학자', ex: 'She wants to be a scientist.' }, { en: 'designer', ko: '디자이너', ex: 'He is a designer.' }, { en: 'chef', ko: '요리사', ex: 'The chef cooks delicious food.' }, { en: 'musician', ko: '음악가', ex: 'She is a talented musician.' }, { en: 'creative', ko: '창의적인', ex: 'Your idea is creative.' }, { en: 'career', ko: '경력, 직업', ex: 'What is your career goal?' }, { en: 'talent', ko: '재능', ex: 'She has great talent.' }, { en: 'practice', ko: '연습하다', ex: 'Practice makes perfect.' }, { en: 'goal', ko: '목표', ex: 'My goal is to study hard.' }, { en: 'pursue', ko: '추구하다', ex: 'Pursue your dream.' }], L8: [{ en: 'opinion', ko: '의견', ex: 'In my opinion, it is right.' }, { en: 'agree', ko: '동의하다', ex: 'I agree with you.' }, { en: 'disagree', ko: '반대하다', ex: 'I disagree with that idea.' }, { en: 'online', ko: '온라인', ex: 'I study online.' }, { en: 'social media', ko: '소셜 미디어', ex: 'Do you use social media?' }, { en: 'comment', ko: '댓글, 언급', ex: 'I left a comment.' }, { en: 'upload', ko: '업로드하다', ex: 'Upload your photo.' }, { en: 'privacy', ko: '개인정보, 사생활', ex: 'Privacy is important.' }, { en: 'balance', ko: '균형', ex: 'Balance is important.' }, { en: 'wise', ko: '현명한', ex: 'That is a wise choice.' }, { en: 'safe', ko: '안전한', ex: 'Stay safe online.' }, { en: 'limit', ko: '제한', ex: 'Limit your screen time.' }] }; const SCRIPTS = { L1: [{ s: 'A', en: "Hi! I'm Mina. Nice to meet you!", ko: "안녕! 나는 미나야. 만나서 반가워!" }, { s: 'B', en: "Nice to meet you, too. I'm Jake.", ko: "나도 반가워. 나는 제이크야." }, { s: 'A', en: "Are you a new student here?", ko: "여기 새로 온 학생이야?" }, { s: 'B', en: "Yes, I am. I'm from Busan. What grade are you in?", ko: "응, 맞아. 부산에서 왔어. 너는 몇 학년이야?" }, { s: 'A', en: "I'm in the 7th grade. What's your favorite subject?", ko: "나는 7학년이야. 좋아하는 과목이 뭐야?" }, { s: 'B', en: "I love science. What about you?", ko: "나는 과학을 좋아해. 너는?" }, { s: 'A', en: "I like music. I'm in the school band.", ko: "나는 음악을 좋아해. 학교 밴드부야." }, { s: 'B', en: "That's cool! What instrument do you play?", ko: "멋진데! 무슨 악기를 연주해?" }], L2: [{ s: 'A', en: "You look healthy! Do you exercise a lot?", ko: "건강해 보여! 운동을 많이 해?" }, { s: 'B', en: "I usually exercise three times a week.", ko: "나는 보통 일주일에 세 번 운동해." }, { s: 'A', en: "How often do you exercise?", ko: "운동을 얼마나 자주 해?" }, { s: 'B', en: "I usually go to the gym on Monday, Wednesday, and Friday.", ko: "보통 월, 수, 금에 헬스장에 가." }, { s: 'A', en: "I never exercise. I'm always tired after school.", ko: "나는 운동을 전혀 안 해. 방과 후엔 항상 피곤해." }, { s: 'B', en: "Why don't you join my soccer team?", ko: "우리 축구팀에 들어오는 건 어때?" }, { s: 'A', en: "That sounds great! When do you practice?", ko: "좋은 생각이야! 언제 연습해?" }, { s: 'B', en: "Every Saturday morning. I'll sign you up!", ko: "매주 토요일 아침이야. 내가 등록시켜 줄게!" }], L3: [{ s: 'A', en: "You look worried. What's wrong?", ko: "걱정돼 보여. 무슨 일이야?" }, { s: 'B', en: "I have a big English test tomorrow.", ko: "내일 중요한 영어 시험이 있어." }, { s: 'A', en: "How do you feel about it?", ko: "시험에 대해 어떻게 느껴?" }, { s: 'B', en: "I feel very nervous. I haven't studied enough.", ko: "너무 긴장돼. 공부를 충분히 못 했어." }, { s: 'A', en: "That's too bad. But don't worry, you'll do fine.", ko: "안됐다. 하지만 걱정 마, 잘 할 거야." }, { s: 'B', en: "Really? I hope so. I'm scared of failing.", ko: "정말? 그러면 좋겠다. 떨어질까봐 무서워." }, { s: 'A', en: "Cheer up! I'll help you study tonight.", ko: "힘내! 오늘 밤에 공부 도와줄게." }, { s: 'B', en: "Thank you so much. I feel better now!", ko: "정말 고마워. 이제 기분이 좀 나아졌어!" }], L4: [{ s: 'A', en: "Where are you going this summer?", ko: "이번 여름에 어디 가?" }, { s: 'B', en: "I'm going to visit Jeju Island with my family.", ko: "가족이랑 제주도에 갈 거야." }, { s: 'A', en: "That sounds exciting! How long are you going to stay?", ko: "신나겠다! 얼마나 있을 거야?" }, { s: 'B', en: "We're going to stay for five days.", ko: "5일 동안 있을 거야." }, { s: 'A', en: "What are you going to do there?", ko: "거기서 뭐 할 거야?" }, { s: 'B', en: "I'm going to see Hallasan Mountain. I can't wait!", ko: "한라산을 볼 거야. 너무 기대돼!" }, { s: 'A', en: "I'm sure you'll have a great time.", ko: "분명 좋은 시간 보낼 거야." }, { s: 'B', en: "I'll bring you a souvenir!", ko: "기념품 사올게!" }], L5: [{ s: 'A', en: "Excuse me. May I use your dictionary?", ko: "실례합니다. 사전 좀 써도 될까요?" }, { s: 'B', en: "Sure, go ahead.", ko: "물론이죠, 쓰세요." }, { s: 'A', en: "Thank you! By the way, can I ask you something?", ko: "감사합니다! 그런데, 뭔가 여쭤봐도 될까요?" }, { s: 'B', en: "Of course. What would you like to know?", ko: "물론이죠. 무엇이 알고 싶으신가요?" }, { s: 'C', en: "Excuse me. Can I take pictures here?", ko: "저기요. 여기서 사진 찍어도 되나요?" }, { s: 'D', en: "I'm sorry, but you must not take pictures inside.", ko: "죄송하지만, 내부에서는 사진 촬영을 하시면 안 됩니다." }, { s: 'C', en: "Oh, I see. I didn't know that. I'm sorry.", ko: "아, 그렇군요. 몰랐어요. 죄송합니다." }, { s: 'D', en: "That's okay. You can take pictures outside.", ko: "괜찮아요. 밖에서는 찍으셔도 됩니다." }], L6: [{ s: 'A', en: "This park is really dirty. Can you help me?", ko: "이 공원이 정말 지저분하네. 도와줄 수 있어?" }, { s: 'B', en: "Sure! What do you need?", ko: "물론이지! 뭐가 필요해?" }, { s: 'A', en: "Can you help me pick up the trash?", ko: "쓰레기 줍는 것 좀 도와줄 수 있어?" }, { s: 'B', en: "Sure! I'd love to help.", ko: "물론이지! 기꺼이 도와줄게." }, { s: 'A', en: "Can you also join our recycling campaign next Saturday?", ko: "다음 주 토요일에 우리 재활용 캠페인에도 참여해줄 수 있어?" }, { s: 'C', en: "I'm sorry, but I can't. I have to go to my grandmother's.", ko: "미안해, 못 하겠어. 할머니댁에 가야 해." }, { s: 'A', en: "That's okay. Maybe next time!", ko: "괜찮아. 다음에 하자!" }, { s: 'C', en: "For sure! Good luck with the campaign.", ko: "꼭! 캠페인 잘 되길 바라." }], L7: [{ s: 'A', en: "What do you want to be in the future?", ko: "미래에 뭐가 되고 싶어?" }, { s: 'B', en: "I want to be a scientist. I'm interested in space.", ko: "과학자가 되고 싶어. 우주에 관심 있거든." }, { s: 'A', en: "Wow, that's amazing! Why are you interested in space?", ko: "와, 대단하다! 왜 우주에 관심이 있어?" }, { s: 'B', en: "Because I want to discover new planets!", ko: "새로운 행성을 발견하고 싶거든!" }, { s: 'A', en: "That's a great dream. I want to be a designer.", ko: "멋진 꿈이다. 나는 디자이너가 되고 싶어." }, { s: 'B', en: "You're so creative. You'll be a great designer.", ko: "너 정말 창의적이잖아. 훌륭한 디자이너가 될 거야." }, { s: 'A', en: "Thank you! What do you do to reach your dream?", ko: "고마워! 꿈을 이루기 위해 뭘 하고 있어?" }, { s: 'B', en: "I practice math and science every day.", ko: "매일 수학과 과학 공부를 해." }], L8: [{ s: 'A', en: "Do you use social media a lot?", ko: "소셜 미디어를 많이 사용해?" }, { s: 'B', en: "Yes, I use it about three hours a day.", ko: "응, 하루에 약 3시간 정도 써." }, { s: 'A', en: "I think we should limit screen time.", ko: "나는 화면 보는 시간을 제한해야 한다고 생각해." }, { s: 'B', en: "I agree. Too much screen time is bad for your eyes.", ko: "동의해. 화면을 너무 많이 보면 눈에 안 좋아." }, { s: 'C', en: "I disagree. We can learn a lot online.", ko: "반대야. 온라인으로 많은 것을 배울 수 있잖아." }, { s: 'A', en: "In my opinion, balance is important.", ko: "내 생각엔, 균형이 중요해." }, { s: 'B', en: "That makes sense. We should use it wisely.", ko: "맞는 말이야. 현명하게 사용해야 해." }, { s: 'C', en: "You're right. I'll try to reduce my screen time.", ko: "맞아. 나도 화면 보는 시간을 줄여볼게." }] }; const GRAMMAR = { L1: [{ title: "Nice to + 동사원형", pattern: "Nice to + 동사원형", rule: "nice(기쁜) 뒤에 to + 동사원형을 붙여 '~하게 되어 반갑다'는 표현을 만들어요.", ex: [{ en: "Nice to see you!", ko: "만나서 반가워요!" }, { en: "Great to hear that.", ko: "그 말 듣게 되어 좋아요." }] }, { title: "What's your favorite ~?", pattern: "What's your favorite + 명사?", rule: "가장 좋아하는 것이 무엇인지 물을 때 써요. What is your favorite의 줄임말이에요.", ex: [{ en: "What's your favorite food?", ko: "가장 좋아하는 음식은?" }, { en: "What's your favorite sport?", ko: "가장 좋아하는 운동은?" }] }, { title: "I like / I love + 명사", pattern: "I like/love + 명사 or 동명사(-ing)", rule: "좋아하는 것을 표현할 때 like, love 뒤에 명사 또는 동명사가 와요.", ex: [{ en: "I like soccer.", ko: "나는 축구를 좋아해." }, { en: "I love reading books.", ko: "나는 책 읽는 것을 매우 좋아해." }] }], L2: [{ title: "빈도부사 위치", pattern: "주어 + 빈도부사 + 일반동사", rule: "always, usually, often, sometimes, never는 일반동사 앞, be동사 뒤에 위치해요.", ex: [{ en: "I always eat breakfast.", ko: "나는 항상 아침을 먹어." }, { en: "She is never late.", ko: "그녀는 절대 늦지 않아." }] }, { title: "How often ~?", pattern: "How often + do/does + 주어 + 동사원형?", rule: "얼마나 자주 ~하는지 물을 때 써요. 대답은 빈도 표현(every day, twice a week 등)으로 해요.", ex: [{ en: "How often do you study?", ko: "공부를 얼마나 자주 해?" }, { en: "How often does she go to the gym?", ko: "그녀는 얼마나 자주 헬스장에 가?" }] }, { title: "Why don't you ~? (제안)", pattern: "Why don't you + 동사원형?", rule: "상대방에게 무언가를 제안하거나 권유할 때 써요. '~하는 게 어때?'라는 뜻이에요.", ex: [{ en: "Why don't you try it?", ko: "한번 해보는 건 어때?" }, { en: "Why don't we eat out?", ko: "외식하는 건 어때?" }] }], L3: [{ title: "I feel + 감정 형용사", pattern: "I feel + 형용사", rule: "자신의 감정 상태를 표현할 때 feel 뒤에 감정 형용사를 써요.", ex: [{ en: "I feel excited.", ko: "나는 신나." }, { en: "She feels worried.", ko: "그녀는 걱정돼." }] }, { title: "That's too bad. (공감)", pattern: "That's too bad. / I'm sorry to hear that.", rule: "상대방의 안 좋은 상황에 공감할 때 쓰는 표현들이에요.", ex: [{ en: "That's too bad!", ko: "안됐다!" }, { en: "I'm sorry to hear that.", ko: "그 말을 들으니 안됐네." }] }, { title: "will + 동사원형 (미래/격려)", pattern: "주어 + will + 동사원형", rule: "미래에 일어날 일이나 격려 표현으로 will + 동사원형을 써요.", ex: [{ en: "You'll do fine!", ko: "잘 할 거야!" }, { en: "It will be okay.", ko: "괜찮을 거야." }] }], L4: [{ title: "be going to (계획된 미래)", pattern: "주어 + be going to + 동사원형", rule: "미리 계획된 미래를 말할 때 써요. will과 달리 이미 계획된 일임을 강조해요.", ex: [{ en: "I'm going to study tonight.", ko: "오늘 밤 공부할 거야." }, { en: "They're going to visit Gyeongju.", ko: "그들은 경주를 방문할 거야." }] }, { title: "be going to 의문문", pattern: "Are/Is + 주어 + going to + 동사원형?", rule: "'~할 예정이야?'라고 물을 때 be동사를 앞으로 보내요.", ex: [{ en: "Are you going to come?", ko: "올 예정이야?" }, { en: "What is she going to eat?", ko: "그녀는 뭘 먹을 거야?" }] }, { title: "can't wait to (기대감)", pattern: "can't wait + to + 동사원형", rule: "매우 기대가 되어 기다릴 수 없다는 표현이에요.", ex: [{ en: "I can't wait to meet you!", ko: "빨리 만나고 싶어!" }, { en: "She can't wait to go.", ko: "그녀는 가는 걸 너무 기대해." }] }], L5: [{ title: "May I ~? (허락 요청)", pattern: "May I + 동사원형?", rule: "허락을 정중하게 요청할 때 써요. Can I보다 더 공손한 표현이에요.", ex: [{ en: "May I come in?", ko: "들어가도 될까요?" }, { en: "May I ask your name?", ko: "이름을 여쭤봐도 될까요?" }] }, { title: "Sure, go ahead. (허락)", pattern: "Sure / Of course / Go ahead", rule: "허락을 줄 때 쓰는 표현들이에요. 모두 '물론이죠'의 뜻이에요.", ex: [{ en: "Sure, go ahead!", ko: "물론이죠, 하세요!" }, { en: "Of course you can.", ko: "물론 할 수 있어요." }] }, { title: "must not (강한 금지)", pattern: "주어 + must not + 동사원형", rule: "강하게 금지를 나타낼 때 써요. '~하면 절대 안 된다'는 뜻이에요.", ex: [{ en: "You must not run here.", ko: "여기서 뛰면 안 돼요." }, { en: "You must not be late.", ko: "늦으면 안 돼요." }] }], L6: [{ title: "Can you ~? (부탁)", pattern: "Can you + 동사원형?", rule: "상대방에게 부탁할 때 써요. '~해줄 수 있어?'라는 뜻이에요.", ex: [{ en: "Can you pass me the salt?", ko: "소금 좀 건네줄 수 있어?" }, { en: "Can you help me?", ko: "도와줄 수 있어?" }] }, { title: "I'm sorry, but I can't. (거절)", pattern: "I'm sorry, but + 이유", rule: "정중하게 거절할 때 써요. 이유를 덧붙이면 더 자연스러워요.", ex: [{ en: "I'm sorry, but I'm busy.", ko: "미안해, 하지만 바빠." }, { en: "I'd love to, but I can't.", ko: "가고 싶지만 못 해." }] }, { title: "I'd love to (강한 의지)", pattern: "I'd love to + 동사원형", rule: "무언가를 하고 싶다는 강한 바람을 표현해요. 매우 긍정적인 표현이에요.", ex: [{ en: "I'd love to help!", ko: "기꺼이 돕고 싶어!" }, { en: "We'd love to join you.", ko: "함께하고 싶어." }] }], L7: [{ title: "be interested in (관심)", pattern: "be interested in + 명사/동명사", rule: "무언가에 관심이 있다고 말할 때 써요. in 뒤에는 명사 또는 동명사가 와요.", ex: [{ en: "She's interested in music.", ko: "그녀는 음악에 관심 있어." }, { en: "I'm interested in cooking.", ko: "나는 요리에 관심 있어." }] }, { title: "want to be (꿈/직업)", pattern: "want to be + 직업명/형용사", rule: "미래에 무엇이 되고 싶은지 말할 때 써요.", ex: [{ en: "I want to be a teacher.", ko: "나는 선생님이 되고 싶어." }, { en: "She wants to be a chef.", ko: "그녀는 요리사가 되고 싶어." }] }, { title: "will be (미래 예측/격려)", pattern: "주어 + will be + 명사/형용사", rule: "미래의 상태를 예측하거나 격려할 때 써요.", ex: [{ en: "You'll be a great designer.", ko: "훌륭한 디자이너가 될 거야." }, { en: "It will be amazing.", ko: "정말 멋질 거야." }] }], L8: [{ title: "I think ~ (의견 표현)", pattern: "I think + 주어 + 동사 / should + 동사원형", rule: "자신의 의견을 말할 때 I think로 시작해요. should는 '~해야 한다'는 조언의 뜻이에요.", ex: [{ en: "I think it's right.", ko: "내 생각엔 맞아." }, { en: "I think we should go.", ko: "우리 가야 할 것 같아." }] }, { title: "I agree / I disagree (동의/반대)", pattern: "I agree (with ~) / I disagree (with ~)", rule: "다른 사람의 의견에 동의하거나 반대할 때 써요.", ex: [{ en: "I agree with your opinion.", ko: "네 의견에 동의해." }, { en: "I disagree with that idea.", ko: "그 생각에 반대야." }] }, { title: "In my opinion (의견)", pattern: "In my opinion, + 주어 + 동사", rule: "'내 의견으로는'이라며 자신의 관점을 말할 때 써요.", ex: [{ en: "In my opinion, exercise is important.", ko: "내 생각엔 운동이 중요해." }, { en: "In my view, studying is fun.", ko: "내 관점에서 공부는 재밌어." }] }] }; const EXAM_QUESTIONS = { L1: [{ type: '어휘선택', q: '다음 중 "음악"에 해당하는 영어 단어는?', opts: ['history', 'science', 'music', 'math', 'P.E.'], ans: 2, exp: 'music = 음악' }, { type: '빈칸채우기', q: 'A: _____ your favorite subject?\\nB: I love science.', opts: ["What's", "When's", "How's", "Where's", "Who's"], ans: 0, exp: '"What\'s your favorite subject?"는 좋아하는 과목을 묻는 표현' }, { type: '내용일치', q: '대화에서 미나에 대한 설명으로 알맞은 것은?', opts: ['과학을 좋아한다', '수학을 좋아한다', '학교 밴드부다', '역사를 좋아한다', 'P.E.를 한다'], ans: 2, exp: '"I\'m in the school band."' }, { type: '어법선택', q: '다음 중 어법상 올바른 문장은?', opts: ['Nice meet you', 'Nice to meets you', 'Nice to meeting you', 'Nice to meet you', 'Nice meeting with you'], ans: 3, exp: 'nice to + 동사원형 → Nice to meet you!' }, { type: '영작', q: '"나의 가장 좋아하는 과목은 역사야." 를 영어로 쓰시오.', opts: null, ans: 'My favorite subject is history.', exp: 'My favorite 명사 is ~. 패턴' }], L2: [{ type: '어휘선택', q: '다음 빈도부사 중 "가끔"을 의미하는 것은?', opts: ['always', 'usually', 'often', 'sometimes', 'never'], ans: 3, exp: 'sometimes = 가끔, 때때로' }, { type: '빈칸채우기', q: '_____ do you exercise?\\n— I exercise three times a week.', opts: ['What time', 'How often', 'How many', 'When', 'Where'], ans: 1, exp: '"How often"은 빈도를 묻는 표현' }, { type: '내용일치', q: '대화에서 B가 운동하는 빈도는?', opts: ['매일', '일주일에 3번', '일주일에 한 번', '한 달에 한 번', '전혀 안 함'], ans: 1, exp: '"I usually exercise three times a week."' }, { type: '어법선택', q: '빈도부사의 위치가 올바른 문장은?', opts: ['Always I eat breakfast', 'I eat always breakfast', 'I always eat breakfast', 'Eat I always breakfast', 'I eat breakfast always now'], ans: 2, exp: '빈도부사는 일반동사 앞, be동사 뒤에 위치' }, { type: '영작', q: '"왜 우리 팀에 들어오는 건 어때?" 를 영어로 쓰시오.', opts: null, ans: "Why don't you join our team?", exp: "Why don't you + 동사원형? = ~하는 게 어때?" }], L3: [{ type: '어휘선택', q: '"걱정되는"에 해당하는 영어 단어는?', opts: ['nervous', 'excited', 'worried', 'surprised', 'scared'], ans: 2, exp: 'worried = 걱정되는' }, { type: '빈칸채우기', q: 'A: You look _____. What\'s wrong?\\nB: I have a big test tomorrow.', opts: ['excited', 'nervous', 'happy', 'worried', 'proud'], ans: 3, exp: '걱정돼 보인다는 표현 → worried' }, { type: '내용일치', q: '대화에서 B가 긴장한 이유는?', opts: ['발표가 있어서', '숙제가 많아서', '시험이 있어서', '선생님께 혼나서', '친구와 싸워서'], ans: 2, exp: '"I have a big test tomorrow."' }, { type: '어법선택', q: '"I feel ___." 빈칸에 알맞은 것은? (excited)', opts: ['excite', 'to excite', 'excitedly', 'excited', 'exciting'], ans: 3, exp: 'feel + 형용사 (감정 형용사)' }, { type: '영작', q: '"힘내!" 를 영어로 쓰시오.', opts: null, ans: 'Cheer up!', exp: 'Cheer up! = 힘내! (격려 표현)' }], L4: [{ type: '어휘선택', q: '"박물관"에 해당하는 영어 단어는?', opts: ['palace', 'market', 'island', 'museum', 'mountain'], ans: 3, exp: 'museum = 박물관' }, { type: '빈칸채우기', q: 'I\'m _____ to visit Jeju Island this summer.', opts: ['go', 'going', 'gone', 'goes', 'went'], ans: 1, exp: 'be going to + 동사원형 (미래 계획)' }, { type: '내용일치', q: '대화에서 B가 여름에 방문할 곳은?', opts: ['Busan', 'Seoul', 'Jeju Island', 'Gyeongju', 'Sokcho'], ans: 2, exp: '"I\'m going to visit Jeju Island."' }, { type: '어법선택', q: '"be going to" 의문문으로 올바른 것은?', opts: ['Do you going to go?', 'Are you going to go?', 'Is you going to go?', 'You are going to go?', 'Will you going to go?'], ans: 1, exp: 'be going to 의문문: Are/Is + 주어 + going to + 동사원형?' }, { type: '영작', q: '"나는 이번 여름에 부산을 방문할 거야." 를 영어로 쓰시오.', opts: null, ans: "I'm going to visit Busan this summer.", exp: "be going to = 계획된 미래" }], L5: [{ type: '어휘선택', q: '"단서"에 해당하는 영어 단어는?', opts: ['mystery', 'clue', 'rule', 'permission', 'evidence'], ans: 1, exp: 'clue = 단서' }, { type: '빈칸채우기', q: '_____ I use your dictionary?\\n— Sure, go ahead.', opts: ['Should', 'Will', 'May', 'Do', 'Would'], ans: 2, exp: 'May I = 허락을 정중하게 요청하는 표현' }, { type: '내용일치', q: '대화에서 내부에서 금지된 것은?', opts: ['음식 먹기', '사진 찍기', '전화하기', '뛰기', '노래하기'], ans: 1, exp: '"you must not take pictures inside."' }, { type: '어법선택', q: '다음 중 "금지" 표현으로 옳은 것은?', opts: ["You don't must run", "You must not run", "You not must run", "You mustn't to run", "You won't must run"], ans: 1, exp: 'must not + 동사원형 = 강한 금지' }, { type: '영작', q: '"들어가도 되나요?" 를 영어로 쓰시오.', opts: null, ans: 'May I come in?', exp: 'May I + 동사원형? = ~해도 될까요?' }], L6: [{ type: '어휘선택', q: '"재활용하다"에 해당하는 영어 단어는?', opts: ['pollute', 'volunteer', 'recycle', 'campaign', 'refuse'], ans: 2, exp: 'recycle = 재활용하다' }, { type: '빈칸채우기', q: '_____ you help me pick up the trash?', opts: ['Would', 'Should', 'Can', 'May', 'Shall'], ans: 2, exp: 'Can you + 동사원형? = ~해줄 수 있어? (부탁)' }, { type: '내용일치', q: 'C가 캠페인에 참여하지 못하는 이유는?', opts: ['몸이 아파서', '숙제가 있어서', '집에 가야 해서', '약속이 있어서', '피곤해서'], ans: 2, exp: '"I have to go home now."' }, { type: '어법선택', q: '다음 중 거절 표현으로 가장 자연스러운 것은?', opts: ["I'm sorry, but I can", "I'm sorry, but I can't", "I'm sorry but can I", "Sorry I can't not", "I'm not sorry, I can't"], ans: 1, exp: "I'm sorry, but I can't. = 정중한 거절" }, { type: '영작', q: '"미안해, 하지만 나는 못 해." 를 영어로 쓰시오.', opts: null, ans: "I'm sorry, but I can't.", exp: "I'm sorry, but + 이유 = 정중한 거절" }], L7: [{ type: '어휘선택', q: '"창의적인"에 해당하는 영어 단어는?', opts: ['talented', 'creative', 'interested', 'future', 'career'], ans: 1, exp: 'creative = 창의적인' }, { type: '빈칸채우기', q: 'I\'m interested _____ space.', opts: ['at', 'on', 'for', 'in', 'to'], ans: 3, exp: 'be interested in = ~에 관심이 있다' }, { type: '내용일치', q: 'B가 미래에 되고 싶은 직업은?', opts: ['designer', 'musician', 'scientist', 'chef', 'teacher'], ans: 2, exp: '"I want to be a scientist."' }, { type: '어법선택', q: '"I want _____ be a designer." 빈칸에 알맞은 것은?', opts: ['to', 'on', 'in', 'for', 'about'], ans: 0, exp: 'want to + 동사원형 = ~하고 싶다' }, { type: '영작', q: '"나는 요리사가 되고 싶어." 를 영어로 쓰시오.', opts: null, ans: 'I want to be a chef.', exp: 'want to be + 직업명 = ~가 되고 싶다' }], L8: [{ type: '어휘선택', q: '"개인정보"에 해당하는 영어 단어는?', opts: ['comment', 'online', 'balance', 'privacy', 'upload'], ans: 3, exp: 'privacy = 개인정보, 사생활' }, { type: '빈칸채우기', q: '_____ my opinion, balance is important.', opts: ['By', 'On', 'In', 'At', 'For'], ans: 2, exp: 'In my opinion = 내 의견으로는' }, { type: '내용일치', q: 'C가 화면 시간 제한에 반대하는 이유는?', opts: ['소셜 미디어가 나쁘다', '온라인에서 많이 배울 수 있다', '시간이 낭비된다', '눈이 나빠진다', '중독성이 있다'], ans: 1, exp: '"We can learn a lot online."' }, { type: '어법선택', q: '다음 중 의견 표현 문장으로 옳은 것은?', opts: ['I think we should limits', 'I think we should limit', 'I thinks we should limit', 'I think we should limited', 'I think we should to limit'], ans: 1, exp: 'should + 동사원형 (조동사 뒤 동사원형)' }, { type: '영작', q: '"내 생각에 우리는 현명하게 사용해야 해." 를 영어로 쓰시오.', opts: null, ans: 'I think we should use it wisely.', exp: 'I think + 주어 + should + 동사원형' }] }; const ACHIEVEMENTS = [{ id: 'first_word', emoji: '🌱', name: '첫걸음', desc: '첫 단어 학습' }, { id: '3day_streak', emoji: '🔥', name: '불꽃', desc: '3일 연속 학습' }, { id: 'unit_master', emoji: '⭐', name: '마스터', desc: '한 단원 100% 암기' }, { id: 'test_perfect', emoji: '📝', name: '시험왕', desc: '시험 5/5 정답' }]; let state = { xp: 0, level: 0, settings: { front: true, darkMode: false, dailyGoal: 20 }, progress: {}, streak: { count: 0, lastDate: null }, studyDates: [], achievements: [], todayStats: { words: 0, correct: 0, total: 0, tests: 0 } }; LESSONS.forEach(lesson => { state.progress[lesson.id] = { wordScores: WORDS[lesson.id].map(() => 0), listenDone: false, memo: '' } }); const app = { loadState() { const saved = localStorage.getItem(STORAGE_KEY); if (saved) { state = { ...state, ...JSON.parse(saved) }; LESSONS.forEach(lesson => { if (!state.progress[lesson.id]) { state.progress[lesson.id] = { wordScores: WORDS[lesson.id].map(() => 0), listenDone: false, memo: '' } } }); } if (state.settings.darkMode) { document.documentElement.classList.add('dark'); setTimeout(() => { const di = document.getElementById('darkIcon'); if (di) di.className = 'ri-sun-line'; }, 0); } }, saveState() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)) }, getLevelName(xp) { if (xp < 100) return '새싹'; if (xp < 250) return '초보'; if (xp < 500) return '기초'; if (xp < 900) return '중급'; return '상급' }, getLevelRange(xp) { const levels = [{ name: '새싹', min: 0, max: 100 }, { name: '초보', min: 100, max: 250 }, { name: '기초', min: 250, max: 500 }, { name: '중급', min: 500, max: 900 }, { name: '상급', min: 900, max: 99999 }]; const current = levels.find(l => xp >= l.min && xp < l.max); return current || levels[4] }, addXP(amount) { state.xp += amount; this.saveState(); this.updateUI(); this.checkAchievements() }, showXPFloat(elem, amount) { const rect = elem.getBoundingClientRect(); const float = document.createElement('div'); float.className = 'xp-float'; float.textContent = `+${amount} XP`; float.style.left = (rect.left + rect.width / 2) + 'px'; float.style.top = (rect.top) + 'px'; document.body.appendChild(float); setTimeout(() => float.remove(), 1000) }, updateStreak() { const today = new Date().toISOString().split('T')[0]; if (state.streak.lastDate === today) return; const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0]; if (state.streak.lastDate === yesterday) { state.streak.count++ } else { state.streak.count = 1 } state.streak.lastDate = today; this.saveState() }, getMotivationalMessage() { const streak = state.streak.count; if (streak < 3) return '시작이 반이야! 계속 힘내!'; if (streak < 7) return '벌써 3일이야? 대단해!'; if (streak < 14) return '일주일 이상! 정말 대단해!'; if (streak < 30) return '거의 한 달이야! 당신은 최고야!'; return '30일 이상! 당신은 영어 챔피언이야!' }, getRecommendedLesson() { let maxDue = -1; let recommendedId = 'L1'; LESSONS.forEach(lesson => { const scores = state.progress[lesson.id].wordScores; const due = scores.filter(s => s < 2).length; if (due > maxDue) { maxDue = due; recommendedId = lesson.id } }); const lesson = LESSONS.find(l => l.id === recommendedId); if (maxDue > 0) { return `${lesson.title}에서 ${maxDue}개의 단어를 복습해보세요!` } return `${lesson.title}을 공부해보세요!` }, updateUI() { this.updateHome(); this.updateProgress() }, updateHome() { const gridHTML = LESSONS.map((lesson) => { const scores = state.progress[lesson.id].wordScores; const mastered = scores.filter(s => s === 2).length; const percent = Math.round((mastered / scores.length) * 100); return `<div class="lesson-card"><div class="lesson-title">${lesson.title}</div><div class="lesson-progress">${mastered}/${scores.length} 암기</div><div class="small-progress-bar"><div class="small-progress-fill" style="width: ${percent}%"></div></div></div>` }).join(''); document.getElementById('lessonGrid').innerHTML = gridHTML }, updateProgress() { const totalMastered = Object.values(state.progress).reduce((sum, p) => { return sum + p.wordScores.filter(s => s === 2).length }, 0); const levelRange = this.getLevelRange(state.xp); const progressInLevel = state.xp - levelRange.min; const totalInLevel = levelRange.max - levelRange.min; const progressPercent = Math.round((progressInLevel / totalInLevel) * 100); const statsHTML = `<div class="stat-card"><div class="stat-label">총 XP</div><div class="stat-value">${state.xp}</div></div><div class="stat-card"><div class="stat-label">레벨</div><div class="stat-value">${this.getLevelName(state.xp)}</div></div><div class="stat-card"><div class="stat-label">스트릭</div><div class="stat-value">${state.streak.count}일</div></div><div class="stat-card"><div class="stat-label">암기 단어</div><div class="stat-value">${totalMastered}</div></div>`; const statsGrid = document.getElementById('statsGrid'); if (statsGrid) statsGrid.innerHTML = statsHTML; const achievementHTML = ACHIEVEMENTS.map(ach => { const unlocked = state.achievements.includes(ach.id); return `<div class="achievement-badge ${unlocked ? 'unlocked' : 'locked'}"><div class="achievement-emoji">${ach.emoji}</div><div class="achievement-name">${ach.name}</div></div>` }).join(''); const achievementGrid = document.getElementById('achievementGrid'); if (achievementGrid) achievementGrid.innerHTML = achievementHTML; const calendarHTML = Array.from({ length: 7 }, (_, i) => { const date = new Date(Date.now() - (6 - i) * 86400000).toISOString().split('T')[0]; const studied = state.studyDates.includes(date); const isToday = date === new Date().toISOString().split('T')[0]; return `<div class="calendar-day ${studied ? 'studied' : ''} ${isToday ? 'today' : ''}">${new Date(date).getDate()}</div>` }).join(''); const calendarGrid = document.getElementById('calendarGrid'); if (calendarGrid) calendarGrid.innerHTML = calendarHTML }, showPage(pageId) { document.getElementById('main-header').style.display='';document.getElementById('detail-header').classList.remove('visible'); document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.getElementById(pageId).classList.add('active'); document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active')); const navBtn = document.querySelector(`.nav-btn[data-page="${pageId}"]`); if(navBtn) navBtn.classList.add('active'); if (pageId === 'home') { this.updateHome(); this.updateProgress() } }, showVocabLessonSelect() { document.getElementById('main-header').style.display='';document.getElementById('detail-header').classList.remove('visible'); document.getElementById('vocabLessonSelect').style.display = 'grid'; document.getElementById('flashcardArea').style.display = 'none'; const selectorHTML = LESSONS.map(lesson => { const scores = state.progress[lesson.id].wordScores; const due = scores.filter(s => s < 2).length; return `<div class="lesson-select-card" onclick="app.startVocabLesson('${lesson.id}')"><div class="lesson-select-title">${lesson.title}</div><div class="lesson-select-desc">${due}개 단어 복습</div></div>` }).join(''); document.getElementById('vocabLessonSelect').innerHTML = selectorHTML }, startVocabLesson(lessonId) { document.getElementById('main-header').style.display='none';document.getElementById('detail-header').classList.add('visible');const lessonTitle = LESSONS.find(l=>l.id===lessonId)?.title||'';document.getElementById('detail-title').textContent = lessonTitle + ' 단어';document.getElementById('detail-back-btn').onclick = () => app.showVocabLessonSelect(); document.getElementById('vocabLessonSelect').style.display = 'none'; document.getElementById('flashcardArea').style.display = 'block'; const words = WORDS[lessonId]; const scores = state.progress[lessonId].wordScores; const indices = words.map((_, i) => i).sort((a, b) => scores[a] - scores[b]); this.vocabState = { lessonId, words, scores, indices, currentIdx: 0 }; this.showFlashcard() }, showFlashcard() { const { words, scores, indices, currentIdx } = this.vocabState; const wordIdx = indices[currentIdx]; const word = words[wordIdx]; const score = scores[wordIdx]; let tag = '🆕새단어'; if (score === 1) tag = '<i class="ri-book-open-line"></i>학습중'; if (score === 2) tag = '<i class="ri-checkbox-circle-fill"></i>암기'; const html = `<div class="flashcard"><span class="flashcard-tag">${tag}</span><div class="flashcard-front">${word.en}</div><div class="flashcard-example">"${word.ex}"</div></div><div class="rating-buttons"><button class="rating-btn btn-hard" onclick="app.rateWord(${wordIdx}, 0)">모름 (0)</button><button class="rating-btn btn-medium" onclick="app.rateWord(${wordIdx}, 1)">애매 (1)</button><button class="rating-btn btn-easy" onclick="app.rateWord(${wordIdx}, 2)">알아요 (2)</button></div><div class="progress-label" id="flashcardProgress">${currentIdx + 1}/${indices.length}</div><div class="small-progress-bar"><div class="small-progress-fill" id="flashcardProgressBar" style="width: ${((currentIdx+1)/indices.length)*100}%"></div></div>`;document.getElementById('flashcardContainer').innerHTML=html},rateWord(wordIdx,score){const{lessonId}=this.vocabState;state.progress[lessonId].wordScores[wordIdx]=score;const xpGains=[2,5,10];const xp=xpGains[score];this.addXP(xp);const button=event.target;this.showXPFloat(button,xp);state.todayStats.words++;const today=new Date().toISOString().split('T')[0];if(!state.studyDates.includes(today)){state.studyDates.push(today)}this.updateStreak();this.vocabState.currentIdx++;if(this.vocabState.currentIdx<this.vocabState.indices.length){this.showFlashcard()}else{const html=`<div style="text-align: center; padding: 2rem;"><div style="font-size: 3rem; margin-bottom: 1rem;">🎉</div><div style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem;">완료!</div><div style="color: var(--muted-fg); margin-bottom: 2rem;">모든 단어를 복습했어요!</div><button class="btn-primary" onclick="app.showVocabLessonSelect()">돌아가기</button></div>`;document.getElementById('flashcardContainer').innerHTML=html}this.saveState()},toggleKorean(){const hidden=document.body.classList.toggle('korean-hidden');const btns=document.querySelectorAll('.script-ko');btns.forEach(btn=>{if(hidden){btn.classList.add('hidden')}else{btn.classList.remove('hidden')}});const toggleBtn=document.querySelector('.toggle-ko-btn');toggleBtn.textContent=hidden?'한국어 보이기':'한국어 숨기기'},showScriptLessonSelect(){ document.getElementById('main-header').style.display='';document.getElementById('detail-header').classList.remove('visible'); document.getElementById('scriptLessonSelect').style.display='grid';document.getElementById('scriptArea').style.display='none';const selectorHTML=LESSONS.map(lesson=>{return`<div class="lesson-select-card" onclick="app.startScriptLesson('${lesson.id}')"><div class="lesson-select-title">${lesson.title}</div><div class="lesson-select-desc">${lesson.subtitle}</div></div>`}).join('');document.getElementById('scriptLessonSelect').innerHTML=selectorHTML},startScriptLesson(lessonId){document.getElementById('main-header').style.display='none';document.getElementById('detail-header').classList.add('visible');const lsTitle = LESSONS.find(l=>l.id===lessonId)?.title||'';document.getElementById('detail-title').textContent = lsTitle + ' 본문';document.getElementById('detail-back-btn').onclick = () => app.showScriptLessonSelect();document.getElementById('scriptLessonSelect').style.display='none';document.getElementById('scriptArea').style.display='block';const scripts=SCRIPTS[lessonId];const grammar=GRAMMAR[lessonId];const scriptHTML=scripts.map(line=>`<div class="script-line"><div class="script-speaker">${line.s}</div><div class="script-text"><div class="script-en">${line.en}</div><div class="script-ko">${line.ko}</div></div></div>`).join('');document.getElementById('script-tab').innerHTML=scriptHTML;const grammarHTML=grammar.map(g=>`<div class="grammar-card"><div class="grammar-title">${g.title}</div><div class="grammar-pattern">${g.pattern}</div><div class="grammar-rule">${g.rule}</div><div class="grammar-examples">${g.ex.map(e=>`<div class="grammar-example"><div class="grammar-ex-en">${e.en}</div><div class="grammar-ex-ko">${e.ko}</div></div>`).join('')}</div></div>`).join('');document.getElementById('grammar-tab').innerHTML=grammarHTML;this.setupTabs()},setupTabs(){const tabBtns=document.querySelectorAll('.tab-btn');const tabContents=document.querySelectorAll('.tab-content');tabBtns.forEach(btn=>{btn.addEventListener('click',(e)=>{const tabId=btn.dataset.tab;tabBtns.forEach(b=>b.classList.remove('active'));tabContents.forEach(tc=>tc.classList.remove('active'));btn.classList.add('active');document.getElementById(tabId).classList.add('active')})})},showTestLessonSelect(){ document.getElementById('main-header').style.display='';document.getElementById('detail-header').classList.remove('visible'); document.getElementById('testLessonSelect').style.display='grid';document.getElementById('quizArea').style.display='none';const selectorHTML=LESSONS.map(lesson=>{return`<div class="lesson-select-card" onclick="app.startTest('${lesson.id}')"><div class="lesson-select-title">${lesson.title}</div><div class="lesson-select-desc">5문제 시험</div></div>`}).join('');document.getElementById('testLessonSelect').innerHTML=selectorHTML},startTest(lessonId){document.getElementById('main-header').style.display='none';document.getElementById('detail-header').classList.add('visible');const testTitle = LESSONS.find(l=>l.id===lessonId)?.title||'';document.getElementById('detail-title').textContent = testTitle + ' 시험';document.getElementById('detail-back-btn').onclick = () => app.showTestLessonSelect();document.getElementById('testLessonSelect').style.display='none';document.getElementById('quizArea').style.display='block';const questions=EXAM_QUESTIONS[lessonId];this.quizState={lessonId,questions,currentIdx:0,score:0,xpEarned:0,answers:[]};this.showQuizQuestion()},showQuizQuestion(){const{questions,currentIdx}=this.quizState;if(currentIdx>=questions.length){this.showQuizScore();return}const q=questions[currentIdx];let optionsHTML='';if(q.type==='영작'){optionsHTML=`<input type="text" class="quiz-input" id="essayInput" placeholder="답을 입력하세요"><button class="btn-primary" onclick="app.submitEssay()">제출</button>`}else{optionsHTML=q.opts.map((opt,i)=>`<button class="option-btn" onclick="app.answerQuestion(${i})" data-idx="${i}">${String.fromCharCode(9312+i)} ${opt}</button>`).join('')}const html=`<div class="quiz-container"><div class="quiz-type-badge">${q.type}</div><div class="quiz-question">${q.q}</div><div class="quiz-options">${optionsHTML}</div><div class="quiz-explanation" id="explanation"></div></div>`;document.getElementById('quizContainer').innerHTML=html;if(q.type==='영작'){setTimeout(()=>document.getElementById('essayInput').focus(),100)}},answerQuestion(optionIdx){const{questions,currentIdx}=this.quizState;const q=questions[currentIdx];const isCorrect=optionIdx===q.ans;if(isCorrect){this.quizState.score++;this.quizState.xpEarned+=15;this.addXP(15);this.quizState.answers.push(true)}this.showQuizFeedback(isCorrect,q)},submitEssay(){const{questions,currentIdx}=this.quizState;const q=questions[currentIdx];const userAnswer=document.getElementById('essayInput').value.trim().toLowerCase();const correctAnswer=q.ans.toLowerCase();const keywords=correctAnswer.split(' ').filter(w=>w.length>3);const isCorrect=keywords.every(kw=>userAnswer.includes(kw));if(isCorrect){this.quizState.score++;this.quizState.xpEarned+=15;this.addXP(15);this.quizState.answers.push(true)}else{this.quizState.answers.push(false)}this.showQuizFeedback(isCorrect,q)},showQuizFeedback(isCorrect,question){const buttons=document.querySelectorAll('.option-btn');buttons.forEach((btn,i)=>{if(i===question.ans){btn.classList.add('correct')}else if(!isCorrect&&btn.classList.contains('selected')){btn.classList.add('incorrect')}btn.disabled=true});const explDiv=document.getElementById('explanation');explDiv.classList.add('show');explDiv.innerHTML=`<strong>${isCorrect?'✓ 정답!':'✗ 오답!'}</strong><br>${question.exp}`;setTimeout(()=>{this.quizState.currentIdx++;this.showQuizQuestion()},2000)},showQuizScore(){const{questions,score,xpEarned}=this.quizState;const html=`<div class="score-summary"><div class="score-number">${score}/${questions.length}</div><div class="score-label">획득한 XP</div><div class="score-xp">+${xpEarned} XP</div></div><div style="text-align: center; display: flex; gap: 1rem;"><button class="btn-primary" onclick="app.startTest('${this.quizState.lessonId}')">다시 풀기</button><button class="btn-secondary" onclick="app.showTestLessonSelect()">돌아가기</button></div>`;document.getElementById('quizContainer').innerHTML=html;state.todayStats.correct=(state.todayStats.correct||0)+score;state.todayStats.total=(state.todayStats.total||0)+questions.length;state.todayStats.tests=(state.todayStats.tests||0)+1;const today=new Date().toISOString().split('T')[0];if(!state.studyDates.includes(today)){state.studyDates.push(today)}this.updateStreak();this.saveState()},checkAchievements(){if(!state.achievements.includes('first_word')){const anyWord=Object.values(state.progress).some(p=>p.wordScores.some(s=>s>0));if(anyWord){state.achievements.push('first_word');this.showAchievementToast('🌱 첫걸음','첫 단어를 학습했어요!')}}if(!state.achievements.includes('3day_streak')&&state.streak.count>=3){state.achievements.push('3day_streak');this.showAchievementToast('🔥 불꽃','3일 연속 학습했어요!')}if(!state.achievements.includes('unit_master')){const anyUnit=Object.values(state.progress).some(p=>{return p.wordScores.every(s=>s===2)});if(anyUnit){state.achievements.push('unit_master');this.showAchievementToast('⭐ 마스터','한 단원을 완벽하게 암기했어요!')}}if(!state.achievements.includes('test_perfect')){if(state.todayStats.correct>0&&state.todayStats.correct===state.todayStats.total&&state.todayStats.total>=5){state.achievements.push('test_perfect');this.showAchievementToast('📝 시험왕','시험에서 완벽한 점수를 얻었어요!')}}this.saveState()},showAchievementToast(title,desc){const toast=document.createElement('div');toast.className='toast';toast.innerHTML=`<strong>${title}</strong><br>${desc}`;document.body.appendChild(toast);setTimeout(()=>toast.remove(),3000)},toggleDarkMode(){state.settings.darkMode=!state.settings.darkMode;if(state.settings.darkMode){document.documentElement.classList.add('dark')}else{document.documentElement.classList.remove('dark')}this.saveState()}};app.loadState();app.updateUI();document.querySelectorAll('.nav-btn').forEach(btn=>{btn.addEventListener('click',(e)=>{const pageId=e.target.dataset.page;app.showPage(pageId)})});document.querySelector('.dark-toggle').addEventListener('click',()=>{app.toggleDarkMode()});app.showVocabLessonSelect();app.showScriptLessonSelect();app.showTestLessonSelect();app.showPage('vocab');
+    </script>
+</body>
+</html>

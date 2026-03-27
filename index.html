@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JY 영어 학습</title>
+  <link href="https://cdn.jsdelivr.net/npm/pretendard@3.3.5/dist/web/static/pretendard.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet">
+  <style>
+    :root {
+      --bg:            #F1EFE8;
+      --fg:            #2C2C2A;
+      --card:          #FFFFFF;
+      --surface:       #E8E6DF;
+      --primary:       #378ADD;
+      --primary-fg:    #FFFFFF;
+      --primary-light: #E6F1FB;
+      --primary-dark:  #185FA5;
+      --muted:         #E8E6DF;
+      --muted-fg:      #888780;
+      --border:        #D3D1C7;
+      --success:       #639922;
+      --success-light: #EAF3DE;
+      --success-dark:  #27500A;
+      --amber:         #BA7517;
+      --amber-light:   #FAEEDA;
+      --amber-dark:    #633806;
+      --fail:          #E24B4A;
+      --sh:    0 1px 2px rgba(0,0,0,.06), 0 1px 3px rgba(0,0,0,.08);
+      --sh-md: 0 2px 8px rgba(0,0,0,.10), 0 1px 4px rgba(0,0,0,.06);
+      --radius: 4px;
+      --font: 'Pretendard', ui-sans-serif, system-ui, -apple-system, sans-serif;
+    }
+    .dark {
+      --bg:            #1E1D1A;
+      --fg:            #D3D1C7;
+      --card:          #2A2926;
+      --surface:       #1A1918;
+      --primary:       #85B7EB;
+      --primary-fg:    #0C447C;
+      --primary-light: #1C2E40;
+      --primary-dark:  #378ADD;
+      --muted:         #1A1918;
+      --muted-fg:      #888780;
+      --border:        #3A3835;
+      --success:       #4A7A1A;
+      --success-light: #1E2E10;
+      --success-dark:  #D3D1C7;
+      --amber:         #BA7517;
+      --amber-light:   #2C2413;
+      --amber-dark:    #FAEEDA;
+      --sh:    0 1px 3px rgba(0,0,0,.3);
+      --sh-md: 0 2px 8px rgba(0,0,0,.35);
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: var(--font);
+      font-size: 17px;
+      line-height: 1.6;
+      background: var(--bg);
+      color: var(--fg);
+      min-height: 100vh;
+      transition: background .3s, color .3s;
+    }
+
+    /* ── Layout ─────────────────────────────────────────── */
+    .wrap {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 2rem 1.25rem 4rem;
+    }
+
+    /* ── Header ─────────────────────────────────────────── */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 3rem;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--fg);
+      text-decoration: none;
+    }
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+      background: var(--primary);
+      color: var(--primary-fg);
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+    .dark-toggle {
+      width: 36px;
+      height: 36px;
+      background: var(--surface);
+      color: var(--muted-fg);
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      transition: background .2s, color .2s, transform .2s;
+    }
+    .dark-toggle:hover { transform: scale(1.1); color: var(--fg); }
+
+    /* ── Hero ────────────────────────────────────────────── */
+    .hero {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+    .hero-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--fg);
+      margin-bottom: .5rem;
+    }
+    .hero-sub {
+      font-size: 1rem;
+      color: var(--muted-fg);
+    }
+
+    /* ── App Cards ───────────────────────────────────────── */
+    .app-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .app-card {
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2rem 1.5rem 1.75rem;
+      text-decoration: none;
+      color: var(--fg);
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+      box-shadow: var(--sh);
+      transition: border-color .2s, box-shadow .2s, transform .2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .app-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--card-accent, var(--primary));
+    }
+    .app-card:hover {
+      border-color: var(--card-accent, var(--primary));
+      box-shadow: var(--sh-md);
+      transform: translateY(-3px);
+    }
+
+    /* 카드별 강조색 */
+    .card-vocab    { --card-accent: var(--primary); }
+    .card-english  { --card-accent: var(--success); }
+    .card-listening{ --card-accent: var(--amber); }
+
+    .app-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+    }
+    .card-vocab     .app-icon { background: var(--primary-light); color: var(--primary-dark); }
+    .card-english   .app-icon { background: var(--success-light); color: var(--success-dark); }
+    .card-listening .app-icon { background: var(--amber-light);   color: var(--amber-dark);   }
+
+    .app-info { flex: 1; }
+    .app-name {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: .35rem;
+      color: var(--fg);
+    }
+    .app-desc {
+      font-size: .9rem;
+      color: var(--muted-fg);
+      line-height: 1.5;
+    }
+
+    .app-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .4rem;
+      margin-top: .25rem;
+    }
+    .tag {
+      font-size: .75rem;
+      font-weight: 500;
+      padding: .2rem .6rem;
+      border-radius: var(--radius);
+    }
+    .card-vocab     .tag { background: var(--primary-light); color: var(--primary-dark); }
+    .card-english   .tag { background: var(--success-light); color: var(--success-dark); }
+    .card-listening .tag { background: var(--amber-light);   color: var(--amber-dark);   }
+
+    .app-arrow {
+      align-self: flex-end;
+      font-size: 18px;
+      color: var(--muted-fg);
+      transition: color .2s, transform .2s;
+    }
+    .app-card:hover .app-arrow {
+      color: var(--card-accent, var(--primary));
+      transform: translateX(4px);
+    }
+
+    /* ── Divider ─────────────────────────────────────────── */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 2.5rem 0;
+    }
+
+    /* ── Footer ─────────────────────────────────────────── */
+    footer {
+      text-align: center;
+      font-size: .85rem;
+      color: var(--muted-fg);
+    }
+
+    @media (max-width: 500px) {
+      .app-grid { grid-template-columns: 1fr; }
+      .hero-title { font-size: 1.4rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <a class="logo" href="#">
+        <div class="logo-icon"><i class="ri-graduation-cap-line"></i></div>
+        JY 영어 학습
+      </a>
+      <button class="dark-toggle" id="darkBtn" aria-label="다크모드 전환">
+        <i id="darkIcon" class="ri-moon-line"></i>
+      </button>
+    </header>
+
+    <div class="hero">
+      <div class="hero-title">어디서 공부할까요?</div>
+      <div class="hero-sub">학습 앱을 선택해 바로 시작하세요</div>
+    </div>
+
+    <div class="app-grid">
+
+      <!-- 단어학습 -->
+      <a class="app-card card-vocab" href="단어학습_앱.html">
+        <div class="app-icon"><i class="ri-english-input"></i></div>
+        <div class="app-info">
+          <div class="app-name">중학 영단어 1800</div>
+          <div class="app-desc">레벨별 단어 암기 · 플래시카드 · 받아쓰기</div>
+          <div class="app-tags">
+            <span class="tag">단어</span>
+            <span class="tag">플래시카드</span>
+            <span class="tag">암기</span>
+          </div>
+        </div>
+        <i class="ri-arrow-right-line app-arrow"></i>
+      </a>
+
+      <!-- 영어학습 -->
+      <a class="app-card card-english" href="영어학습_앱.html">
+        <div class="app-icon"><i class="ri-book-2-line"></i></div>
+        <div class="app-info">
+          <div class="app-name">중1 영어 학습</div>
+          <div class="app-desc">단원별 본문 · 문법 정리 · 퀴즈 · 진도 관리</div>
+          <div class="app-tags">
+            <span class="tag">본문</span>
+            <span class="tag">문법</span>
+            <span class="tag">퀴즈</span>
+          </div>
+        </div>
+        <i class="ri-arrow-right-line app-arrow"></i>
+      </a>
+
+      <!-- 리스닝 -->
+      <a class="app-card card-listening" href="03.리스닝/리스닝_앱.html">
+        <div class="app-icon"><i class="ri-headphone-line"></i></div>
+        <div class="app-info">
+          <div class="app-name">영어듣기 연습</div>
+          <div class="app-desc">수능형 듣기 평가 · 14회차 · 스크립트 확인</div>
+          <div class="app-tags">
+            <span class="tag">듣기</span>
+            <span class="tag">평가</span>
+            <span class="tag">스크립트</span>
+          </div>
+        </div>
+        <i class="ri-arrow-right-line app-arrow"></i>
+      </a>
+
+    </div>
+
+    <hr class="divider">
+
+    <footer>JY 영어 학습 · 중학교 1학년</footer>
+  </div>
+
+  <script>
+    const DARK_KEY = 'jy_gate_dark';
+    const btn  = document.getElementById('darkBtn');
+    const icon = document.getElementById('darkIcon');
+    const html = document.documentElement;
+
+    function applyDark(on) {
+      html.classList.toggle('dark', on);
+      icon.className = on ? 'ri-sun-line' : 'ri-moon-line';
+      localStorage.setItem(DARK_KEY, on ? '1' : '0');
+    }
+
+    // 초기 상태: 기존 앱들의 dark 설정 우선 반영
+    (function init() {
+      // 영어학습_앱 상태 확인
+      try {
+        const eng = JSON.parse(localStorage.getItem('jy_english_v3') || '{}');
+        if (eng?.settings?.darkMode !== undefined) { applyDark(eng.settings.darkMode); return; }
+      } catch(e) {}
+      // gate 자체 저장값
+      const saved = localStorage.getItem(DARK_KEY);
+      applyDark(saved === '1');
+    })();
+
+    btn.addEventListener('click', () => {
+      const isDark = html.classList.contains('dark');
+      applyDark(!isDark);
+    });
+  </script>
+</body>
+</html>
