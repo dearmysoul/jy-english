@@ -503,16 +503,17 @@
       applyDark(!isDark);
     });
 
-    // ── 데이터 키 목록 ────────────────────────────
+    // ── 학습 데이터 키 (완료 배지용) ─────────────
     const DATA_KEYS = ['vocab1800_v1', 'jy_english_v3', 'listen_v2'];
 
-    // ── 내보내기 ──────────────────────────────────
+    // ── 내보내기 (localStorage 전체) ─────────────
     function exportData() {
       const backup = {};
-      DATA_KEYS.forEach(k => {
-        const v = localStorage.getItem(k);
-        if (v) backup[k] = JSON.parse(v);
-      });
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        try { backup[k] = JSON.parse(localStorage.getItem(k)); }
+        catch (e) { backup[k] = localStorage.getItem(k); }
+      }
       if (!Object.keys(backup).length) {
         alert('저장된 학습 데이터가 없습니다.');
         return;
@@ -525,7 +526,7 @@
       URL.revokeObjectURL(a.href);
     }
 
-    // ── 가져오기 ──────────────────────────────────
+    // ── 가져오기 (백업 파일 전체 복원) ───────────
     function importData() {
       const input = document.createElement('input');
       input.type = 'file';
@@ -537,11 +538,12 @@
         reader.onload = ev => {
           try {
             const backup = JSON.parse(ev.target.result);
-            let count = 0;
-            DATA_KEYS.forEach(k => {
-              if (backup[k]) { localStorage.setItem(k, JSON.stringify(backup[k])); count++; }
+            const keys = Object.keys(backup);
+            if (!keys.length) { alert('유효한 백업 파일이 아닙니다.'); return; }
+            keys.forEach(k => {
+              const v = backup[k];
+              localStorage.setItem(k, typeof v === 'string' ? v : JSON.stringify(v));
             });
-            if (count === 0) { alert('유효한 백업 파일이 아닙니다.'); return; }
             document.getElementById('migrateOk').classList.add('show');
             setTimeout(() => location.reload(), 1500);
           } catch (err) {
