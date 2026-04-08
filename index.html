@@ -172,6 +172,38 @@
     .card-english  { --card-accent: var(--success); }
     .card-listening{ --card-accent: var(--amber); }
 
+    /* ── 완료 배지 ────────────────────────────────── */
+    .done-badge {
+      display: none;
+      align-items: center;
+      gap: 5px;
+      font-size: .75rem;
+      font-weight: 600;
+      padding: .25rem .65rem;
+      border-radius: var(--radius);
+      background: var(--success-light);
+      color: var(--success-dark);
+      margin-top: .25rem;
+    }
+    .done-badge.show { display: flex; }
+
+    /* ── 오늘 전체 완료 배너 ──────────────────────── */
+    .all-done-banner {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: var(--success-light);
+      color: var(--success-dark);
+      border: 1.5px solid var(--success);
+      border-radius: var(--radius);
+      padding: .9rem 1.25rem;
+      font-weight: 700;
+      font-size: 1rem;
+      margin-bottom: 1.75rem;
+    }
+    .all-done-banner.show { display: flex; }
+
     .app-icon {
       width: 48px;
       height: 48px;
@@ -262,6 +294,11 @@
       <div class="hero-sub">학습 앱을 선택해 바로 시작하세요</div>
     </div>
 
+    <div class="all-done-banner" id="allDoneBanner">
+      <i class="ri-checkbox-circle-fill" style="font-size:20px;"></i>
+      오늘 학습 모두 완료! 수고했어요 🎉
+    </div>
+
     <div class="app-grid">
 
       <!-- 단어학습 -->
@@ -274,6 +311,9 @@
             <span class="tag">단어</span>
             <span class="tag">플래시카드</span>
             <span class="tag">암기</span>
+          </div>
+          <div class="done-badge" id="badge-vocab">
+            <i class="ri-checkbox-circle-fill"></i> 오늘 완료
           </div>
         </div>
         <i class="ri-arrow-right-line app-arrow"></i>
@@ -290,6 +330,9 @@
             <span class="tag">문법</span>
             <span class="tag">퀴즈</span>
           </div>
+          <div class="done-badge" id="badge-english">
+            <i class="ri-checkbox-circle-fill"></i> 오늘 완료
+          </div>
         </div>
         <i class="ri-arrow-right-line app-arrow"></i>
       </a>
@@ -304,6 +347,9 @@
             <span class="tag">듣기</span>
             <span class="tag">평가</span>
             <span class="tag">스크립트</span>
+          </div>
+          <div class="done-badge" id="badge-listening">
+            <i class="ri-checkbox-circle-fill"></i> 오늘 완료
           </div>
         </div>
         <i class="ri-arrow-right-line app-arrow"></i>
@@ -344,6 +390,28 @@
       const isDark = html.classList.contains('dark');
       applyDark(!isDark);
     });
+
+    // ── 오늘 완료 배지 ─────────────────────────────
+    (function checkTodayProgress() {
+      const today = new Date().toISOString().slice(0, 10);
+
+      function isDone(key, checker) {
+        try { return checker(JSON.parse(localStorage.getItem(key) || '{}')); }
+        catch (e) { return false; }
+      }
+
+      const vocabDone    = isDone('vocab1800_v1',  s => Array.isArray(s.studyDates) && s.studyDates.includes(today));
+      const englishDone  = isDone('jy_english_v3', s => Array.isArray(s.studyDates) && s.studyDates.includes(today));
+      const listenDone   = isDone('listen_v2',     s => s.doneDate === today);
+
+      if (vocabDone)   document.getElementById('badge-vocab').classList.add('show');
+      if (englishDone) document.getElementById('badge-english').classList.add('show');
+      if (listenDone)  document.getElementById('badge-listening').classList.add('show');
+
+      if (vocabDone && englishDone && listenDone) {
+        document.getElementById('allDoneBanner').classList.add('show');
+      }
+    })();
   </script>
 </body>
 </html>

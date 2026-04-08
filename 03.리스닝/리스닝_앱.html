@@ -2372,6 +2372,7 @@
       }
       pauseAudio();
       state.submitted[sid] = true;
+      state.doneDate = new Date().toISOString().slice(0, 10);
       saveState();
       renderResult(session);
     }
