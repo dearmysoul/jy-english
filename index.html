@@ -271,6 +271,89 @@
       color: var(--muted-fg);
     }
 
+    /* ── 데이터 마이그레이션 ─────────────────────────────── */
+    .migrate-banner {
+      background: var(--amber-light);
+      border: 1.5px solid var(--amber);
+      border-radius: var(--radius);
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.75rem;
+      display: none;
+    }
+    .migrate-banner.show { display: block; }
+    .migrate-title {
+      font-weight: 700;
+      color: var(--amber-dark);
+      margin-bottom: .4rem;
+      font-size: .95rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .migrate-desc {
+      font-size: .85rem;
+      color: var(--fg);
+      margin-bottom: .85rem;
+      line-height: 1.6;
+    }
+    .migrate-btns {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .6rem;
+    }
+    .migrate-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: .85rem;
+      font-weight: 600;
+      padding: .45rem .9rem;
+      border-radius: var(--radius);
+      border: none;
+      cursor: pointer;
+      transition: opacity .15s;
+    }
+    .migrate-btn:hover { opacity: .85; }
+    .migrate-btn-import {
+      background: var(--amber);
+      color: #fff;
+    }
+    .migrate-btn-export {
+      background: var(--surface);
+      color: var(--fg);
+      border: 1px solid var(--border);
+    }
+    .migrate-ok {
+      font-size: .8rem;
+      color: var(--success);
+      font-weight: 600;
+      display: none;
+      margin-top: .5rem;
+    }
+    .migrate-ok.show { display: block; }
+
+    /* 설정 영역 (푸터 위) */
+    .data-tools {
+      display: flex;
+      justify-content: center;
+      gap: .75rem;
+      flex-wrap: wrap;
+    }
+    .data-tool-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: .8rem;
+      color: var(--muted-fg);
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: .3rem .75rem;
+      cursor: pointer;
+      transition: color .15s, border-color .15s;
+    }
+    .data-tool-btn:hover { color: var(--fg); border-color: var(--fg); }
+
     @media (max-width: 500px) {
       .app-grid { grid-template-columns: 1fr; }
       .hero-title { font-size: 1.4rem; }
@@ -292,6 +375,24 @@
     <div class="hero">
       <div class="hero-title">어디서 공부할까요?</div>
       <div class="hero-sub">학습 앱을 선택해 바로 시작하세요</div>
+    </div>
+
+    <!-- 데이터 마이그레이션 배너 (데이터 없을 때만 표시) -->
+    <div class="migrate-banner" id="migrateBanner">
+      <div class="migrate-title">
+        <i class="ri-information-line"></i> 이전 학습 데이터가 없습니다
+      </div>
+      <div class="migrate-desc">
+        기존에 로컬 파일로 학습한 기록이 있다면, 로컬 파일에서 <strong>백업 파일 내보내기</strong>를 먼저 실행한 뒤 여기서 <strong>가져오기</strong>를 눌러 복원하세요.
+      </div>
+      <div class="migrate-btns">
+        <button class="migrate-btn migrate-btn-import" onclick="importData()">
+          <i class="ri-upload-2-line"></i> 백업 파일 가져오기
+        </button>
+      </div>
+      <div class="migrate-ok" id="migrateOk">
+        <i class="ri-checkbox-circle-fill"></i> 데이터를 성공적으로 복원했습니다. 페이지를 새로고침합니다…
+      </div>
     </div>
 
     <div class="all-done-banner" id="allDoneBanner">
@@ -359,6 +460,17 @@
 
     <hr class="divider">
 
+    <div class="data-tools">
+      <button class="data-tool-btn" onclick="exportData()">
+        <i class="ri-download-2-line"></i> 백업 파일 내보내기
+      </button>
+      <button class="data-tool-btn" onclick="importData()">
+        <i class="ri-upload-2-line"></i> 백업 파일 가져오기
+      </button>
+    </div>
+
+    <hr class="divider" style="margin-top:1.25rem;">
+
     <footer>JY 영어 학습 · 중학교 1학년</footer>
   </div>
 
@@ -390,6 +502,62 @@
       const isDark = html.classList.contains('dark');
       applyDark(!isDark);
     });
+
+    // ── 데이터 키 목록 ────────────────────────────
+    const DATA_KEYS = ['vocab1800_v1', 'jy_english_v3', 'listen_v2'];
+
+    // ── 내보내기 ──────────────────────────────────
+    function exportData() {
+      const backup = {};
+      DATA_KEYS.forEach(k => {
+        const v = localStorage.getItem(k);
+        if (v) backup[k] = JSON.parse(v);
+      });
+      if (!Object.keys(backup).length) {
+        alert('저장된 학습 데이터가 없습니다.');
+        return;
+      }
+      const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'jy-english-backup.json';
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+
+    // ── 가져오기 ──────────────────────────────────
+    function importData() {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = '.json';
+      input.onchange = e => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = ev => {
+          try {
+            const backup = JSON.parse(ev.target.result);
+            let count = 0;
+            DATA_KEYS.forEach(k => {
+              if (backup[k]) { localStorage.setItem(k, JSON.stringify(backup[k])); count++; }
+            });
+            if (count === 0) { alert('유효한 백업 파일이 아닙니다.'); return; }
+            document.getElementById('migrateOk').classList.add('show');
+            setTimeout(() => location.reload(), 1500);
+          } catch (err) {
+            alert('파일을 읽는 중 오류가 발생했습니다.');
+          }
+        };
+        reader.readAsText(file);
+      };
+      input.click();
+    }
+
+    // ── 마이그레이션 배너 (데이터 없을 때만) ──────
+    (function checkMigrate() {
+      const hasData = DATA_KEYS.some(k => localStorage.getItem(k));
+      if (!hasData) document.getElementById('migrateBanner').classList.add('show');
+    })();
 
     // ── 오늘 완료 배지 ─────────────────────────────
     (function checkTodayProgress() {
