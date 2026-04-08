@@ -172,20 +172,29 @@
     .card-english  { --card-accent: var(--success); }
     .card-listening{ --card-accent: var(--amber); }
 
-    /* ── 완료 배지 ────────────────────────────────── */
-    .done-badge {
-      display: none;
-      align-items: center;
-      gap: 5px;
+    /* ── 진행 현황 ────────────────────────────────── */
+    .card-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .4rem;
+      margin-top: .5rem;
+    }
+    .stat-chip {
       font-size: .75rem;
-      font-weight: 600;
-      padding: .25rem .65rem;
+      font-weight: 500;
+      padding: .2rem .6rem;
       border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--muted-fg);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .stat-chip.today {
       background: var(--success-light);
       color: var(--success-dark);
-      margin-top: .25rem;
+      font-weight: 700;
     }
-    .done-badge.show { display: flex; }
 
     /* ── 오늘 전체 완료 배너 ──────────────────────── */
     .all-done-banner {
@@ -413,9 +422,7 @@
             <span class="tag">플래시카드</span>
             <span class="tag">암기</span>
           </div>
-          <div class="done-badge" id="badge-vocab">
-            <i class="ri-checkbox-circle-fill"></i> 오늘 완료
-          </div>
+          <div class="card-stats" id="stats-vocab"></div>
         </div>
         <i class="ri-arrow-right-line app-arrow"></i>
       </a>
@@ -431,9 +438,7 @@
             <span class="tag">문법</span>
             <span class="tag">퀴즈</span>
           </div>
-          <div class="done-badge" id="badge-english">
-            <i class="ri-checkbox-circle-fill"></i> 오늘 완료
-          </div>
+          <div class="card-stats" id="stats-english"></div>
         </div>
         <i class="ri-arrow-right-line app-arrow"></i>
       </a>
@@ -449,9 +454,7 @@
             <span class="tag">평가</span>
             <span class="tag">스크립트</span>
           </div>
-          <div class="done-badge" id="badge-listening">
-            <i class="ri-checkbox-circle-fill"></i> 오늘 완료
-          </div>
+          <div class="card-stats" id="stats-listening"></div>
         </div>
         <i class="ri-arrow-right-line app-arrow"></i>
       </a>
@@ -561,24 +564,65 @@
       if (!hasData) document.getElementById('migrateBanner').classList.add('show');
     })();
 
-    // ── 오늘 완료 배지 ─────────────────────────────
-    (function checkTodayProgress() {
+    // ── 진행 현황 표시 ────────────────────────────
+    (function renderStats() {
       const today = new Date().toISOString().slice(0, 10);
 
-      function isDone(key, checker) {
-        try { return checker(JSON.parse(localStorage.getItem(key) || '{}')); }
-        catch (e) { return false; }
+      function load(key) {
+        try { return JSON.parse(localStorage.getItem(key) || 'null'); } catch(e) { return null; }
+      }
+      function chip(icon, text, isToday) {
+        return `<span class="stat-chip${isToday ? ' today' : ''}"><i class="${icon}"></i>${text}</span>`;
+      }
+      function lastStudied(dates) {
+        if (!Array.isArray(dates) || !dates.length) return null;
+        const last = dates.slice().sort().pop();
+        if (last === today) return '오늘';
+        const diff = Math.round((new Date(today) - new Date(last)) / 86400000);
+        return `${diff}일 전`;
       }
 
-      const vocabDone    = isDone('vocab1800_v1',  s => Array.isArray(s.studyDates) && s.studyDates.includes(today));
-      const englishDone  = isDone('jy_english_v3', s => Array.isArray(s.studyDates) && s.studyDates.includes(today));
-      const listenDone   = isDone('listen_v2',     s => s.doneDate === today);
+      // 단어학습
+      const vocab = load('vocab1800_v1');
+      if (vocab) {
+        const mastered = Object.values(vocab.days || {}).filter(d => d.testPassed).length;
+        const totalDays = Object.keys(vocab.days || {}).length;
+        const last = lastStudied(vocab.studyDates);
+        const isToday = last === '오늘';
+        let html = chip('ri-checkbox-circle-line', `${mastered}/${totalDays}일 완료`);
+        if (vocab.streak?.count > 0) html += chip('ri-fire-line', `${vocab.streak.count}일 연속`);
+        if (last) html += chip(isToday ? 'ri-check-line' : 'ri-time-line', isToday ? '오늘 학습' : `마지막 ${last}`, isToday);
+        document.getElementById('stats-vocab').innerHTML = html;
+      }
 
-      if (vocabDone)   document.getElementById('badge-vocab').classList.add('show');
-      if (englishDone) document.getElementById('badge-english').classList.add('show');
-      if (listenDone)  document.getElementById('badge-listening').classList.add('show');
+      // 교과학습
+      const eng = load('jy_english_v3');
+      if (eng) {
+        const mastered = Object.values(eng.progress || {}).reduce((s, p) => s + (p.wordScores || []).filter(v => v === 2).length, 0);
+        const last = lastStudied(eng.studyDates);
+        const isToday = last === '오늘';
+        let html = chip('ri-star-line', `${mastered}단어 암기`);
+        if (eng.xp) html += chip('ri-trophy-line', `${eng.xp} XP`);
+        if (last) html += chip(isToday ? 'ri-check-line' : 'ri-time-line', isToday ? '오늘 학습' : `마지막 ${last}`, isToday);
+        document.getElementById('stats-english').innerHTML = html;
+      }
 
-      if (vocabDone && englishDone && listenDone) {
+      // 리스닝
+      const listen = load('listen_v2');
+      if (listen) {
+        const submitted = Object.keys(listen.submitted || {}).filter(k => listen.submitted[k]).length;
+        const total = 14;
+        const isToday = listen.doneDate === today;
+        let html = chip('ri-play-circle-line', `${submitted}/${total}회차 완료`);
+        if (isToday) html += chip('ri-check-line', '오늘 학습', true);
+        document.getElementById('stats-listening').innerHTML = html;
+      }
+
+      // 전체 완료 배너 (오늘 모두 학습)
+      const vocabToday = vocab && Array.isArray(vocab.studyDates) && vocab.studyDates.includes(today);
+      const engToday   = eng   && Array.isArray(eng.studyDates)   && eng.studyDates.includes(today);
+      const listenToday = listen && listen.doneDate === today;
+      if (vocabToday && engToday && listenToday) {
         document.getElementById('allDoneBanner').classList.add('show');
       }
     })();
